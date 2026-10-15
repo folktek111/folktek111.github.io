@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folktek · Julian Baw</title>
+<meta name="description" content="Julian Baw, Uddebo. Traditional craft, building restoration, stoves and low-impact building. Folktek: technology as any essential technique or tool.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lime: #E4E6DD;      /* limewashed wall */
+    --tar: #2B2621;       /* pine tar */
+    --falu: #8E2F22;      /* Falu red */
+    --ochre: #A9853A;     /* linseed ochre */
+    --slate: #59625C;     /* slate roof */
+    --paper: #F2F2EC;
+    --rule: #C9CBC0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --lime: #23211D;
+      --tar: #E7E5DC;
+      --falu: #D0705F;
+      --ochre: #C9A65A;
+      --slate: #A3ABA4;
+      --paper: #2C2924;
+      --rule: #3E3A33;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--lime);
+    color: var(--tar);
+    font-family: "Source Serif 4", Georgia, serif;
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+  a { color: var(--falu); text-underline-offset: 0.18em; }
+  a:focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+  h1, h2, h3, .tech-word { font-family: "Bricolage Grotesque", system-ui, sans-serif; line-height: 1.05; }
+
+  /* Header */
+  header { padding: 1.5rem 0; }
+  header .wrap { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+  .mark { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 1.25rem; text-decoration: none; color: var(--tar); }
+  nav a { margin-left: 1.25rem; color: var(--tar); text-decoration: none; font-size: 1rem; }
+  nav a:hover { text-decoration: underline; }
+
+  /* Hero: the reframing of technology is the memorable thing */
+  .hero { padding: 3rem 0 4rem; }
+  .hero p.lede { max-width: 34rem; font-size: 1.3rem; margin: 0 0 2.5rem; }
+  .tech { list-style: none; padding: 0; margin: 0; border-top: 2px solid var(--tar); }
+  .tech li {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+    gap: 1.5rem; align-items: end;
+    padding: 1.1rem 0; border-bottom: 1px solid var(--rule);
+  }
+  .tech-word { font-size: clamp(2.6rem, 8vw, 6rem); font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+  .tech li:nth-child(1) .tech-word { color: var(--falu); }
+  .tech li:nth-child(2) .tech-word { color: var(--slate); }
+  .tech li:nth-child(3) .tech-word { color: var(--ochre); }
+  .tech li p { margin: 0 0 0.4rem; font-size: 1.05rem; }
+
+  section { padding: 3.5rem 0; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; margin: 0 0 1.5rem; letter-spacing: -0.01em; }
+  h3 { font-size: 1.3rem; font-weight: 600; margin: 0 0 0.4rem; }
+  .intro { max-width: 40rem; }
+
+  /* What I do */
+  .craft { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 2rem 2.5rem; }
+  .craft div { border-left: 4px solid var(--falu); padding-left: 1rem; }
+  .craft div:nth-child(2) { border-color: var(--ochre); }
+  .craft div:nth-child(3) { border-color: var(--slate); }
+  .craft div:nth-child(4) { border-color: var(--tar); }
+  .craft div:nth-child(5) { border-color: var(--rule); }
+  .craft p { margin: 0; }
+
+  /* Work list */
+  .work { background: var(--paper); }
+  .work ul { list-style: none; padding: 0; margin: 0; columns: 2 20rem; column-gap: 3rem; }
+  .work li { break-inside: avoid; padding: 0.9rem 0; border-bottom: 1px solid var(--rule); }
+  .work li strong { font-weight: 600; display: block; }
+  .work li span { color: var(--slate); font-size: 1rem; }
+
+  .training ul { padding-left: 1.2rem; margin: 0; max-width: 40rem; }
+
+  .research p { max-width: 40rem; }
+
+  footer { padding: 3rem 0 4rem; border-top: 2px solid var(--tar); margin-top: 2rem; }
+  footer p { margin: 0 0 0.5rem; }
+
+  @media (max-width: 40rem) {
+    nav a { margin-left: 0; margin-right: 1rem; }
+    .tech li { grid-template-columns: 1fr; gap: 0.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="mark" href="/">Folktek</a>
+    <nav aria-label="Main">
+      <a href="#work">Work</a>
+      <a href="#folktekologi">Folktekologi</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap">
+      <h1 id="hero-h" class="lede" style="font-family:'Source Serif 4',serif;font-weight:400;font-size:1.3rem;line-height:1.5;max-width:34rem;margin:0 0 2.5rem;">
+        Technology is any essential technique or tool. Some of it is made of steel. Most of it is made of hands, wood, fungi and people talking.
+      </h1>
+      <ul class="tech">
+        <li><p class="tech-word">Hands</p><p>Traditional craft and building: windows, log houses, stoves, roofs, boats.</p></li>
+        <li><p class="tech-word">Nature</p><p>Mushrooms, trees, soil and whole living systems doing the work.</p></li>
+        <li><p class="tech-word">People</p><p>Circles, meetings and talking together, the oldest social tools there are.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="who-h">
+    <div class="wrap intro">
+      <h2 id="who-h">Julian Baw</h2>
+      <p>Craftsman, pedagogue and project leader based in Uddebo, in Tranemo kommun. British-born, Swedish citizen, working in English and Swedish.</p>
+      <p>I work on old and unusual buildings: restoring what is there, building what is needed, and teaching the skills along the way.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="do-h">
+    <div class="wrap">
+      <h2 id="do-h">What I do</h2>
+      <div class="craft">
+        <div>
+          <h3>Special building</h3>
+          <p>Low-impact and one-off builds: tiny houses, container builds, roofing.</p>
+        </div>
+        <div>
+          <h3>Stoves and heat</h3>
+          <p>Wood stoves, rocket stoves and wood-fired boiler houses, installed and built.</p>
+        </div>
+        <div>
+          <h3>Byggnadsvård</h3>
+          <p>Window restoration, log house repair, torp restoration and façade work.</p>
+        </div>
+        <div>
+          <h3>Interiors</h3>
+          <p>Kitchens, house renovation and shop fittings.</p>
+        </div>
+        <div>
+          <h3>Boats</h3>
+          <p>Boat carpentry.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="work-h">
+    <div class="wrap">
+      <h2 id="work-h">Work</h2>
+      <ul>
+        <li><strong>Window restoration</strong><span>Stjärnholms slott and listed buildings and churches in Sörmland, with CA Fönsterhantverk</span></li>
+        <li><strong>Window restoration</strong><span>Brf. Enigheten</span></li>
+        <li><strong>Damp-damaged log house, c. 1830</strong><span>Jenningskaskolan</span></li>
+        <li><strong>Mullbänkstorp restoration, c. 1750</strong><span>Backen</span></li>
+        <li><strong>Wood-fired boiler house, wood stoves, kitchen and house renovation</strong><span>Advanced Biotech Lab</span></li>
+        <li><strong>Roofing and Borgarstuga renovation</strong><span>Vita Korpen eco-village, Dalarna</span></li>
+        <li><strong>Kitchens</strong><span>Vita Hästen collective house and Gröna Oasen café</span></li>
+        <li><strong>Shop fittings</strong><span>Reko Hälsokost</span></li>
+        <li><strong>Tiny houses and container builds</strong><span>Own company</span></li>
+        <li><strong>Eco-building project with teaching</strong><span>Friberga Gård</span></li>
+        <li><strong>Sagojord installation, Nordiska Trädgårdar</strong><span>Visitors' prize for best idea garden, and jury silver</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="training" aria-labelledby="train-h">
+    <div class="wrap">
+      <h2 id="train-h">Training</h2>
+      <ul>
+        <li>Båtsnickarutbildning, Stensunds folkhögskola</li>
+        <li>Permaculture Design Certificate and advanced permaculture teacher training</li>
+        <li>Regenerative Agriculture, Ridgedale</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="research" id="folktekologi" aria-labelledby="fk-h">
+    <div class="wrap">
+      <h2 id="fk-h">Folktekologi</h2>
+      <p>An ongoing research strand into the simplest technologies people can use at home: low-impact, no or low voltage, working with natural systems rather than replacing them, and run through local cottage-industry economies and co-ops.</p>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Contact</h2>
+    <p>Uddebo, Tranemo kommun</p>
+  </div>
+</footer>
+
+</body>
+</html>
