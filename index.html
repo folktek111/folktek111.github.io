@@ -11,59 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
-<style>
-  :root { --bg: #E4E6DD; --ink: #2B2621; --falu: #8E2F22; --ochre: #A9853A; --slate: #59625C; --paper: #F2F2EC; --rule: #C9CBC0; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #23211D; --ink: #E7E5DC; --falu: #D0705F; --ochre: #C9A65A; --slate: #A3ABA4; --paper: #2C2924; --rule: #3E3A33; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 1.125rem/1.6 "Source Serif 4", Georgia, serif; -webkit-text-size-adjust: 100%; }
-  a { color: var(--falu); text-underline-offset: 0.18em; }
-  a:focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; }
-  .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
-  h1, h2, .word { font-family: "Bricolage Grotesque", system-ui, sans-serif; line-height: 1.05; font-weight: 800; margin: 0; }
-
-  header .wrap { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem 1rem; padding-top: 1.5rem; padding-bottom: 1.5rem; }
-  header h1 { font-size: 1.25rem; }
-  nav a { margin-right: 1rem; color: var(--ink); text-decoration: none; font-size: 1rem; }
-  nav a:hover { text-decoration: underline; }
-
-  .hero { padding: 2rem 0 3rem; }
-  .hero p { max-width: 36rem; font-size: 1.3rem; margin: 0 0 2rem; }
-  .tech { list-style: none; padding: 0; margin: 0; border-top: 2px solid var(--ink); }
-  .tech li { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,20rem); gap: 1.5rem; align-items: end; padding: 0.9rem 0; border-bottom: 1px solid var(--rule); }
-  .word { font-size: clamp(2.4rem, 7vw, 5rem); letter-spacing: -0.02em; }
-  .tech li:nth-child(1) .word { color: var(--falu); }
-  .tech li:nth-child(2) .word { color: var(--slate); }
-  .tech li:nth-child(3) .word { color: var(--ochre); }
-  .tech li p { margin: 0 0 0.3rem; font-size: 1.05rem; }
-
-  section { padding: 3rem 0; }
-  h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 1rem; }
-  .who { max-width: 40rem; }
-  .who p { margin: 0; }
-
-  .do { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 2rem 2.5rem; }
-  .do > div { border-left: 4px solid var(--falu); padding-left: 1rem; }
-  .do > div:nth-child(2) { border-color: var(--ochre); }
-  .do > div:nth-child(3) { border-color: var(--slate); }
-  .do ul { list-style: none; padding: 0; margin: 0; }
-  .do li { padding: 0.15rem 0; }
-  .do small { display: block; margin-top: 0.75rem; color: var(--slate); font-size: 0.95rem; }
-
-  .work { background: var(--paper); }
-  .work ul { list-style: none; padding: 0; margin: 0; columns: 2 20rem; column-gap: 3rem; }
-  .work li { break-inside: avoid; padding: 0.75rem 0; border-bottom: 1px solid var(--rule); }
-  .work strong { display: block; font-weight: 600; }
-  .work span { color: var(--slate); font-size: 1rem; }
-
-  .fk p { max-width: 40rem; margin: 0; }
-
-  footer { padding: 2.5rem 0 3.5rem; border-top: 2px solid var(--ink); }
-  footer p { margin: 0 0 0.4rem; }
-
-  @media (max-width: 40rem) { .tech li { grid-template-columns: 1fr; gap: 0.2rem; } }
-</style>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -123,12 +71,99 @@
   <section class="work" id="projects">
     <div class="wrap">
       <h2>Projects</h2>
+      <ul class="tiles">
+        <li>
+          <img src="/img/p/stove-installation.jpg" width="900" height="675" alt="Stove installation" loading="lazy">
+          <strong>Stove installation</strong>
+          <span>Wood stoves fitted with hearth plate and flue.</span>
+        </li>
+        <li>
+          <img src="/img/p/rocket-stoves.jpg" width="900" height="675" alt="Rocket stoves" loading="lazy">
+          <strong>Rocket stoves</strong>
+          <span>Rocket stoves from oil drums and scrap metal, built in workshops.</span>
+        </li>
+        <li>
+          <img src="/img/p/round-house.jpg" width="900" height="675" alt="Round house" loading="lazy">
+          <strong>Round house</strong>
+          <span>Reciprocal timber roof on a round earth-walled house.</span>
+        </li>
+        <li>
+          <img src="/img/p/straw-bale.jpg" width="900" height="675" alt="Straw bale building" loading="lazy">
+          <strong>Straw bale building</strong>
+          <span>Straw bale walls raised together with workshop groups.</span>
+        </li>
+        <li>
+          <img src="/img/p/wagons.jpg" width="900" height="675" alt="Wagons" loading="lazy">
+          <strong>Wagons</strong>
+          <span>Old site wagons stripped, insulated, re-windowed and lived in.</span>
+        </li>
+        <li>
+          <img src="/img/p/tiny-houses.jpg" width="900" height="675" alt="Tiny houses" loading="lazy">
+          <strong>Tiny houses</strong>
+          <span>Small timber houses on wheels.</span>
+        </li>
+        <li>
+          <img src="/img/p/green-roof.jpg" width="900" height="675" alt="Green roof shed" loading="lazy">
+          <strong>Green roof shed</strong>
+          <span>Open timber shed under a living roof.</span>
+        </li>
+        <li>
+          <img src="/img/p/log-cabin.jpg" width="900" height="675" alt="Log cabin" loading="lazy">
+          <strong>Log cabin</strong>
+          <span>A cabin built from round logs.</span>
+        </li>
+        <li>
+          <img src="/img/p/takkupa.jpg" width="900" height="675" alt="Takkupa" loading="lazy">
+          <strong>Takkupa</strong>
+          <span>Roof dormer: SketchUp drawings, kontrollplan and bygglov.</span>
+        </li>
+        <li>
+          <img src="/img/p/biochar.jpg" width="900" height="675" alt="Biochar" loading="lazy">
+          <strong>Biochar</strong>
+          <span>Biochar made in pits, drums and kilns, and taught as a course.</span>
+        </li>
+        <li>
+          <a href="/frobytardag/"><img src="/img/p/frobytardag.jpg" width="900" height="675" alt="Fröbytardag" loading="lazy">
+          <strong>Fröbytardag</strong>
+          <span>Seed swap days: bring seeds, take seeds.</span></a>
+        </li>
+      </ul>
     </div>
   </section>
 
   <section id="gallery">
     <div class="wrap">
       <h2>Gallery</h2>
+      <div class="grid">
+        <a href="/img/g/01.jpg"><img src="/img/g/01-t.jpg" width="600" height="600" alt="Turf-roofed hobbit hut among nettles" loading="lazy"></a>
+        <a href="/img/g/02.jpg"><img src="/img/g/02-t.jpg" width="600" height="600" alt="Small red shed on wheels with heart-shaped doors" loading="lazy"></a>
+        <a href="/img/g/03.jpg"><img src="/img/g/03-t.jpg" width="600" height="600" alt="Windmill sculpture made from scrap" loading="lazy"></a>
+        <a href="/img/g/04.jpg"><img src="/img/g/04-t.jpg" width="600" height="600" alt="Glass pyramid greenhouse" loading="lazy"></a>
+        <a href="/img/g/05.jpg"><img src="/img/g/05-t.jpg" width="600" height="600" alt="Dome house with a glazed front" loading="lazy"></a>
+        <a href="/img/g/06.jpg"><img src="/img/g/06-t.jpg" width="600" height="600" alt="A-frame shelter of rough boards" loading="lazy"></a>
+        <a href="/img/g/07.jpg"><img src="/img/g/07-t.jpg" width="600" height="600" alt="Glass bottle wall panel" loading="lazy"></a>
+        <a href="/img/g/08.jpg"><img src="/img/g/08-t.jpg" width="600" height="600" alt="Compost toilet on stilts with stairs" loading="lazy"></a>
+        <a href="/img/g/09.jpg"><img src="/img/g/09-t.jpg" width="600" height="600" alt="Reciprocal roof seen from inside" loading="lazy"></a>
+        <a href="/img/g/10.jpg"><img src="/img/g/10-t.jpg" width="600" height="600" alt="Kettle on a green barrel rocket stove" loading="lazy"></a>
+        <a href="/img/g/11.jpg"><img src="/img/g/11-t.jpg" width="600" height="600" alt="Rocket stove from above" loading="lazy"></a>
+        <a href="/img/g/12.jpg"><img src="/img/g/12-t.jpg" width="600" height="600" alt="Frying pan over a drum fire" loading="lazy"></a>
+        <a href="/img/g/13.jpg"><img src="/img/g/13-t.jpg" width="600" height="600" alt="Glowing charcoal" loading="lazy"></a>
+        <a href="/img/g/14.jpg"><img src="/img/g/14-t.jpg" width="600" height="600" alt="Stove seen from above, set in gravel" loading="lazy"></a>
+        <a href="/img/g/15.jpg"><img src="/img/g/15-t.jpg" width="600" height="600" alt="Fire inside a drum stove" loading="lazy"></a>
+        <a href="/img/g/16.jpg"><img src="/img/g/16-t.jpg" width="600" height="600" alt="Straw bale wall on a log foundation" loading="lazy"></a>
+        <a href="/img/g/17.jpg"><img src="/img/g/17-t.jpg" width="600" height="600" alt="Hands joined in a circle" loading="lazy"></a>
+        <a href="/img/g/18.jpg"><img src="/img/g/18-t.jpg" width="600" height="600" alt="Wooden blocks laid out in a circle" loading="lazy"></a>
+        <a href="/img/g/19.jpg"><img src="/img/g/19-t.jpg" width="600" height="600" alt="Building a roof on a round house" loading="lazy"></a>
+        <a href="/img/g/20.jpg"><img src="/img/g/20-t.jpg" width="600" height="600" alt="Wagon kitchen interior" loading="lazy"></a>
+        <a href="/img/g/21.jpg"><img src="/img/g/21-t.jpg" width="600" height="600" alt="Wagon interior with tools on the wall" loading="lazy"></a>
+        <a href="/img/g/22.jpg"><img src="/img/g/22-t.jpg" width="600" height="600" alt="Timber tiny house with round window" loading="lazy"></a>
+        <a href="/img/g/23.jpg"><img src="/img/g/23-t.jpg" width="600" height="600" alt="Glazed workshop lit up at night" loading="lazy"></a>
+        <a href="/img/g/24.jpg"><img src="/img/g/24-t.jpg" width="600" height="600" alt="Grey wagon home with a wooden door" loading="lazy"></a>
+        <a href="/img/g/25.jpg"><img src="/img/g/25-t.jpg" width="600" height="600" alt="Turf-roofed earth cellar door" loading="lazy"></a>
+        <a href="/img/g/26.jpg"><img src="/img/g/26-t.jpg" width="600" height="600" alt="Raising a log cabin roof" loading="lazy"></a>
+        <a href="/img/g/27.jpg"><img src="/img/g/27-t.jpg" width="600" height="600" alt="Burning down a biochar pit" loading="lazy"></a>
+        <a href="/img/g/28.jpg"><img src="/img/g/28-t.jpg" width="600" height="600" alt="Mixing by hand in buckets" loading="lazy"></a>
+      </div>
     </div>
   </section>
 
