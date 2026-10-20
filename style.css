@@ -79,3 +79,10 @@ a.q:hover, a.q:focus-visible { text-decoration: underline dotted; text-decoratio
 .cat a:hover, .cat a:focus-visible { color: var(--slate); }
 .kitten { min-height: 100vh; display: grid; place-items: center; font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size: clamp(2rem, 8vw, 4rem); }
 .kitten p { margin: 0; }
+
+/* SoundCloud click-to-load */
+.sc { margin-top: 2rem; max-width: 40rem; }
+.sc-play { font: inherit; font-size: 1rem; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-left: 4px solid var(--falu); padding: 0.6rem 1rem; cursor: pointer; }
+.sc-play:hover, .sc-play:focus-visible { border-color: var(--falu); }
+.sc-note { margin: 0.4rem 0 0; color: var(--slate); font-size: 0.85rem; }
+.sc iframe { display: block; }
