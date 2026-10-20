@@ -54,12 +54,14 @@
 
   <section class="work">
     <div class="wrap">
-      <h2>Fröbytardag 2026</h2>
+      <details class="gal">
+      <summary><h2>Fröbytardag 2026</h2></summary>
       <div class="grid">
         <a href="/img/fbd/2026-6193.jpg"><img src="/img/fbd/2026-6193.jpg" width="600" height="600" alt="People along a table of seed packets" loading="lazy"></a>
         <a href="/img/fbd/2026-6195.jpg"><img src="/img/fbd/2026-6195.jpg" width="600" height="600" alt="Looking through seed packets" loading="lazy"></a>
         <a href="/img/fbd/2026-6199.jpg"><img src="/img/fbd/2026-6199.jpg" width="600" height="600" alt="Choosing seeds at the swap table" loading="lazy"></a>
       </div>
+      </details>
     </div>
   </section>
 
@@ -104,18 +106,22 @@
           <p>One Fröbytardag came with a biokolskurs: how wood turns to charcoal, and why it belongs in soil.</p>
           <p>Pyrolysis and gasification, soil life, compost tea, and the kilns: oil drums, top-lit updraft stoves, cone kilns and pits dug in the ground.</p>
         </div>
-        <div class="grid" style="margin-top:1rem">
+        <details class="gal gal-sm" style="margin-top:1rem">
+        <summary><h3>Photos</h3></summary>
+        <div class="grid">
           <a href="/img/fbd/biochar-pit.jpg"><img src="/img/fbd/biochar-pit.jpg" alt="Burning down a biochar pit ringed with stones" loading="lazy"></a>
           <a href="/img/fbd/biochar-can.jpg"><img src="/img/fbd/biochar-can.jpg" alt="Tin packed with sticks for charring" loading="lazy"></a>
           <a href="/img/fbd/biochar-burn.jpg"><img src="/img/fbd/biochar-burn.jpg" alt="Tin charring in the fire" loading="lazy"></a>
         </div>
+        </details>
       </div>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2>Posters</h2>
+      <details class="gal">
+      <summary><h2>Posters</h2></summary>
       <div class="posters">
         <a href="/img/fbd/poster-01.jpg"><img src="/img/fbd/poster-01.jpg" alt="Hand-painted Fröbytardag poster, Fritids Fjärilen, Mariaskolan" loading="lazy"></a>
         <a href="/img/fbd/poster-02.jpg"><img src="/img/fbd/poster-02.jpg" alt="Fröbytardag poster, Fjärilen, Mariaskolan, with talks programme" loading="lazy"></a>
@@ -126,6 +132,7 @@
         <a href="/img/fbd/poster-03.jpg"><img src="/img/fbd/poster-03.jpg" alt="Fröbytardag banner, Kulturhuset Ytterjärna, 6 April 2013" loading="lazy"></a>
         <a href="/img/fbd/poster-08.jpg"><img src="/img/fbd/poster-08.jpg" alt="Fröbytardag with biochar course" loading="lazy"></a>
       </div>
+      </details>
     </div>
   </section>
 </main>
@@ -138,5 +145,16 @@
   </div>
 </footer>
 
+<script>
+  // Open a collapsed gallery when a link points at it (e.g. #gallery).
+  function openFromHash() {
+    var t = location.hash && document.getElementById(location.hash.slice(1));
+    if (!t) return;
+    var d = t.matches("details") ? t : t.querySelector("details.gal");
+    if (d) { d.open = true; t.scrollIntoView(); }
+  }
+  window.addEventListener("hashchange", openFromHash);
+  openFromHash();
+</script>
 </body>
 </html>

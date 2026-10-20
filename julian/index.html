@@ -125,7 +125,8 @@
 
   <section id="gallery">
     <div class="wrap">
-      <h2>Gallery</h2>
+      <details class="gal">
+      <summary><h2>Gallery</h2></summary>
       <div class="grid">
         <a href="/img/g/01.jpg"><img src="/img/g/01-t.jpg" width="600" height="600" alt="Turf-roofed hobbit hut among nettles" loading="lazy"></a>
         <a href="/img/g/02.jpg"><img src="/img/g/02-t.jpg" width="600" height="600" alt="Small red shed on wheels with heart-shaped doors" loading="lazy"></a>
@@ -156,6 +157,7 @@
         <a href="/img/g/27.jpg"><img src="/img/g/27-t.jpg" width="600" height="600" alt="Burning down a biochar pit" loading="lazy"></a>
         <a href="/img/g/28.jpg"><img src="/img/g/28-t.jpg" width="600" height="600" alt="Mixing by hand in buckets" loading="lazy"></a>
       </div>
+      </details>
     </div>
   </section>
 </main>
@@ -169,5 +171,16 @@
     <p class="door"><a href="/folktekologi/" aria-label="Further in"><img src="/favicon.svg" width="14" height="14" alt=""></a></p>
   </div>
 </footer>
+<script>
+  // Open a collapsed gallery when a link points at it (e.g. #gallery).
+  function openFromHash() {
+    var t = location.hash && document.getElementById(location.hash.slice(1));
+    if (!t) return;
+    var d = t.matches("details") ? t : t.querySelector("details.gal");
+    if (d) { d.open = true; t.scrollIntoView(); }
+  }
+  window.addEventListener("hashchange", openFromHash);
+  openFromHash();
+</script>
 </body>
 </html>
