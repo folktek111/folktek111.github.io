@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Unified Theory of Wobbliness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+:root{
+  --bg:#eeedf3; --panel:#fbfbfd; --ink:#1e1b33; --muted:#625e7a; --line:#d4d2e0; --soft:#e6e4ef;
+  --accent:#5b57a8; --accent-soft:#e3e2f3; --lede:#8d89a5;
+  --wobbly:#3d6b3a; --wobbly-soft:#dde8d6;
+  --wonky:#a4462a;  --wonky-soft:#f1dcd2;
+  --wibble:#b77b14; --wibble-soft:#f5e5c6;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#15131f; --panel:#1e1b2c; --ink:#ebe9f5; --muted:#a19cb8; --line:#34304a; --soft:#28243a;
+  --accent:#a9a5f0; --accent-soft:#2a2745; --lede:#cbc7de;
+  --wobbly:#7fb06f; --wobbly-soft:#1c2a18;
+  --wonky:#d97a55;  --wonky-soft:#3a2018;
+  --wibble:#e2a83c; --wibble-soft:#3a2c12;
+  color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding:calc(28px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(56px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,6vw,3rem);font-family:"Source Serif 4",Georgia,serif;font-weight:600}
+h2{font-size:1.4rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+
+/* header */
+header{display:flex;flex-direction:column;gap:10px}
+header .lede{color:var(--lede);font-size:1.02rem}
+.wavebox{height:90px;overflow:hidden;position:relative;border-radius:10px;background:#1b1828;border:1px solid #1b1828;display:flex;align-items:center;justify-content:center;--wobbly:#7fb06f;--wonky:#d97a55;--wibble:#e2a83c}
+header .claim{text-align:center;max-width:none;color:var(--ink)}
+header h1{text-align:center}
+#st{height:1.7em;display:flex;align-items:center;justify-content:center;font-family:var(--f-body);font-size:min(4.4rem,8.6vw);font-weight:500;color:var(--ink);overflow:hidden;text-align:center}
+#st .w{display:inline-block;opacity:0;transition:opacity 1.4s ease}
+#st .w.on{opacity:1}
+#st .c{display:inline-block;white-space:pre}
+#st.wob .c{animation:wl3 3.4s ease-in-out infinite}
+@keyframes wl3{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-3px) rotate(-4deg)}75%{transform:translateY(3px) rotate(4deg)}}
+#st.fall .c{transition:transform 4.5s cubic-bezier(.35,0,.65,1),opacity 4.5s ease-in;opacity:0}
+.wavebox svg{position:absolute;inset:0;height:100%;width:100%}
+@keyframes drift{to{transform:translateX(-50%)}}
+.claim{font-family:var(--f-mono);font-weight:500;font-size:clamp(1.8rem,6.5vw,2.7rem);line-height:1.1;color:var(--wobbly);margin:6px 0 4px}
+.wobbletext span{display:inline-block;white-space:pre;animation:wl 2.6s ease-in-out infinite}
+.claim.wobbletext span{animation-name:wl2;animation-duration:3.2s}
+@keyframes wl2{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2px) rotate(-2deg)}75%{transform:translateY(2px) rotate(2deg)}}
+.respell{font-size:clamp(2rem,8vw,3.2rem);letter-spacing:.02em;cursor:pointer;user-select:none;-webkit-user-select:none}
+.respell .l{display:inline-block;white-space:pre;animation:wl 5s ease-in-out infinite}
+.respell .ins{display:inline-block;font-size:0;opacity:0;transition:font-size .8s cubic-bezier(.34,1.7,.5,1),opacity .4s}
+.respell.fixed .ins{font-size:1em;opacity:1}
+.respell.fixed .ins .l{animation:spinin .9s cubic-bezier(.34,1.7,.5,1),wl 5s ease-in-out .9s infinite}
+.respell .l.wonk{animation:wonkaway 1.1s cubic-bezier(.9,0,.1,1) forwards !important}
+.respell .l.wib{animation:wibback 1.2s ease-out forwards !important}
+@keyframes wonkaway{0%{transform:none;opacity:1}20%{transform:translate(calc(var(--dx)*2px),calc(var(--dy)*3px)) rotate(calc(var(--dx)*12deg))}40%{transform:translate(calc(var(--dx)*5px),calc(var(--dy)*1.5px)) rotate(calc(var(--dx)*-9deg))}60%{transform:translate(calc(var(--dx)*7.5px),calc(var(--dy)*8px)) rotate(calc(var(--dx)*25deg))}80%{transform:translate(calc(var(--dx)*11px),calc(var(--dy)*5.5px)) rotate(calc(var(--dx)*-15deg))}100%{transform:translate(calc(var(--dx)*15px),calc(var(--dy)*13px)) rotate(calc(var(--dx)*40deg));opacity:.35}}
+@keyframes wibback{0%{transform:translate(calc(var(--dx)*15px),calc(var(--dy)*13px)) rotate(calc(var(--dx)*40deg));opacity:.35}30%{transform:translate(calc(var(--dx)*-4px),calc(var(--dy)*-3px)) rotate(calc(var(--dx)*-14deg));opacity:1}50%{transform:translate(calc(var(--dx)*2.5px),calc(var(--dy)*1.5px)) rotate(calc(var(--dx)*9deg))}70%{transform:translate(calc(var(--dx)*-1.5px),calc(var(--dy)*-1px)) rotate(calc(var(--dx)*-5deg))}85%{transform:translate(calc(var(--dx)*0.5px),0) rotate(calc(var(--dx)*2deg))}100%{transform:none;opacity:1}}
+@keyframes spinin{0%{transform:rotate(-200deg) scale(.2) translateY(-30px)}100%{transform:none}}
+.respell.jolt{animation:jolt .6s}
+@keyframes jolt{0%,100%{transform:none}20%{transform:skewX(-12deg) translateX(-6px)}40%{transform:skewX(10deg) translateX(5px)}60%{transform:skewX(-6deg)}80%{transform:skewX(3deg)}}
+@media (prefers-reduced-motion:reduce){.respell .l,.respell.fixed .ins .l,.respell.jolt{animation:none}}
+@keyframes wl{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-4px) rotate(-4deg)}75%{transform:translateY(4px) rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wobbletext span{animation:none}}
+
+/* states */
+.states{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.state{border-radius:10px;padding:16px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;gap:8px}
+.state .rune{font-size:1.9rem;line-height:1}
+.state.wobbly .rune{color:var(--wobbly)} .state.wonky .rune{color:var(--wonky)} .state.wibble .rune{color:var(--wibble)}
+.state.wobbly{border-top:5px solid var(--wobbly)} .state.wonky{border-top:5px solid var(--wonky)} .state.wibble{border-top:5px solid var(--wibble)}
+.eq{font-family:var(--f-mono);font-size:.92rem;background:var(--soft);border-radius:6px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
+.cycle{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-size:2rem;padding:6px 0}
+.cycle span.r1{color:var(--wobbly)} .cycle span.r2{color:var(--wonky)} .cycle span.r3{color:var(--wibble)}
+.cycle .arr{font-size:1.2rem;color:var(--muted)}
+.kitten{text-align:center;font-family:var(--f-mono);font-size:1.25rem}
+.kitten small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--muted);margin-top:4px}
+
+/* proofs */
+.proof{--st:var(--wobbly);--st-soft:var(--wobbly-soft);border-left:6px solid var(--st)}
+.proof.wonky{--st:var(--wonky);--st-soft:var(--wonky-soft)}
+.proof.wibble{--st:var(--wibble);--st-soft:var(--wibble-soft)}
+.proof-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.lvl{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--st)}
+.meter{display:flex;gap:3px;align-items:center}
+.meter i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.meter i.on{background:var(--st)}
+.meter span{font:400 .7rem var(--f-mono);color:var(--muted);margin-right:6px}
+.tag{display:inline-block;font:500 .72rem var(--f-mono);padding:2px 9px;border-radius:999px;margin-left:6px;vertical-align:3px;background:var(--st-soft);color:var(--st)}
+.maths{font-family:var(--f-mono);font-size:.86rem;line-height:1.75;background:var(--soft);border-radius:8px;padding:12px 14px;overflow-x:auto;white-space:pre;tab-size:2}
+.maths .c{color:var(--muted)}
+.maths b{color:var(--st);font-weight:600}
+.verdict{align-self:flex-start;font-family:var(--f-display);font-weight:700;font-size:1.05rem;color:var(--st);border:2px solid var(--st);background:var(--st-soft);border-radius:8px;padding:6px 12px;transform:rotate(-1.5deg);display:inline-block}
+.verdict:hover{animation:wob .6s ease-in-out}
+@keyframes wob{0%,100%{transform:rotate(-1.5deg)}25%{transform:rotate(2deg)}50%{transform:rotate(-3deg)}75%{transform:rotate(1.5deg)}}
+.verdict small{display:block;font-family:var(--f-body);font-weight:400;font-size:.82rem;color:var(--muted);margin-top:2px}
+.fact{font-size:.88rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px}
+
+/* table */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .7rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.v{font-family:var(--f-display);font-weight:700;white-space:nowrap}
+td.v.wobbly{color:var(--wobbly)} td.v.wonky{color:var(--wonky)} td.v.wibble{color:var(--wibble)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+.dot.wobbly{background:var(--wobbly)} .dot.wonky{background:var(--wonky)} .dot.wibble{background:var(--wibble)}
+
+ol.protocol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+footer{font-size:.78rem;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){.wavebox svg{animation:none}.verdict:hover{animation:none}}
+html[data-pal="light"]{--bg:#eeedf3;--panel:#fbfbfd;--ink:#1e1b33;--muted:#625e7a;--line:#d4d2e0;--soft:#e6e4ef;--accent:#5b57a8;--accent-soft:#e3e2f3;--lede:#8d89a5;--wobbly:#3d6b3a;--wobbly-soft:#dde8d6;--wonky:#a4462a;--wonky-soft:#f1dcd2;--wibble:#b77b14;--wibble-soft:#f5e5c6;color-scheme:light}
+html[data-pal="dark"]{--bg:#15131f;--panel:#1e1b2c;--ink:#ebe9f5;--muted:#a19cb8;--line:#34304a;--soft:#28243a;--accent:#a9a5f0;--accent-soft:#2a2745;--lede:#cbc7de;--wobbly:#7fb06f;--wobbly-soft:#1c2a18;--wonky:#d97a55;--wonky-soft:#3a2018;--wibble:#e2a83c;--wibble-soft:#3a2c12;color-scheme:dark}
+html[data-pal="denial"]{--bg:#f2f2f2;--panel:#ffffff;--ink:#222222;--muted:#777777;--line:#cccccc;--soft:#e8e8e8;--accent:#555555;--accent-soft:#e0e0e0;--lede:#888888;--wobbly:#555555;--wobbly-soft:#e0e0e0;--wonky:#555555;--wonky-soft:#e0e0e0;--wibble:#555555;--wibble-soft:#e0e0e0;color-scheme:light}
+html[data-pal="denial"] body{filter:grayscale(1)}
+html[data-pal="denial"] .wavebox{background:#e8e8e8;border-color:#cccccc;--wobbly:#333333;--wonky:#888888;--wibble:#aaaaaa}
+html[data-pal="fake"]{--bg:#f1ede3;--panel:#ffffff;--ink:#111111;--muted:#444444;--line:#111111;--soft:#ffe600;--accent:#e10600;--accent-soft:#ffe600;--lede:#e10600;--wobbly:#e10600;--wobbly-soft:#ffd6d4;--wonky:#0a8a2a;--wonky-soft:#d4f5dc;--wibble:#111111;--wibble-soft:#ffe600;color-scheme:light}
+html[data-pal="fake"] .wavebox{background:#111111;border-color:#111111;--wobbly:#ff3b30;--wonky:#2ee66b;--wibble:#ffe600}
+html[data-pal="psycho"]{--bg:#00ffd5;--panel:#ffff00;--ink:#d1009b;--muted:#0033ff;--line:#ff2a00;--soft:#7cff00;--accent:#ff00d4;--accent-soft:#00e5ff;--lede:#ff2a00;--wobbly:#0033ff;--wobbly-soft:#ff9ee6;--wonky:#ff2a00;--wonky-soft:#b3ff00;--wibble:#9400ff;--wibble-soft:#ffd000;color-scheme:light}
+html[data-pal="psycho"] body{animation:psy 7s linear infinite}
+html[data-pal="psycho"] .panel{transform:rotate(-.4deg)}
+html[data-pal="psycho"] .panel:nth-of-type(even){transform:rotate(.5deg)}
+@keyframes psy{to{filter:hue-rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){html[data-pal="psycho"] body{animation:none}}
+html[data-pal="psycho"] .wavebox{background:#ff00d4;border-color:#0033ff;--wobbly:#00ffd5;--wonky:#ffff00;--wibble:#0033ff}
+.palettes{text-align:center;font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;gap:8px;align-items:center}
+.palettes p{max-width:52ch}
+.palbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.palbtns button{font:500 .75rem var(--f-mono);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
+.palbtns button[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+html[data-pal="denial"] .rdon{background:#111;color:#111 !important;border-radius:2px;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 2px}
+html[data-pal="denial"] .respell{background:#111;border-radius:4px;padding:0 8px}
+html[data-pal="denial"] .respell .l{color:#111 !important}
+html[data-pal="denial"] .strk{text-decoration:line-through;text-decoration-thickness:2px}
+html[data-pal="denial"] .mlx{text-decoration:line-through;text-decoration-thickness:2px}
+html[data-pal="denial"] .den-hide{display:none}
+.maths .ml{display:inline-block}
+.psyR{transform:rotate(180deg)}
+.psyX{transform:scaleX(-1)}
+.psyY{transform:scaleY(-1)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Den Oseriösa Hexverksamheten · Department of Applied Wobble</div>
+  <h1 data-fake="The Unified Theory of Total Stability">The Unified Theory of Wobbliness</h1>
+  <div class="wavebox">
+    <svg id="wv" aria-hidden="true" viewBox="0 0 800 64" preserveAspectRatio="none">
+      <path id="p-wonk" fill="none" stroke="var(--wonky)" stroke-width="2" stroke-linejoin="miter" opacity=".65" vector-effect="non-scaling-stroke"/>
+      <path id="p-wib" fill="none" stroke="var(--wibble)" stroke-width="2" opacity=".8" vector-effect="non-scaling-stroke"/>
+      <path id="p-wob" fill="none" stroke="var(--wobbly)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+  <p class="lede">Humans like to overcomplicate things and take themselves way too seriously. Give yourself a break.</p>
+  <p class="lede">This is the theory that unifies everything in existence. Not some of it. ALL OF IT. Every atom, every ocean, every star, every heartbeat, every bad day and every good one. From the wavy sea, to the wobbly nature of every living thing, to the wonkiness of human nature. Look around: nature has never once drawn a straight line. The only straight lines are made by monkeys.</p>
+  <p class="lede">Thousands of years of philosophy. Centuries of physics. Billions spent on particle colliders. Libraries full of equations.</p>
+  <p class="lede">And we got it down to three f#¢%¡ñ9 words.</p>
+  <div id="st" role="img" aria-label="Everything is wobbly."></div>
+</header>
+
+<section class="panel">
+  <div class="eyebrow">Abstract</div>
+  <p>Nothing in the universe sits still. Not atoms, not oceans, not stars, not the vacuum of empty space itself, not even absolute zero. <span data-fake="Everything sits perfectly still, as scientists have always said.">Everything oscillates, vibrates, ripples or hums.</span> It's just how it is, it's the factory setting of existence, and the kattemattical name for this is <b class="rd">Wobbly</b>.</p>
+  <p>When a wobble starts feeding on itself and gets stuck going round the same groove, it goes <b>Wonky</b>. (Or it just goes wonky anyway.) You know the one: 3 a.m., same thought, fourteenth lap, everything was just perfect, and then… Wonkiness is not fixed by force and/or making it more complicated, and certainly not by trying harder. It's fixed by… <b class="rd">Wibbling</b> (yep, you heard that right): letting enough variation happen that the nonsense cancels out and the sensible bit is what's left standing.</p>
+  <p>You wibble your way back to wobbly.</p>
+  <p>Below, as requested by nobody, we show that every major theory in physics, from Newton to string theory, independently arrives at the same conclusion.</p>
+  <p><span class="rd" data-fake="It took physics 3 days.">It took physics 339 years.</span></p>
+  <p data-fake="A cat could have told you in 3 seconds. (We did try, but you thought we wanted snacks.)">A cat could have told you in 33.9 minutes. (We did try, but you thought we wanted snacks.)</p>
+</section>
+
+<h2>The Three Grand Postulates (rules or assumptions)</h2>
+<p>The three postulates are the rules, or assumptions, the whole theory rests on: <span data-fake="nothing that exists ever changes state.">everything that exists is always in one of three states.</span> It is wobbling, it has gone wonky, or it is wibbling its way back. The three W's.</p>
+<p>That's it.</p>
+<p>Each postulate has a real, completely unnecessary equation to match, and every proof further down is just a more complicated way of saying one of these three things.</p>
+
+<section class="states" aria-label="The three postulates">
+  <div class="state wobbly">
+    <div class="eyebrow">Postulate I</div>
+    <h3><span class="rd">Wobbly</span></h3>
+    <div class="eq">Δx · Δp ≥ ℏ/2</div>
+    <div class="eyebrow">Heisenberg's uncertainty principle</div>
+    <p>The baseline. <span data-fake="Everything can be pinned down exactly, every time.">Nothing can be pinned down completely.</span> Ask anyone who has tried to put a feral cat in a cardboard box.</p>
+  </div>
+  <div class="state wonky">
+    <div class="eyebrow">Postulate II</div>
+    <h3>Wonky</h3>
+    <div class="eq">r(t) = r₀ · e<sup>αt</sup>, α &gt; 0</div>
+    <div class="eyebrow">Unstable spiral</div>
+    <p>The wobble caught in a loop that amplifies itself: thought spirals, bad patterns, feedback howl.</p>
+  </div>
+  <div class="state wibble">
+    <div class="eyebrow">Postulate III</div>
+    <h3><span class="rd">Wibble</span></h3>
+    <div class="eq">⟨x<sub>f</sub>|x<sub>i</sub>⟩ = ∫ 𝒟x(t) e<sup>iS/ℏ</sup></div>
+    <div class="eyebrow">Feynman's path integral</div>
+    <p>The way back. Not one correct move, but enough motion that the steady path survives.</p>
+  </div>
+</section>
+
+<h2>The Overcomplicated Monkey Mind Proof</h2>
+<p>For those who don't trust three words: here are thirteen theories (all written by old men with very tolerant wives), several centuries and a bunch of symbols and lines only a tiny fraction of people actually understand, and a bunch more pretend to.</p>
+<p>They all say exactly the same thing.</p>
+<p style="margin-top:10px">Feel free to skip to the end. We won't tell.</p>
+
+<!-- 1 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 1 · 1687</div><h3>Newton's Laws of Motion</h3></div>
+    <div class="meter" data-l="1"></div>
+  </div>
+  <p>In 1687 Newton wrote down three laws of motion. Any cat could have shown him in four seconds with a glass of water and the edge of a table. Read the laws closely and all three describe a seesaw.</p>
+<div class="maths"><span class="c">1st law:</span>  ΣF = 0  ⇒  v = constant
+<span class="c">2nd law:</span>  F = m·a = m·ẍ
+<span class="c">3rd law:</span>  F<sub>AB</sub> = −F<sub>BA</sub>
+
+<span class="c">Take anything sitting in balance at x₀:</span>   F(x₀) = 0
+<span class="c">Nudge it by a tiny amount δ:</span>
+  F(x₀ + δ) ≈ F(x₀) + F′(x₀)·δ = F′(x₀)·δ
+<span class="c">If it's stable, it pushes back, so F′(x₀) &lt; 0. Call it −k:</span>
+  m·δ̈ = −k·δ
+<span class="c">That is the equation of an oscillator.</span></div>
+  <div class="verdict">∴ Everything is wobbly.<small>Anything stable wobbles when nudged. Anything unstable falls over (see Level 8, or the glass).</small></div>
+</article>
+
+<!-- 2 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 2 · 1678</div><h3>Hooke's Law &amp; Simple Harmonic Motion</h3></div>
+    <div class="meter" data-l="2"></div>
+  </div>
+  <p>Robert Hooke first published his law as an anagram, <i>ceiiinosssttuv</i> (for real), and only revealed it two years later: <i>ut tensio, sic vis</i> ("as the stretch, so the force"). He was so worried someone would pinch the idea, he hid it in a word puzzle. The theory was wobbly from day one.</p>
+<div class="maths">F = −k·x
+m·ẍ + k·x = 0
+x(t) = A·cos(ωt + φ),     ω = √(k/m)
+
+<span class="c">Energy:</span>
+E = ½m·ẋ² + ½k·x² = ½k·A²    <span class="c">(constant)</span>
+<span class="c">It never stops. It sloshes between motion and stretch forever.</span>
+
+<span class="c">Add friction:</span>
+ẍ + 2γẋ + ω₀²x = 0
+x(t) = A·e<sup>−γt</sup>·cos(ω<sub>d</sub>t + φ)
+<span class="c">Even when it calms down, it gets to stillness by wobbling.</span></div>
+  <p class="fact"><span data-fake="Chemical bonds are completely rigid. Atoms have never once moved.">Chemical bonds behave like little springs, so everything made of atoms has springs in it.</span></p>
+  <div class="verdict">∴ Everything is wobbly.<small>Springs go boing. It took two years to publish.</small></div>
+</article>
+
+<!-- 3 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 3 · 1827 / 1905</div><h3>Brownian Motion</h3></div>
+    <div class="meter" data-l="3"></div>
+  </div>
+  <p>In 1827 the botanist Robert Brown watched tiny particles from pollen floating in water under his microscope. They never stopped jiggling. In 1905 Einstein explained why: they're being bumped from every side by water molecules, which are wobbling because they're warm.</p>
+<div class="maths"><span class="c">How far a jiggling particle wanders (in one direction):</span>
+⟨x²⟩ = 2·D·t
+<span class="c">Stokes–Einstein relation:</span>
+D = k<sub>B</sub>·T / (6π·η·r)
+
+<span class="c">Worked example: a 1 µm grain in water at 20 °C</span>
+<span class="c">(r = 0.5×10⁻⁶ m, η = 1.0×10⁻³ Pa·s, T = 293 K)</span>
+D = (1.381×10⁻²³ × 293) / (6π × 10⁻³ × 0.5×10⁻⁶)
+  = 4.3×10⁻¹³ m²/s
+<span class="c">Distance wandered in one second:</span>
+√(2·D·t) ≈ <b data-fake="0 µm (it doesn't move)">0.9 µm</b>      <span class="c">about its own width, every second, forever</span></div>
+  <p class="fact">Jean Perrin confirmed Einstein's numbers by experiment in 1908, which finally convinced the doubters that atoms were real. He got the Nobel Prize for it in 1926.</p>
+  <div class="verdict">∴ Everything is wobbly.<small>Anything warmer than absolute zero is being jostled. (Level 6 says even absolute zero doesn't help.)</small></div>
+</article>
+
+<!-- 4 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 4 · 1747 / 1924</div><h3>Waves &amp; the de Broglie Relation</h3></div>
+    <div class="meter" data-l="4"></div>
+  </div>
+  <p>Chain a lot of wobbly springs together and the wobble starts travelling. That's a wave. Then Louis de Broglie pointed out that matter itself does this.</p>
+<div class="maths"><span class="c">A chain of masses joined by springs:</span>
+m·ẍₙ = k·(xₙ₊₁ − 2xₙ + xₙ₋₁)
+<span class="c">Shrink the spacing to zero:</span>
+∂²u/∂t² = c²·∂²u/∂x²         <span class="c">(the wave equation)</span>
+u(x,t) = A·sin(kx − ωt)
+
+<span class="c">de Broglie:</span>   λ = h / p
+
+<span class="c">Worked example: one 4 kg cat strolling at 1 m/s</span>
+λ = 6.626×10⁻³⁴ J·s / (4 kg × 1 m/s)
+  = <b data-fake="exactly 0 m (cats are solid)">1.66×10⁻³⁴ m</b></div>
+  <p class="fact">Confirmed for electrons by Davisson and Germer in 1927: fire them at a crystal and they diffract like light. The cat has not been tested yet.</p>
+  <div class="verdict">∴ Everything is wobbly.<small>Including the cat. Very, very slightly.</small></div>
+</article>
+
+<!-- 5 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 5 · 1927</div><h3>Heisenberg's Uncertainty Principle <span class="tag">WOBBLY</span></h3></div>
+    <div class="meter" data-l="5"></div>
+  </div>
+  <p>You can't build a wave that is in one exact place and also has one exact wavelength. Since wavelength is momentum (Level 4), nothing can be both perfectly located and perfectly still. Physicists call this a profound limit on human knowledge.</p>
+  <p>Cats call it Tuesday.</p>
+<div class="maths"><span class="c">A pulse squeezed into a small space needs a spread of wavelengths</span>
+<span class="c">(Fourier analysis):</span>
+Δx · Δk ≥ ½
+<span class="c">Momentum is wavenumber times ℏ:</span>   p = ℏk
+⇒  <b>Δx · Δp ≥ ℏ/2</b>
+
+<span class="c">Worked example: an electron held inside an atom (Δx ≈ 10⁻¹⁰ m)</span>
+Δp ≥ 1.055×10⁻³⁴ / (2 × 10⁻¹⁰) = 5.3×10⁻²⁵ kg·m/s
+Δv = Δp / mₑ ≈ 5.3×10⁻²⁵ / 9.11×10⁻³¹
+   ≈ <b data-fake="0 km/s (perfectly still)">580 km/s</b>      <span class="c">just from being contained</span></div>
+  <div class="verdict">∴ Everything is wobbly.<small><span data-fake="Wobbly is just a mood. Ignore it.">Wobbly isn't a mood. It's a lower bound.</span></small></div>
+</article>
+
+<!-- 6 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 6 · 1926–1948</div><h3>Zero-Point Energy</h3></div>
+    <div class="meter" data-l="6"></div>
+  </div>
+  <p>Take the spring from Level 2, make it quantum, and cool it to absolute zero. Does it stop? No. Stopping would mean an exact position and an exact momentum, which Level 5 forbids. Erwin Schrödinger, yes, the f#¢%¡ñ9 cat-in-a-box guy*. Well, he worked out exactly how much it keeps jiggling.</p>
+  <p style="font-size:.82rem;color:var(--muted)">*He could have used another animal.</p>
+<div class="maths">E = p²/2m + ½mω²x²
+<span class="c">Use Level 5,  Δp ≥ ℏ/(2Δx):</span>
+E ≥ ℏ²/(8m·Δx²) + ½mω²·Δx²
+<span class="c">Find the lowest possible energy:  dE/dΔx = 0</span>
+  ⇒ Δx² = ℏ/(2mω)
+E<sub>min</sub> = ℏω/4 + ℏω/4 = <b data-fake="0 (total stillness achieved)">ℏω/2</b>
+
+<span class="c">Exact answer (Schrödinger):</span>
+Eₙ = ℏω(n + ½),   n = 0, 1, 2, …
+<span class="c">At n = 0 there is still ½ℏω left. Always.</span></div>
+  <p class="fact">Evidence: helium stays liquid at normal pressure even close to absolute zero, because its zero-point jiggle is too strong for it to freeze. The Casimir force, where two metal plates in a vacuum get pulled together, was measured by Lamoreaux in 1997.</p>
+  <div class="verdict">∴ Everything is wobbly.<small>Even doing nothing. Absolute stillness isn't on the menu in this universe.</small></div>
+</article>
+
+<!-- 7 -->
+<article class="panel proof wonky">
+  <div class="proof-head">
+    <div><div class="lvl">Level 7 · 1963</div><h3>Chaos Theory &amp; the Butterfly Effect <span class="tag">WONKY</span></h3></div>
+    <div class="meter" data-l="7"></div>
+  </div>
+  <p>Edward Lorenz was running a simple weather model on a computer. He restarted a run with a number rounded from 0.506127 to 0.506 and got completely different weather. A tiny wobble, fed back through the system, grew until nothing could be predicted. He called it the butterfly effect. He could just as easily have called it the cat-walking-across-the-keyboard effect.</p>
+<div class="maths"><span class="c">The Lorenz system:</span>
+ẋ = σ(y − x)
+ẏ = x(ρ − z) − y
+ż = xy − βz
+<span class="c">with σ = 10, ρ = 28, β = 8/3</span>
+
+<span class="c">Two starting points a tiny distance δ₀ apart drift apart as:</span>
+|δ(t)| ≈ |δ₀| · e<sup>λt</sup>,     λ ≈ 0.91   <span class="c">(Lyapunov exponent)</span>
+<span class="c">Error of one millionth reaches size 1 after:</span>
+t = ln(10⁶) / 0.91 ≈ <b data-fake="never (weather is 100% predictable)">15 time units</b>
+
+<span class="c">The logistic map, the simplest road to chaos:</span>
+xₙ₊₁ = r·xₙ·(1 − xₙ)
+r &lt; 3        →  settles down
+r = 3        →  starts wobbling between two values
+r ≈ 3.57     →  <b>chaos</b></div>
+  <div class="verdict">∴ Everything is wobbly.<small>Feed a tiny wobble back into itself and it grows until nothing makes sense. Wonky, with a butterfly on it.</small></div>
+</article>
+
+<!-- 8 -->
+<article class="panel proof wonky">
+  <div class="proof-head">
+    <div><div class="lvl">Level 8 · 1890s–1940s</div><h3>Unstable Spirals <span class="tag">WONKY</span></h3></div>
+    <div class="meter" data-l="8"></div>
+  </div>
+  <p>Wobble plus positive feedback. Each time round the loop it gains a little instead of losing a little. Example: a cat chasing its own tail.</p>
+<div class="maths"><span class="c">Near any state, a system behaves like:</span>   ẋ = A·x
+<span class="c">The eigenvalues of A come out as:</span>   λ = α ± iω
+<span class="c">In polar form:</span>
+r(t) = r₀ · e<sup>αt</sup>
+θ(t) = θ₀ + ωt
+
+α &lt; 0   →  stable spiral        <span class="c">(wobble settles home)</span>
+α = 0   →  centre               <span class="c">(pure wobble, forever)</span>
+α &gt; 0   →  <b>unstable spiral</b>      <span class="c">(WONKY)</span>
+
+<span class="c">Barkhausen criterion for feedback howl:</span>
+|loop gain| ≥ 1   and   loop phase = 0 (mod 2π)
+<span class="c">Hopf bifurcation: the moment α crosses zero,</span>
+<span class="c">a calm wobble turns into a runaway one.</span></div>
+  <div class="verdict">∴ Everything is wobbly.<small>Wonky isn't a lack of wobble. It's wobble that's started feeding itself.</small></div>
+</article>
+
+<!-- 9 -->
+<article class="panel proof wibble">
+  <div class="proof-head">
+    <div><div class="lvl">Level 9 · 1983</div><h3>Simulated Annealing <span class="tag">WIBBLE</span></h3></div>
+    <div class="meter" data-l="9"></div>
+  </div>
+  <p>Blacksmiths have always known it: heat the metal, then cool it slowly, and the atoms settle into a strong, even crystal. In 1983 Kirkpatrick, Gelatt and Vecchi turned this into maths for getting any system out of a rut. Shake it up enough to climb out of the dip, then calm down gently.</p>
+<div class="maths"><span class="c">Metropolis rule: accept a move that makes things worse</span>
+<span class="c">with probability</span>
+P = e<sup>−ΔE / T</sup>
+
+<span class="c">Worked example: stuck in a dip with a wall of height ΔE = 1</span>
+T = 1     →  P = e<sup>−1</sup>  ≈ <b>0.37</b>       <span class="c">wibbly enough to climb out</span>
+T = 0.1   →  P = e<sup>−10</sup> ≈ 0.000045    <span class="c">frozen in the rut</span>
+
+<span class="c">Cool slowly enough,</span>
+T<sub>k</sub> ∝ 1 / ln(k)
+<span class="c">and you are guaranteed to find the deepest, steadiest state.</span>
+<span class="c">Cool too fast and you freeze into the first rut you find.</span></div>
+  <div class="verdict">∴ Everything is wobbly.<small>Shake it up to get out of the rut. Then cool down gently. Get serious too early and you freeze the wonk in place.</small></div>
+</article>
+
+<!-- 10 -->
+<article class="panel proof wibble">
+  <div class="proof-head">
+    <div><div class="lvl">Level 10 · 1665 / 1975</div><h3>Synchronisation <span class="tag">WIBBLE</span></h3></div>
+    <div class="meter" data-l="10"></div>
+  </div>
+  <p>In 1665 Christiaan Huygens, ill in bed, noticed two pendulum clocks hanging from the same beam had fallen into step all by themselves. Fireflies, metronomes on a shared board and heart pacemaker cells all do the same. Nobody conducts. Loose wobblers nudge each other until they find a shared rhythm.</p>
+<div class="maths"><span class="c">The Kuramoto model (1975):</span>
+θ̇ᵢ = ωᵢ + (K/N) · Σⱼ sin(θⱼ − θᵢ)
+
+<span class="c">How in step everyone is:</span>
+r·e<sup>iψ</sup> = (1/N) · Σⱼ e<sup>iθⱼ</sup>
+r = 0   →  everyone wobbling alone
+r = 1   →  everyone in step
+
+<span class="c">Below a critical coupling K<sub>c</sub>, nothing happens.</span>
+<span class="c">Above it (natural tempos spread with half-width γ, K<sub>c</sub> = 2γ):</span>
+r = √(1 − K<sub>c</sub>/K)
+<span class="c">Worked example: K = 2·K<sub>c</sub>  ⇒  r = √½ ≈ <b>0.71</b></span></div>
+  <div class="verdict">∴ Everything is wobbly.<small>Coherence isn't forced on the wobble. It comes out of it.</small></div>
+</article>
+
+<!-- 11 -->
+<article class="panel proof wibble">
+  <div class="proof-head">
+    <div><div class="lvl">Level 11 · 1948</div><h3>Feynman's Path Integral <span class="tag">WIBBLE</span></h3></div>
+    <div class="meter" data-l="11"></div>
+  </div>
+  <p>How does a particle get from A to B? Feynman's answer: it tries every possible path at once, much like a cat getting from the sofa to the food bowl, including the route across your face. The wild paths cancel each other out, and the sensible path survives because all its neighbours agree with it. That's the way back from wonky: not one correct move, but enough variation that the coherent route is what's left.</p>
+<div class="maths">⟨x<sub>f</sub> | x<sub>i</sub>⟩ = ∫ 𝒟x(t) · e<sup>iS[x]/ℏ</sup>
+S[x] = ∫ ( ½m·ẋ² − V(x) ) dt
+
+<span class="c">Far from the classical path, S changes fast,</span>
+<span class="c">so the phases spin round and the paths cancel.</span>
+<span class="c">Near it, δS = 0, so the phases line up and add together.</span>
+
+δS = 0   ⇒   <b>m·ẍ = −∂V/∂x</b>
+<span class="c">That's Newton's second law. We're back at Level 1.</span>
+
+<span class="c">In Level 8 terms, wibbling is whatever brings α back below zero:</span>
+r(t) = r₀ · e<sup>−|α|t</sup>      <span class="c">(the spiral turns inward)</span></div>
+  <div class="verdict">∴ Everything is wobbly.<small>The way out of wonky is to wibble. Order is whatever survives the wobbling.</small></div>
+</article>
+
+<!-- 12 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 12 · 1915 / 2015</div><h3>General Relativity &amp; Gravitational Waves</h3></div>
+    <div class="meter" data-l="12"></div>
+  </div>
+  <p>Spacetime wobbles too. Simplify Einstein's field equations for small ripples and you get the wave equation from Level 4. <span data-fake="LIGO picked nothing up in 2015. Completely flat.">LIGO picked one up in 2015.</span> It took a century, two colliding black holes and a pair of 4 km lasers to measure a wobble smaller than a proton.</p>
+<div class="maths"><span class="c">Einstein field equations:</span>
+G<sub>μν</sub> + Λg<sub>μν</sub> = (8πG/c⁴) T<sub>μν</sub>
+
+<span class="c">Weak field: flat spacetime plus a small ripple</span>
+g<sub>μν</sub> = η<sub>μν</sub> + h<sub>μν</sub>,    |h| ≪ 1
+<span class="c">Lorenz gauge, empty space:</span>
+□ h̄<sub>μν</sub> = 0
+( −(1/c²)·∂²/∂t² + ∇² ) h̄<sub>μν</sub> = 0
+<span class="c">→ the wave equation again, travelling at the speed of light.</span>
+
+<span class="c">GW150914 (14 Sept 2015): two black holes, roughly 36 and 29</span>
+<span class="c">solar masses, about 1.3 billion light-years away.</span>
+Peak strain:   h ≈ 10⁻²¹
+ΔL = h · L ≈ 10⁻²¹ × 4 km = <b>4×10⁻¹⁸ m</b>
+<span class="c">A few thousandths of the width of a proton.</span></div>
+  <p class="fact">Turned into sound, the signal was a chirp rising from about 35 to 250 Hz. A cat's purr sits at roughly 25 to 150 Hz. We draw no conclusions. We just think it's interesting.</p>
+  <div class="verdict" data-fakeverdict>∴ Everything is wobbly.<small>Including the stage everything happens on.</small></div>
+</article>
+
+<!-- 13 -->
+<article class="panel proof wobbly">
+  <div class="proof-head">
+    <div><div class="lvl">Level 13 · The Deep End</div><h3>Quantum Field Theory &amp; String Theory</h3></div>
+    <div class="meter" data-l="13"></div>
+  </div>
+  <p>Quantum field theory says every particle is a ripple in a field, and every field is an infinite mattress of Level 6 springs. String theory, your current 'Theory of Everything', goes further and says particles are different notes played on a tiny vibrating string. Brace yourself.</p>
+<div class="maths"><span class="c">── Part I: Quantum fields ─────────────────────────</span>
+<span class="c">Klein–Gordon Lagrangian:</span>
+ℒ = ½ ∂<sub>μ</sub>φ ∂<sup>μ</sup>φ − ½ m²φ²
+⇒ (□ + m²) φ = 0
+
+<span class="c">Mode expansion:</span>
+φ(x) = ∫ d³k / ((2π)³ √(2ω<sub>k</sub>)) · [ a<sub>k</sub> e<sup>−ik·x</sup> + a<sub>k</sub><sup>†</sup> e<sup>ik·x</sup> ]
+ω<sub>k</sub> = √(k² + m²)
+[ a<sub>k</sub> , a<sub>q</sub><sup>†</sup> ] = (2π)³ δ³(k − q)
+
+<span class="c">Hamiltonian:</span>
+H = ∫ d³k/(2π)³ · ω<sub>k</sub> ( a<sub>k</sub><sup>†</sup>a<sub>k</sub> + ½[a<sub>k</sub>, a<sub>k</sub><sup>†</sup>] )
+  = Σ (one spring per wavelength) + ∞ zero-point wobble
+<span class="c">A particle is one quantum of wobble:</span>   a<sub>k</sub><sup>†</sup>|0⟩
+
+<span class="c">── Part II: Strings ───────────────────────────────</span>
+<span class="c">Polyakov action:</span>
+S = −(1/4πα′) ∫ d²σ √(−h) h<sup>ab</sup> ∂<sub>a</sub>X<sup>μ</sup> ∂<sub>b</sub>X<sub>μ</sub>
+
+<span class="c">Closed-string solution:</span>
+X<sup>μ</sup>(τ,σ) = x<sup>μ</sup> + α′p<sup>μ</sup>τ
+          + i√(α′/2) Σ<sub>n≠0</sub> (1/n) [ α<sub>n</sub><sup>μ</sup> e<sup>−in(τ−σ)</sup> + α̃<sub>n</sub><sup>μ</sup> e<sup>−in(τ+σ)</sup> ]
+
+<span class="c">Zero-point wobble of the modes, per transverse direction:</span>
+½ · Σ<sub>n=1</sub><sup>∞</sup> n
+<span class="c">Zeta regularisation:</span>
+1 + 2 + 3 + 4 + … = ζ(−1) = <b>−1/12</b>      <span class="c">(yes, really)</span>
+<span class="c">Total over D−2 transverse directions:</span>
+(D−2)/2 · (−1/12) = −(D−2)/24
+<span class="c">Lorentz invariance requires this to equal −1:</span>
+⇒ <b data-fake="D = 3 (we checked)">D = 26</b>
+
+<span class="c">Mass spectrum (closed bosonic string):</span>
+M² = (2/α′) (N + Ñ − 2)
+<span class="c">Different vibration ⇒ different particle.</span>
+<span class="c">The N = Ñ = 1 level contains the graviton.</span></div>
+  <div class="verdict">∴ Everything is wobbly.<small>Twenty-six dimensions, an infinite sum that somehow equals minus a twelfth, and decades of very hard work. Conclusion: wobbly. (String theory hasn't been confirmed by experiment yet. It is, however, extremely wobbly.)</small></div>
+</article>
+
+<section class="panel">
+  <h2>Summary of Findings</h2>
+  <p><span data-fake="Thirteen theories. One verdict: totally stable. One cat, convinced.">Thirteen theories. Three verdicts. One cat, unimpressed.</span></p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Level</th><th>Theory</th><th>What wobbles</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Newton</td><td>Anything in balance</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>2</td><td>Hooke</td><td>Springs, and therefore all matter</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>3</td><td>Brownian motion</td><td>Anything warm</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>4</td><td>Waves / de Broglie</td><td>Matter itself, including cats</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>5</td><td>Heisenberg</td><td>Position and momentum</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>6</td><td>Zero-point energy</td><td>Absolute stillness</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>7</td><td>Chaos theory</td><td>Tiny wobbles that grow</td><td class="v wonky"><span class="dot wonky"></span>Wonky</td></tr>
+      <tr><td>8</td><td>Unstable spirals</td><td>Wobble with feedback</td><td class="v wonky"><span class="dot wonky"></span>Wonky</td></tr>
+      <tr><td>9</td><td>Simulated annealing</td><td>Getting out of a rut</td><td class="v wibble"><span class="dot wibble"></span>Wibble</td></tr>
+      <tr><td>10</td><td>Synchronisation</td><td>Wobblers falling into step</td><td class="v wibble"><span class="dot wibble"></span>Wibble</td></tr>
+      <tr><td>11</td><td>Path integral</td><td>Every possible route at once</td><td class="v wibble"><span class="dot wibble"></span>Wibble</td></tr>
+      <tr><td>12</td><td>General relativity</td><td>Spacetime</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+      <tr><td>13</td><td>QFT / strings</td><td>The fabric of the particles</td><td class="v wobbly"><span class="dot wobbly"></span>Wobbly</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Conclusion: The Recorrection Protocol</h2>
+  <p>Thirteen independent lines of evidence, spanning 339 years and an alarming number of Greek letters, agree: everything is wobbly. Nothing is a problem that needs solving; it's right there in front of you.</p>
+  <p>Everything is wobbly, it ALWAYS goes wonky, and when a system goes wonky, the only thing to do is wibble:</p>
+  <ol class="protocol">
+    <li>Notice the out-of-control spiral (α &gt; 0). Or watch everything f#¢k up in your face. That's the <b style="color:var(--wonky)">WONK</b>.</li>
+    <li>Do not force it straight. Forcing is just more feedback.</li>
+    <li><b style="color:var(--wibble)">WIBBLE</b>. Let variation (stuff) happen, you are not in control anyway. The cancellation does the work.</li>
+    <li>Arrive back at <b style="color:var(--wobbly)">WOBBLY</b>, which is where you were meant to be all along.</li>
+  </ol>
+</section>
+
+<section class="panel" style="text-align:center;align-items:center">
+  <div class="wavebox" style="width:100%;margin-bottom:6px">
+    <svg aria-hidden="true" viewBox="0 0 800 64" preserveAspectRatio="none">
+      <path id="q-wonk" fill="none" stroke="var(--wonky)" stroke-width="2" stroke-linejoin="miter" opacity=".65" vector-effect="non-scaling-stroke"/>
+      <path id="q-wib" fill="none" stroke="var(--wibble)" stroke-width="2" opacity=".8" vector-effect="non-scaling-stroke"/>
+      <path id="q-wob" fill="none" stroke="var(--wobbly)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+  <h2 class="respell" aria-label="Everything is wobbly"><span class="l">E</span><span class="l">V</span><span class="ins"><span class="l">E</span></span><span class="l">R</span><span class="l">Y</span><span class="l">T</span><span class="ins"><span class="l">H</span></span><span class="l">I</span><span class="l">N</span><span class="l">G</span><span class="l"> </span><span class="l">I</span><span class="l">S</span><span class="l"> </span><span class="l">W</span><span class="l">O</span><span class="l">B</span><span class="ins"><span class="l">B</span></span><span class="l">L</span><span class="l">Y</span></h2>
+  <p data-den="Everything's just fine." data-fake="Actually, make everything as complicated as possible and take it very, very seriously. Experts insist." style="font-family:var(--f-display);font-size:1.15rem">So for fµ¢k's sake, keep it simple. Stop overcomplicating everything and being so f#¢%¡ñ9 serious.</p>
+  <p class="den-hide" data-fake="Life is not a mystery. It has all been solved. Move along." style="font-family:var(--f-display);font-size:1.15rem">Life is called The Great Mystery for a reason.</p>
+  <p aria-label="cat face" style="font-family:var(--f-mono);font-size:2rem;font-weight:500;letter-spacing:.05em;margin-top:6px"><span style="color:#9693a3">=</span><span style="color:#5c5868">^</span><span style="color:#e48aa8">.</span><span style="color:#5c5868">^</span><span style="color:#9693a3">=</span></p>
+  <p class="den-hide" data-fake="There is no Kitten Force. There never was." style="font-family:var(--f-display);font-size:1.15rem">May the Kitten Force be with you.</p>
+  <div class="wavebox" style="width:100%;margin-top:6px">
+    <svg aria-hidden="true" viewBox="0 0 800 64" preserveAspectRatio="none">
+      <path id="r-wonk" fill="none" stroke="var(--wonky)" stroke-width="2" stroke-linejoin="miter" opacity=".65" vector-effect="non-scaling-stroke"/>
+      <path id="r-wib" fill="none" stroke="var(--wibble)" stroke-width="2" opacity=".8" vector-effect="non-scaling-stroke"/>
+      <path id="r-wob" fill="none" stroke="var(--wobbly)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+</section>
+
+<footer>Den Oseriösa Hexverksamheten · Department of Applied Wobble · =^.^=</footer>
+
+<div class="palettes">
+  <p>As with everything in life, you can always change the palette and make things seem different, when everything is exactly the same.</p>
+  <div class="palbtns" role="group" aria-label="Colour palette">
+    <button type="button" data-p="serious" aria-pressed="true">serious</button>
+    <button type="button" data-p="denial" aria-pressed="false">denial</button>
+    <button type="button" data-p="fake" aria-pressed="false">fake news</button>
+    <button type="button" data-p="psycho" aria-pressed="false">psycho</button>
+  </div>
+</div>
+
+</div>
+<script>
+(function(){
+  document.querySelectorAll('.maths').forEach(function(m){ m.innerHTML=m.innerHTML.split('\n').map(function(l){ return l.trim()?'<span class="ml'+(l.indexOf('<span class="c">')===0?' mlc':'')+'">'+l+'</span>':l; }).join('\n'); });
+  document.querySelectorAll('.verdict').forEach(function(v){
+    var n=v.firstChild; if(!n||n.nodeType!==3) return;
+    var s=document.createElement('span'); s.className='vt'; s.innerHTML='∴ Everything is <span class="rd">wobbly</span>.';
+    if(v.hasAttribute('data-fakeverdict')) s.setAttribute('data-fake','∴ Nothing is wobbly. (Experts agree.)');
+    v.replaceChild(s,n);
+  });
+  (function(){
+    var re=/\b(wobbl\w*|wonk\w*|wibbl\w*)/gi, re1=/\b(wobbl|wonk|wibbl)/i;
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode; if(!p||p.closest('script,style,svg,#st,.respell,.palettes,.meter')) return NodeFilter.FILTER_REJECT; return re1.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;}});
+    var nodes=[],n; while((n=w.nextNode())) nodes.push(n);
+    nodes.forEach(function(t){
+      var f=document.createDocumentFragment(), s=t.nodeValue, last=0;
+      s.replace(re,function(m,g,i){ if(i>last) f.appendChild(document.createTextNode(s.slice(last,i))); var sp=document.createElement('span'); sp.className='strk'; sp.textContent=m; f.appendChild(sp); last=i+m.length; return m; });
+      if(last<s.length) f.appendChild(document.createTextNode(s.slice(last)));
+      t.parentNode.replaceChild(f,t);
+    });
+  })();
+  var psy=[].slice.call(document.querySelectorAll('.wrap > h2, .wrap > p, header .lede, .panel > p, .state p, .state h3, .proof h3, .verdict small, .verdict .vt, ol.protocol li, .fact, .maths .ml, .eq, td, .lvl')).filter(function(el){ return !el.closest('.palettes') && !el.querySelector('svg,.respell'); });
+  var PSY=false, loop=null, SP='   ';
+  function mangle(s){
+    var r=Math.random();
+    if(r<0.3) return s.replace(/\s+/g,'');
+    if(r<0.55) return s.replace(/\s+/g,function(m){ return Math.random()<0.65?'':m; });
+    if(r<0.8) return s.replace(/\s+/g,function(m){ var q=Math.random(); return q<0.45?'':(q<0.6?SP:m); });
+    return s.replace(/\s+/g,function(){ return Math.random()<0.55?'':SP; }).replace(/(\w{3,})(\w{3,})/g,function(m,a,b){ return Math.random()<0.2?a+SP+b:m; });
+  }
+  function mess(el){
+    if(el._orig!=null) return; el._orig=el.innerHTML; el.textContent=mangle(el.textContent); var r=Math.random();
+    el._f = r<0.15?'psyR':(r<0.3?'psyX':(r<0.4?'psyY':''));
+    if(el._f) el.classList.add(el._f);
+    else if(r<0.7) el.style.transform='translate('+(Math.random()*16-8).toFixed(1)+'px,'+(Math.random()*8-4).toFixed(1)+'px) rotate('+(Math.random()*6-3).toFixed(1)+'deg)';
+    if(Math.random()<0.25) el.style.letterSpacing=(Math.random()<0.5?'-0.04em':(0.1+Math.random()*0.3).toFixed(2)+'em');
+  }
+  function unpsy(el){ clearTimeout(el._t); el._t=null; if(el._orig!=null){ el.innerHTML=el._orig; el._orig=null; } if(el._f){ el.classList.remove(el._f); el._f=null; } el.style.transform=''; el.style.letterSpacing=''; }
+  var io=('IntersectionObserver' in window)? new IntersectionObserver(function(es){
+    es.forEach(function(e){ var el=e.target; if(e.isIntersecting && el._orig!=null && !el._t){ el._t=setTimeout(function(){ unpsy(el); },2000); } });
+  },{threshold:.5}) : null;
+  function visible(el){ var r=el.getBoundingClientRect(); return r.bottom>0 && r.top<innerHeight; }
+  function sneak(){
+    if(!PSY) return;
+    var v=psy.filter(function(el){ return el._orig==null && visible(el); });
+    var n=1+Math.floor(Math.random()*4);
+    for(var i=0;i<n && v.length;i++){ (function(el){ mess(el); el._t=setTimeout(function(){ unpsy(el); },900+Math.random()*1300); })(v.splice(Math.floor(Math.random()*v.length),1)[0]); }
+  }
+  window.applyMode=function(m){
+    PSY=false; clearInterval(loop);
+    psy.forEach(function(el){ unpsy(el); });
+    document.querySelectorAll('.rdon,.mlx').forEach(function(e){ e.classList.remove('rdon','mlx'); });
+    document.querySelectorAll('[data-den]').forEach(function(el){ if(m==='denial'){ if(el.dataset.dorig==null){ el.dataset.dorig=el.innerHTML; el.textContent=el.dataset.den; } } else if(el.dataset.dorig!=null){ el.innerHTML=el.dataset.dorig; delete el.dataset.dorig; } });
+    if(m==='denial'){
+      document.querySelectorAll('.rd, .maths b').forEach(function(e){ if(Math.random()<0.6) e.classList.add('rdon'); });
+      document.querySelectorAll('.strk').forEach(function(e){ if(/^(wobbl|wibbl)/i.test(e.textContent) && !e.closest('.rd') && Math.random()<0.4) e.classList.add('rdon'); });
+      document.querySelectorAll('.ml:not(.mlc)').forEach(function(e){ if(Math.random()<0.4) e.classList.add('mlx'); });
+    }
+    document.querySelectorAll('[data-fake]').forEach(function(el){
+      if(m==='fake'){ if(el.dataset.orig==null){ el.dataset.orig=el.innerHTML; el.textContent=el.dataset.fake; } }
+      else if(el.dataset.orig!=null){ el.innerHTML=el.dataset.orig; delete el.dataset.orig; }
+    });
+    if(m==='psycho'){
+      PSY=true;
+      psy.forEach(function(el){ if(Math.random()<0.8){ mess(el); if(io){ io.unobserve(el); io.observe(el); } else { el._t=setTimeout(function(){ unpsy(el); },2000); } } });
+      loop=setInterval(function(){ if(Math.random()<0.9) sneak(); },900);
+    }
+  };
+})();
+document.querySelectorAll('.palbtns button').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(b.dataset.p==='serious') delete document.documentElement.dataset.pal; else document.documentElement.dataset.pal=b.dataset.p;
+    document.querySelectorAll('.palbtns button').forEach(function(x){x.setAttribute('aria-pressed', x===b?'true':'false');});
+    applyMode(b.dataset.p);
+  });
+});
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function wave(pre,o){
+    var pW=document.getElementById(pre+'-wob'), pK=document.getElementById(pre+'-wonk'), pB=document.getElementById(pre+'-wib'); if(!pW) return;
+    pW.ownerSVGElement.style.transform=o.flip;
+    function hue(x){return 'hsl('+Math.round(((x%360)+360)%360)+',60%,62%)';}
+    var N=64, r=[]; for(var i=0;i<N;i++) r.push(Math.random()*2-1);
+    var W=Math.random()*0.8, D=Math.random()*0.3, B=Math.random()*0.5, offK=Math.random()*400, phW=Math.random()*100, phB=Math.random()*100, t0=Math.random()*10000, last=null;
+    function jag(x){ var u=(x+offK)/25, i=Math.floor(u), f=u-i; var a=r[((i%N)+N)%N], b=r[(((i+1)%N)+N)%N]; return a+(b-a)*f; }
+    function frame(tt){
+      var t=tt+t0, dt=last==null?0.016:Math.min(0.05,(tt-last)/1000); last=tt; dt*=0.6;
+      if(Math.random()<0.13*dt) W=Math.min(1,W+0.45+Math.random()*0.55);
+      if(Math.random()<0.5*dt) r[Math.floor(Math.random()*N)]=Math.random()*2-1;
+      W+=-0.3*W*dt;
+      D+=(0.9*W - 1.5*B*D - 0.05*D)*dt; D=Math.max(0,Math.min(1,D));
+      B+=(1.3*D - 0.45*B)*dt; B=Math.max(0,Math.min(1,B));
+      offK+=(8 + 70*W*(0.4+Math.abs(Math.sin(t/1200))))*dt;
+      phW+=20*dt; phB+=(25+60*B)*dt;
+      var k=2*Math.PI/100, s1='', s2='', s3='', ampK=8+16*W;
+      var x0=Math.floor(offK/25)*25-offK;
+      for(var x=x0-25,j=0;x<=825;x+=25,j++){ s1+=(j?'L':'M')+x.toFixed(1)+' '+(32+ampK*jag(x)).toFixed(1); }
+      for(var x=0,j=0;x<=800;x+=5,j++){
+        var yW=32+16*Math.sin(k*(x-phW))+D*14*jag(x);
+        var env=0.6+0.4*Math.sin(x/90+t/2400);
+        var yB=32+(5+15*B)*env*(0.6*Math.sin(2*Math.PI*(x-phB)/50)+0.4*Math.sin(2*Math.PI*(x-phB*1.3)/31+1));
+        s2+=(j?'L':'M')+x+' '+yW.toFixed(1); s3+=(j?'L':'M')+x+' '+yB.toFixed(1);
+      }
+      var h=t*o.hs+o.h0;
+      pW.setAttribute('stroke',hue(h)); pK.setAttribute('stroke',hue(h+120)); pB.setAttribute('stroke',hue(h+240));
+      pK.setAttribute('d',s1); pW.setAttribute('d',s2); pB.setAttribute('d',s3);
+      if(!reduce) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  wave('q',{flip:'scaleX(-1)',h0:0,hs:0.02}); wave('r',{flip:'scaleY(-1)',h0:180,hs:-0.03});
+})();
+(function(){
+  var st=document.getElementById('st'); if(!st) return;
+  var words=['Everything','is','wobbly.'];
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function build(){
+    st.className='';st.innerHTML='';
+    words.forEach(function(w,wi){
+      var s=document.createElement('span');s.className='w';s.setAttribute('aria-hidden','true');
+      (w+(wi<2?' ':'')).split('').forEach(function(ch,i){var c=document.createElement('span');c.className='c';c.textContent=ch;c.style.animationDelay=(-(wi*10+i)*0.22)+'s';s.appendChild(c);});
+      st.appendChild(s);
+    });
+    return st.querySelectorAll('.w');
+  }
+  if(reduce){ build().forEach(function(w){w.classList.add('on');}); return; }
+  function run(){
+    var ws=build();
+    setTimeout(function(){ws[0].classList.add('on')},1200);
+    setTimeout(function(){ws[1].classList.add('on')},3200);
+    setTimeout(function(){ws[2].classList.add('on')},5200);
+    setTimeout(function(){st.classList.add('wob')},10000);
+    setTimeout(function(){
+      st.querySelectorAll('.c').forEach(function(c){
+        var dx=(Math.random()*2-1)*25, dy=30+Math.random()*45, r=(Math.random()*2-1)*45;
+        c.style.animation='none';
+        c.style.transitionDelay=(Math.random()*1.5)+'s';
+        c.style.transform='translate('+dx+'px,'+dy+'px) rotate('+r+'deg)';
+      });
+      st.classList.add('fall');
+    },17000);
+    setTimeout(run,24500);
+  }
+  run();
+})();
+(function(){
+  var svg=document.getElementById('wv'); if(!svg) return;
+  var pW=document.getElementById('p-wob'), pK=document.getElementById('p-wonk'), pB=document.getElementById('p-wib');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N=64, r=[]; for(var i=0;i<N;i++) r.push(Math.random()*2-1);
+  var W=0.6, D=0, B=0, offK=0, phW=0, phB=0, last=null;
+  function jag(x){ var u=(x+offK)/25, i=Math.floor(u), f=u-i; var a=r[((i%N)+N)%N], b=r[(((i+1)%N)+N)%N]; return a+(b-a)*f; }
+  function frame(t){
+    var dt=last==null?0.016:Math.min(0.05,(t-last)/1000); last=t; dt*=0.6;
+    /* wonk: random bursts that fade */
+    if(Math.random()<0.13*dt) W=Math.min(1,W+0.45+Math.random()*0.55);
+    if(Math.random()<0.5*dt) r[Math.floor(Math.random()*N)]=Math.random()*2-1;
+    W+=-0.3*W*dt;
+    /* wonk distorts the wobble; wibble corrects it */
+    D+=(0.9*W - 1.5*B*D - 0.05*D)*dt; D=Math.max(0,Math.min(1,D));
+    /* wibble gets energised by the distortion, then calms */
+    B+=(1.3*D - 0.45*B)*dt; B=Math.max(0,Math.min(1,B));
+    offK+=(8 + 70*W*(0.4+Math.abs(Math.sin(t/1200))))*dt;
+    phW+=20*dt; phB+=(25+60*B)*dt;
+    var k=2*Math.PI/100, s1='', s2='', s3='', ampK=8+16*W;
+    var x0=Math.floor(offK/25)*25-offK;
+    for(var x=x0-25,j=0;x<=825;x+=25,j++){ s1+=(j?'L':'M')+x.toFixed(1)+' '+(32+ampK*jag(x)).toFixed(1); }
+    for(var x=0,j=0;x<=800;x+=5,j++){
+      var yW=32+16*Math.sin(k*(x-phW))+D*14*jag(x);
+      var env=0.6+0.4*Math.sin(x/90+t/2400);
+      var yB=32+(5+15*B)*env*(0.6*Math.sin(2*Math.PI*(x-phB)/50)+0.4*Math.sin(2*Math.PI*(x-phB*1.3)/31+1));
+      s2+=(j?'L':'M')+x+' '+yW.toFixed(1); s3+=(j?'L':'M')+x+' '+yB.toFixed(1);
+    }
+    pK.setAttribute('d',s1); pW.setAttribute('d',s2); pB.setAttribute('d',s3);
+    if(!reduce) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+(function(){
+  var rs=document.querySelector('.respell'); if(!rs) return;
+  var ls=rs.querySelectorAll('.l');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  ls.forEach(function(l,i){
+    if(!l.parentNode.classList.contains('ins')) l.style.animationDelay=(i*-0.35)+'s';
+    l.style.fontSize=(1+0.12*Math.sin(i*1.7)).toFixed(2)+'em';
+  });
+  function paint(t){
+    ls.forEach(function(l,i){ if(l.dataset.st) return; var h=((i*22 - t*0.06)%360+360)%360; l.style.color='hsl('+Math.round(h)+',38%,55%)'; });
+    if(!reduce) requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+  function episode(){
+    var pool=[].filter.call(ls,function(l){return l.textContent.trim() && !l.dataset.st && (rs.classList.contains('fixed')||!l.parentNode.classList.contains('ins'));});
+    var l=pool[Math.floor(Math.random()*pool.length)]; if(!l) return;
+    l.style.setProperty('--dx',Math.random()<.5?-1:1); l.style.setProperty('--dy',Math.random()<.5?-1:1);
+    l.dataset.st='wonk'; l.style.color='var(--wonky)'; l.classList.add('wonk');
+    setTimeout(function(){l.classList.remove('wonk'); l.classList.add('wib'); l.dataset.st='wib'; l.style.color='var(--wibble)';},1100);
+    setTimeout(function(){l.classList.remove('wib'); l.dataset.st='wob'; l.style.color='var(--wobbly)';},2300);
+    setTimeout(function(){delete l.dataset.st;},3800);
+  }
+  if(!reduce) setInterval(episode,4500);
+  function fix(){rs.classList.add('jolt');setTimeout(function(){rs.classList.add('fixed')},250);setTimeout(function(){rs.classList.remove('jolt')},700);}
+  var done=false;
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es,o){if(es[0].isIntersecting&&!done){done=true;setTimeout(fix,1800);o.disconnect();}},{threshold:.6}).observe(rs);
+  } else setTimeout(fix,3000);
+  rs.addEventListener('click',function(){if(rs.classList.contains('fixed')) rs.classList.remove('fixed'); else fix();});
+})();
+document.querySelectorAll('.wobbletext').forEach(function(el){
+  var t=el.textContent; el.setAttribute('aria-label',t); el.textContent='';
+  t.split('').forEach(function(ch,i){var s=document.createElement('span');s.textContent=ch;s.setAttribute('aria-hidden','true');s.style.animationDelay=(i*-0.18)+'s';el.appendChild(s);});
+});
+document.querySelectorAll('.meter').forEach(function(m){
+  var L=['difficulty','effort','hmm','overthinking','overcomplicatedness','my brain hurts','BUT WHY?','oh come on','send help','really?','make it stop','headf#¢k','just say wobbly'];
+  var l=+m.dataset.l, h='<span>'+L[l-1]+'</span>';
+  for(var i=1;i<=13;i++) h+='<i'+(i<=l?' class="on"':'')+'></i>';
+  m.innerHTML=h; m.setAttribute('aria-label','Difficulty '+l+' of 13');
+});
+</script>
+</body>
+</html>
