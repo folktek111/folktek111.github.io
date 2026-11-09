@@ -6,77 +6,39 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Jules Baw</title>
-<meta name="description" content="Jules Baw, Uddebo. Live mixing, live recording, field recording and DJ.">
+<title>Folktek</title>
+<meta name="description" content="Folktek: a long-term research project into the simple, low-impact technologies anyone can build and develop.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css">
+<style>
+  :root { --bg:#f3efe6; --ink:#141210; --muted:#6b645a; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141210; --ink:#f3efe6; --muted:#a39b8f; } }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: var(--bg); color: var(--ink); font-family: "Source Serif 4", Georgia, serif;
+    font-size: 1.125rem; line-height: 1.65; padding: 3rem 1.5rem; }
+  main { max-width: 34rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.4rem; }
+  .sun { width: min(46vw, 13rem); height: auto; color: var(--ink); }
+  h1 { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; font-size: clamp(2.6rem, 9vw, 3.6rem);
+    letter-spacing: -0.02em; line-height: 1; margin: 0 0 .4rem; }
+  p { margin: 0; }
+  h2 { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; font-size: 1.25rem; margin: 1rem 0 0; }
+  .wip { margin-top: 1.6rem; font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size: .8rem;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+</style>
 </head>
 <body>
-<!-- the more you look, the more you see -->
-<header>
-  <div class="wrap">
-    <h1>Jules Baw</h1>
-  </div>
-</header>
-
 <main>
-  <section id="audio">
-    <div class="wrap">
-      <div class="who">
-        <p class="lead">Sound engineer and DJ in <a class="q" href="/julian/">Uddebo</a>.</p>
-      </div>
-      <div class="do" style="margin-top:2.5rem">
-        <div>
-          <h2>Audio</h2>
-          <ul>
-            <li>Live mixing</li>
-            <li>Live recording</li>
-            <li>Field recording</li>
-            <li>DJ</li>
-          </ul>
-          <small><a href="https://soundcloud.com/jules-baw">SoundCloud</a></small>
-        </div>
-      </div>
-      <div class="sc" id="sc">
-        <button type="button" class="sc-play" id="sc-play">▶ Listen here</button>
-        <p class="sc-note">Loads the SoundCloud player, which sets SoundCloud cookies.</p>
-      </div>
-      <details class="fold">
-        <summary>…</summary>
-        <p>The same <a class="q" href="/julian/">hands</a> build stoves and houses.</p>
-      </details>
-    </div>
-  </section>
+  <svg class="sun" viewBox="0 0 256 256" role="img" aria-label="Folktek sun">
+    <path fill="currentColor" fill-rule="evenodd" d="M113,195 119,219 121,223 127,251 128,251 142,195ZM89,185 74,170 69,167 40,215 88,187ZM185,166 166,186 195,204 214,214 187,167ZM194,144 250,130 195,116 194,117ZM61,113 41,117 37,119 6,126 6,127 60,141 61,140ZM118,69 107,72 98,76 92,80 80,92 73,104 70,113 69,138 72,149 78,161 92,176 98,180 112,186 125,187 126,188 138,187 149,184 165,175 177,162 183,151 187,138 187,119 185,110 179,97 174,90 165,81 151,73 142,70ZM215,43 167,71 166,73 186,92ZM43,40 72,89 91,70 91,68 55,46ZM129,6 116,57 116,61 139,62 143,61 143,58 130,6Z"/>
+  </svg>
+  <h1>Folktek</h1>
+  <p>Folktek is a long-term research project, worked on for many years, to identify the technologies people need to live in a resilient, simple, low-impact way: technologies that anyone can build and develop.</p>
+  <h2>What is technology?</h2>
+  <p>We tend to picture technology as something advanced and highly intellectual: screens and circuits. Folktek is a study into what technology really is.</p>
+  <p class="wip">Under construction</p>
 </main>
-
-<footer id="contact">
-  <div class="wrap">
-    <h2>Contact</h2>
-    <p><a href="mailto:julesbaw@folktek.org">julesbaw@folktek.org</a></p>
-    <p>Uddebo, Tranemo kommun</p>
-    <p class="door"><a href="/julian/" aria-label="Further in"><img src="/favicon.svg" width="14" height="14" alt=""></a></p>
-  </div>
-</footer>
-<script>
-  // Click-to-load: nothing loads from SoundCloud until someone presses play.
-  document.getElementById("sc-play").addEventListener("click", function () {
-    var src = "https://w.soundcloud.com/player/?url=" +
-      encodeURIComponent("https://soundcloud.com/jules-baw") +
-      "&color=%238e2f22&auto_play=true&show_user=true&show_reposts=false&visual=false";
-    var f = document.createElement("iframe");
-    f.src = src;
-    f.width = "100%";
-    f.height = "450";
-    f.title = "Jules Baw on SoundCloud";
-    f.setAttribute("allow", "autoplay");
-    f.setAttribute("scrolling", "no");
-    f.style.border = "0";
-    var box = document.getElementById("sc");
-    box.innerHTML = "";
-    box.appendChild(f);
-  });
-</script>
 </body>
 </html>

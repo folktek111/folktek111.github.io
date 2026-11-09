@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Jules Baw</title>
+<meta name="description" content="Jules Baw, Uddebo. Live mixing, live recording, field recording and DJ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<!-- the more you look, the more you see -->
+<header>
+  <div class="wrap">
+    <h1>Jules Baw</h1>
+  </div>
+</header>
+
+<main>
+  <section id="audio">
+    <div class="wrap">
+      <div class="who">
+        <p class="lead">Sound engineer and DJ in <a class="q" href="/julian/">Uddebo</a>.</p>
+      </div>
+      <div class="do" style="margin-top:2.5rem">
+        <div>
+          <h2>Audio</h2>
+          <ul>
+            <li>Live mixing</li>
+            <li>Live recording</li>
+            <li>Field recording</li>
+            <li>DJ</li>
+          </ul>
+          <small><a href="https://soundcloud.com/jules-baw">SoundCloud</a></small>
+        </div>
+      </div>
+      <div class="sc" id="sc">
+        <button type="button" class="sc-play" id="sc-play">▶ Listen here</button>
+        <p class="sc-note">Loads the SoundCloud player, which sets SoundCloud cookies.</p>
+      </div>
+      <details class="fold">
+        <summary>…</summary>
+        <p>The same <a class="q" href="/julian/">hands</a> build stoves and houses.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <h2>Contact</h2>
+    <p><a href="mailto:julesbaw@folktek.org">julesbaw@folktek.org</a></p>
+    <p>Uddebo, Tranemo kommun</p>
+    <p class="door"><a href="/julian/" aria-label="Further in"><img src="/favicon.svg" width="14" height="14" alt=""></a></p>
+  </div>
+</footer>
+<script>
+  // Click-to-load: nothing loads from SoundCloud until someone presses play.
+  document.getElementById("sc-play").addEventListener("click", function () {
+    var src = "https://w.soundcloud.com/player/?url=" +
+      encodeURIComponent("https://soundcloud.com/jules-baw") +
+      "&color=%238e2f22&auto_play=true&show_user=true&show_reposts=false&visual=false";
+    var f = document.createElement("iframe");
+    f.src = src;
+    f.width = "100%";
+    f.height = "450";
+    f.title = "Jules Baw on SoundCloud";
+    f.setAttribute("allow", "autoplay");
+    f.setAttribute("scrolling", "no");
+    f.style.border = "0";
+    var box = document.getElementById("sc");
+    box.innerHTML = "";
+    box.appendChild(f);
+  });
+</script>
+</body>
+</html>
