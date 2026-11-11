@@ -404,7 +404,6 @@ h1,h2{color:var(--head,var(--ink))}
     <button type="button" class="navbtn" id="next">4 weeks →</button>
     <label class="note" for="datein">Go to</label><input type="date" id="datein" min="1900-01-01" max="2100-12-31">
     <span class="range" id="range"></span>
-    <label class="wtog"><input type="checkbox" id="ovTog"> Overall score wave</label>
     <span class="wtog" role="group" aria-label="Scoring">Scoring: <label style="color:var(--sys-W);font-weight:600"><input type="checkbox" name="smode" value="W" style="accent-color:var(--sys-W)"> Western</label> <label style="color:var(--sys-C);font-weight:600"><input type="checkbox" name="smode" value="C" style="accent-color:var(--sys-C)"> Chinese</label> <label style="color:var(--sys-H);font-weight:600"><input type="checkbox" name="smode" value="H" style="accent-color:var(--sys-H)"> Human Design</label> <label style="color:var(--sys-G);font-weight:600"><input type="checkbox" name="smode" value="G" style="accent-color:var(--sys-G)"> Gene Keys</label> <label style="background:#3a3652;color:#fff;padding:1px 7px;border-radius:5px;font-weight:600"><input type="checkbox" name="smode" value="comb" style="accent-color:var(--sys-comb)"> Combined</label></span>
   </div>
   <nav class="strip" aria-label="Days"><div class="tl"><div class="wave" id="wave"></div><div class="strip-in" id="strip"></div></div></nav>
@@ -1835,7 +1834,7 @@ function renderTimeline(){
   let ovP="";try{ovP=MODE_ORD.filter(m=>SCORE_ON.includes(m)).map(md=>sysPath(smoothPath(days.map(d=>modeO(d,md)),N,W,H,1),md)).join("")}catch(e){}
   if(false){const os=[],OP=os.map((_,i)=>{const w=os.slice(Math.max(0,i-1),i+2),a=w.reduce((s,x)=>s+x,0)/w.length;return [(i+0.5)/N*W,H-a/13*H]});ovP=`M${OP[0][0].toFixed(1)},${OP[0][1].toFixed(1)}`;for(let i=0;i<OP.length-1;i++){const p0=OP[i-1]||OP[i],p1=OP[i],p2=OP[i+1],p3=OP[i+2]||p2;ovP+=` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`}}
   const ovSvg=ovP?`<svg class="ovw" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W}" y1="${(H-7/13*H).toFixed(1)}" y2="${(H-7/13*H).toFixed(1)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>${ovP}</svg>`:"";
-  const wv=document.getElementById("wave");let ovOn=false;try{ovOn=localStorage.getItem("orkOvWave")==="1"}catch(e){}
+  const wv=document.getElementById("wave");let ovOn=true;
   wv.classList.toggle("showov",ovOn);const tg=document.getElementById("ovTog");if(tg){tg.checked=ovOn;tg.onchange=()=>{wv.classList.toggle("showov",tg.checked);try{localStorage.setItem("orkOvWave",tg.checked?"1":"0")}catch(e){}}}
   wv.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line}L${W},${H}L0,${H}Z" fill="var(--wave-fill)"/><path d="${line}" fill="none" stroke="var(--wave)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>${ovSvg}${marks}${ti>=0&&ti<=100?`<div class="todayline" style="left:${ti}%"></div>`:""}<span class="wlab top">full</span><span class="wlab bot">new</span>`;
   // strip
