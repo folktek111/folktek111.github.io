@@ -166,7 +166,7 @@
     <label>Born <input type="date" id="pDate"></label>
     <label>Time <input type="time" id="pTime"></label>
     <label><input type="checkbox" id="pNoTime"> time unknown</label>
-    <span style="display:inline-flex;gap:10px;align-items:center">Birthplace <label style="display:inline-flex;flex-direction:row;gap:4px;align-items:center"><input type="radio" name="pMode" id="pListR" value="list" checked> town</label><label style="display:inline-flex;flex-direction:row;gap:4px;align-items:center"><input type="radio" name="pMode" id="pCoordR" value="custom"> coordinates</label></span> <select id="pPlace" aria-label="Birthplace"></select>
+    <span style="display:inline-flex;gap:10px;align-items:center">Birthplace <label style="display:inline-flex;flex-direction:row;gap:4px;align-items:center"><input type="radio" name="pMode" id="pListR" value="list" checked> town</label><label style="display:inline-flex;flex-direction:row;gap:4px;align-items:center"><input type="radio" name="pMode" id="pCoordR" value="custom"> coordinates</label></span> <span id="pPlace" style="position:relative;display:inline-block"><input id="pTown" autocomplete="off" placeholder="Start typing a town or city" aria-label="Birthplace" style="width:240px"><span id="pTownRes" hidden style="position:absolute;left:0;top:100%;z-index:20;min-width:260px;max-height:260px;overflow:auto;background:var(--panel,var(--card));border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18)"></span></span>
     <span id="pCustom" hidden>lat <input id="pLat" inputmode="decimal" size="7"> lon <input id="pLon" inputmode="decimal" size="7"> <select id="pTz"></select></span>
     <button id="pSave">Save &amp; use</button> <button id="pDel">Delete</button> <button id="pCancel">Cancel</button>
     <span id="pErr" class="warn"></span>
@@ -1151,6 +1151,10 @@ if (typeof module !== 'undefined') module.exports = OR;
   var people = store.get('people', []);
   var TZS = (Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['Europe/Stockholm','Europe/London','Europe/Oslo','Europe/Copenhagen','Europe/Helsinki','Europe/Berlin','Europe/Paris','Europe/Madrid','Europe/Rome','Europe/Bucharest','Europe/Athens','America/New_York','America/Chicago','America/Los_Angeles','Asia/Kolkata','Asia/Shanghai','Asia/Tokyo','Australia/Sydney','UTC']);
   function tzOpts(sel, val) { if (TZS.indexOf(val) < 0) TZS = [val].concat(TZS); sel.innerHTML = TZS.map(function (z) { return '<option' + (z === val ? ' selected' : '') + '>' + z + '</option>'; }).join(''); }
+  var townPick = null, CITIES = null;
+  function loadCities() { return CITIES ? Promise.resolve(CITIES) : fetch('cities.json').then(function (r) { return r.json(); }).then(function (j) { CITIES = j; return j; }); }
+  function foldTxt(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+  var regionName = (function () { try { var d = new Intl.DisplayNames(['en'], { type: 'region' }); return function (c) { try { return d.of(c); } catch (e) { return c; } }; } catch (e) { return function (c) { return c; }; } })();
   function placeOpts(sel, val) { sel.innerHTML = OR.PLACES.map(function (p) { return '<option value="' + p.id + '"' + (p.id === val ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') ; }
   function placeById(id) { return OR.PLACES.filter(function (p) { return p.id === id; })[0]; }
   var prof = null, loc, personId = store.get('sel', '');
@@ -1189,22 +1193,28 @@ if (typeof module !== 'undefined') module.exports = OR;
     $('pTime').value = b && b.timeKnown ? b.time : '';
     $('pNoTime').checked = b ? !b.timeKnown : false;
     var pid = b ? (b.placeId || 'custom') : 'stockholm';
-    placeOpts($('pPlace'), pid);
+    townPick = b && pid !== 'custom' ? { name: b.placeName, lat: b.lat, lon: b.lon, tz: b.tz } : null; $('pTown').value = townPick ? (townPick.name || '') : ''; $('pTownRes').hidden = true;
     $('pCustom').hidden = pid !== 'custom'; $('pPlace').hidden = pid === 'custom'; $('pCoordR').checked = pid === 'custom'; $('pListR').checked = pid !== 'custom';
     $('pLat').value = b ? b.lat : ''; $('pLon').value = b ? b.lon : '';
     tzOpts($('pTz'), b ? b.tz : 'Europe/Stockholm');
     $('pDel').hidden = !b; $('pErr').textContent = '';
     $('pName').focus();
   }
+  $('pTown').oninput = function () { var box = $('pTownRes'), raw = this.value.trim(), q = foldTxt(raw); townPick = null; if (q.length < 2) { box.hidden = true; return; }
+    loadCities().then(function (C) { var out = []; for (var i = 0; i < C.c.length && out.length < 60; i++) if (foldTxt(C.c[i][0]).indexOf(q) === 0) out.push(C.c[i]);
+      out = out.slice(0, 25); box.hidden = !out.length;
+      box.innerHTML = out.map(function (c, i) { return '<button type="button" data-i="' + i + '" style="display:block;width:100%;text-align:left;border:0;background:none;padding:6px 10px;cursor:pointer;color:inherit;font:inherit">' + esc(c[0]) + ', ' + esc(regionName(c[1])) + (/^[A-Z]+$/.test(c[2]) ? ' (' + esc(c[2]) + ')' : '') + '</button>'; }).join('');
+      Array.prototype.forEach.call(box.querySelectorAll('button'), function (bt) { bt.onclick = function () { var c = out[+bt.dataset.i]; townPick = { name: c[0] + ', ' + regionName(c[1]), lat: c[3], lon: c[4], tz: C.tz[c[5]] }; $('pTown').value = townPick.name; box.hidden = true; }; });
+    }).catch(function () { box.hidden = false; box.innerHTML = '<span style="display:block;padding:6px 10px">Couldn\u2019t load the town list. Pick coordinates instead.</span>'; }); };
   ['pListR','pCoordR'].forEach(function (id) { $(id).onchange = function () { var c = $('pCoordR').checked; $('pCustom').hidden = !c; $('pPlace').hidden = c; }; });
   $('pCancel').onclick = function () { if (!prof) return; $('pform').hidden = true; personOpts(); };
   $('pSave').onclick = function () {
-    var name = $('pName').value.trim(), date = $('pDate').value, noTime = $('pNoTime').checked, time = $('pTime').value, pid = $('pCoordR').checked ? 'custom' : $('pPlace').value;
+    var name = $('pName').value.trim(), date = $('pDate').value, noTime = $('pNoTime').checked, time = $('pTime').value, pid = $('pCoordR').checked ? 'custom' : 'town';
     if (!name || !date) { $('pErr').textContent = 'Name and birth date are needed.'; return; }
     if (!noTime && !time) { $('pErr').textContent = 'Add a birth time, or tick “time unknown”.'; return; }
     var pl;
     if (pid === 'custom') { var la = num($('pLat').value), lo = num($('pLon').value); if (la === null || lo === null || Math.abs(la) > 66 || Math.abs(lo) > 180) { $('pErr').textContent = 'Latitude (−66 to 66) and longitude (−180 to 180) as decimals, e.g. 57.47 and 13.25.'; return; } pl = { lat: la, lon: lo, tz: $('pTz').value, name: la.toFixed(2) + ', ' + lo.toFixed(2) }; }
-    else { var pp = placeById(pid); pl = { lat: pp.lat, lon: pp.lon, tz: pp.tz, name: pp.name }; }
+    else { if (!townPick) { $('pErr').textContent = 'Start typing your birthplace and pick it from the list (or choose coordinates).'; return; } pl = { lat: townPick.lat, lon: townPick.lon, tz: townPick.tz, name: townPick.name }; }
     var b = { id: editing ? editing.id : 'p' + Date.now(), name: name, date: date, time: noTime ? '' : time, timeKnown: !noTime, lat: pl.lat, lon: pl.lon, tz: pl.tz, placeId: pid, placeName: pl.name };
     if (editing) people = people.map(function (p) { return p.id === b.id ? b : p; }); else people.push(b);
     store.set('people', people);

@@ -691,7 +691,7 @@ const pair=(a,b,L)=>L.some(p=>p===a+b||p===b+a);
 const DEFAULT_PERSON={id:"example",name:"Example (1 Jan 2000)",y:2000,mo:1,d:1,h:12,mi:0,noTime:false,place:{name:"Stockholm, Sweden",cc:"SE",lat:59.33,lon:18.07,tz:"Europe/Stockholm"}};
 let PEOPLE=[];try{PEOPLE=JSON.parse(localStorage.getItem("orakel-people")||"[]").filter(p=>p&&p.id&&p.y&&p.place)}catch(e){}
 let WHO="example";try{WHO=localStorage.getItem("orakel-who")||"example"}catch(e){}
-const ACTIVE=PEOPLE.find(p=>p.id===WHO)||DEFAULT_PERSON;
+const ACTIVE=PEOPLE.find(p=>p.id===WHO)||PEOPLE[0]||DEFAULT_PERSON;
 const IS_J=false;
 const MY_EL=(STEM[pillar(new Date(ACTIVE.y,ACTIVE.mo-1,ACTIVE.d))[0]]||"x fire").split(" ")[1].toLowerCase();
 if(!IS_J)CHANNELS["6–59"][2]="Closeness and intimacy.";
@@ -2401,13 +2401,14 @@ document.querySelectorAll("#lvK button").forEach(b=>b.onclick=()=>{lvK=b.dataset
   const row=document.getElementById("personRow"),line=document.getElementById("birthLine"),box=document.getElementById("personForm");
   const save=()=>{try{localStorage.setItem("orakel-people",JSON.stringify(PEOPLE))}catch(e){}};
   const go=id=>{try{localStorage.setItem("orakel-who",id)}catch(e){}location.reload()};
-  const all=[DEFAULT_PERSON,...PEOPLE];
-  row.innerHTML=`<select id="whoSel" aria-label="Whose chart">${all.map(p=>`<option value="${p.id}"${p.id===ACTIVE.id?" selected":""}>${esc(p.name)}</option>`).join("")}</select>
-    <button type="button" class="pbtn" id="addP">+ Add person</button>${ACTIVE.id==="example"?"":`<button type="button" class="pbtn" id="delP">Remove</button>`}`;
+  const all=PEOPLE;
+  row.innerHTML=`<select id="whoSel" aria-label="Whose chart">${all.length?"":"<option>Nobody yet</option>"}${all.map(p=>`<option value="${p.id}"${p.id===ACTIVE.id?" selected":""}>${esc(p.name)}</option>`).join("")}</select>
+    <button type="button" class="pbtn" id="addP">+ Add person</button>${PEOPLE.length?`<button type="button" class="pbtn" id="delP">Remove</button>`:""}`;
   document.getElementById("whoSel").onchange=e=>go(e.target.value);
   {const a=ACTIVE;line.textContent=`${a.d} ${MO[a.mo-1]} ${a.y} · ${a.noTime?"time unknown":String(a.h).padStart(2,"0")+":"+String(a.mi).padStart(2,"0")+" local"} · ${a.place.name} · ${Math.abs(a.place.lat).toFixed(2)}°${a.place.lat>=0?"N":"S"} ${Math.abs(a.place.lon).toFixed(2)}°${a.place.lon>=0?"E":"W"}`}
   const del=document.getElementById("delP");
   if(del)del.onclick=()=>{if(del.dataset.sure){PEOPLE=PEOPLE.filter(p=>p.id!==ACTIVE.id);save();go("example")}else{del.dataset.sure=1;del.textContent="Tap again to remove "+ACTIVE.name;del.classList.add("on")}};
+  if(!PEOPLE.length){line.textContent="Add your birth details to see your chart.";document.querySelectorAll(".wrap > *").forEach(e=>{if(!/^(HEADER|FOOTER)$/.test(e.tagName))e.style.display="none"});setTimeout(()=>{const a=document.getElementById("addP");if(a)a.click();const x=document.getElementById("pfX");if(x)x.hidden=true},0)}
   let CITIES=null,pick=null;
   const cn=(()=>{try{const d=new Intl.DisplayNames(["en"],{type:"region"});return c=>{try{return d.of(c)}catch(e){return c}}}catch(e){return c=>c}})();
   const loadC=()=>CITIES?Promise.resolve(CITIES):fetch("cities.json").then(r=>r.json()).then(j=>CITIES=j);
