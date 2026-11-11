@@ -166,7 +166,7 @@
     <label>Born <input type="date" id="pDate"></label>
     <label>Time <input type="time" id="pTime"></label>
     <label><input type="checkbox" id="pNoTime"> time unknown</label>
-    <label>Birthplace <select id="pPlace"></select></label>
+    <span style="display:inline-flex;gap:10px;align-items:center">Birthplace <label style="display:inline-flex;flex-direction:row;gap:4px;align-items:center"><input type="radio" name="pMode" id="pListR" value="list" checked> town</label><label style="display:inline-flex;flex-direction:row;gap:4px;align-items:center"><input type="radio" name="pMode" id="pCoordR" value="custom"> coordinates</label></span> <select id="pPlace" aria-label="Birthplace"></select>
     <span id="pCustom" hidden>lat <input id="pLat" inputmode="decimal" size="7"> lon <input id="pLon" inputmode="decimal" size="7"> <select id="pTz"></select></span>
     <button id="pSave">Save &amp; use</button> <button id="pDel">Delete</button> <button id="pCancel">Cancel</button>
     <span id="pErr" class="warn"></span>
@@ -1151,7 +1151,7 @@ if (typeof module !== 'undefined') module.exports = OR;
   var people = store.get('people', []);
   var TZS = (Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['Europe/Stockholm','Europe/London','Europe/Oslo','Europe/Copenhagen','Europe/Helsinki','Europe/Berlin','Europe/Paris','Europe/Madrid','Europe/Rome','Europe/Bucharest','Europe/Athens','America/New_York','America/Chicago','America/Los_Angeles','Asia/Kolkata','Asia/Shanghai','Asia/Tokyo','Australia/Sydney','UTC']);
   function tzOpts(sel, val) { if (TZS.indexOf(val) < 0) TZS = [val].concat(TZS); sel.innerHTML = TZS.map(function (z) { return '<option' + (z === val ? ' selected' : '') + '>' + z + '</option>'; }).join(''); }
-  function placeOpts(sel, val) { sel.innerHTML = OR.PLACES.map(function (p) { return '<option value="' + p.id + '"' + (p.id === val ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') + '<option value="custom"' + (val === 'custom' ? ' selected' : '') + '>Custom coordinates…</option>'; }
+  function placeOpts(sel, val) { sel.innerHTML = OR.PLACES.map(function (p) { return '<option value="' + p.id + '"' + (p.id === val ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') ; }
   function placeById(id) { return OR.PLACES.filter(function (p) { return p.id === id; })[0]; }
   var prof = null, loc, personId = store.get('sel', '');
   var skyCfg = store.get('sky', { id: 'stockholm' });
@@ -1190,16 +1190,16 @@ if (typeof module !== 'undefined') module.exports = OR;
     $('pNoTime').checked = b ? !b.timeKnown : false;
     var pid = b ? (b.placeId || 'custom') : 'stockholm';
     placeOpts($('pPlace'), pid);
-    $('pCustom').hidden = pid !== 'custom';
+    $('pCustom').hidden = pid !== 'custom'; $('pPlace').hidden = pid === 'custom'; $('pCoordR').checked = pid === 'custom'; $('pListR').checked = pid !== 'custom';
     $('pLat').value = b ? b.lat : ''; $('pLon').value = b ? b.lon : '';
     tzOpts($('pTz'), b ? b.tz : 'Europe/Stockholm');
     $('pDel').hidden = !b; $('pErr').textContent = '';
     $('pName').focus();
   }
-  $('pPlace').onchange = function () { $('pCustom').hidden = this.value !== 'custom'; };
+  ['pListR','pCoordR'].forEach(function (id) { $(id).onchange = function () { var c = $('pCoordR').checked; $('pCustom').hidden = !c; $('pPlace').hidden = c; }; });
   $('pCancel').onclick = function () { if (!prof) return; $('pform').hidden = true; personOpts(); };
   $('pSave').onclick = function () {
-    var name = $('pName').value.trim(), date = $('pDate').value, noTime = $('pNoTime').checked, time = $('pTime').value, pid = $('pPlace').value;
+    var name = $('pName').value.trim(), date = $('pDate').value, noTime = $('pNoTime').checked, time = $('pTime').value, pid = $('pCoordR').checked ? 'custom' : $('pPlace').value;
     if (!name || !date) { $('pErr').textContent = 'Name and birth date are needed.'; return; }
     if (!noTime && !time) { $('pErr').textContent = 'Add a birth time, or tick “time unknown”.'; return; }
     var pl;

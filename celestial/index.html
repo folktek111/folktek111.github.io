@@ -184,6 +184,9 @@ input[type=date]{font:400 .85rem var(--f-mono);border:1px solid var(--line);back
 .wave{position:relative;height:100px;border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
 .wave svg{position:absolute;inset:0;width:100%;height:100%}
 .wave .mark{position:absolute;top:0;bottom:0;border-left:1px dashed var(--wave)}
+.wave .mark.wheel{border-left:1px dotted var(--accent)}
+.wave .mark.wheel span{top:auto;bottom:4px;font:1rem/1 serif;color:var(--accent);cursor:help;pointer-events:auto;padding:1px 3px}
+.wave .mark.wheel span.open::after{content:" " attr(data-n);font:500 .66rem var(--f-mono)}
 .wave .mark span{position:absolute;top:4px;left:4px;font:500 .66rem var(--f-mono);color:var(--wave);white-space:nowrap;background:var(--panel);padding:0 3px;border-radius:3px}
 .wave .mark.new span{top:auto;bottom:4px}
 .wave .todayline{position:absolute;top:0;bottom:0;border-left:2px solid var(--accent)}
@@ -1824,6 +1827,9 @@ function renderTimeline(){
   while(q.time.date.getTime()<t0+span){if(q.quarter===0||q.quarter===2){const x=(q.time.date.getTime()-t0)/span*100;marks+=`<div class="mark ${q.quarter?"full":"new"}" style="left:${x}%"><span>${q.quarter?"Full":"New"} ${fmtS(q.time.date)} ${hm(q.time.date)}</span></div>`}q=Astronomy.NextMoonQuarter(q)}
   try{let le=Astronomy.SearchLunarEclipse(new Date(t0-864e5));while(le.peak.date.getTime()<t0+span){const x=(le.peak.date.getTime()-t0)/span*100;if(x>=0)marks+=`<div class="mark ecl lunar" style="left:${x}%"><span>Lunar eclipse (${le.kind}) ${fmtS(le.peak.date)}</span></div>`;le=Astronomy.NextLunarEclipse(le.peak)}
   let se=Astronomy.SearchGlobalSolarEclipse(new Date(t0-864e5));while(se.peak.date.getTime()<t0+span){const x=(se.peak.date.getTime()-t0)/span*100;if(x>=0)marks+=`<div class="mark ecl solar" style="left:${x}%"><span>Solar eclipse (${se.kind}) ${fmtS(se.peak.date)}</span></div>`;se=Astronomy.NextGlobalSolarEclipse(se.peak)}}catch(e){}
+  try{const WH=[[0,"Ostara","❀","spring equinox"],[45,"Beltane","✹","cross-quarter: halfway from spring equinox to summer solstice"],[90,"Litha","☼","summer solstice"],[135,"Lughnasadh","⚘","cross-quarter: first harvest"],[180,"Mabon","❦","autumn equinox"],[225,"Samhain","✵","cross-quarter: halfway from autumn equinox to winter solstice"],[270,"Yule","❄","winter solstice"],[315,"Imbolc","✧","cross-quarter: first stirrings of spring"]];
+    WH.forEach(([lon,nm,sy,what])=>{const r=Astronomy.SearchSunLongitude(lon,new Date(t0-864e5),N+2);if(!r)return;const tt=r.date.getTime();if(tt<t0||tt>t0+span)return;const x=(tt-t0)/span*100,lab=`${nm} · ${fmtS(r.date)} ${hm(r.date)} · ${what}`;
+      marks+=`<div class="mark wheel" style="left:${x}%"><span title="${lab}" aria-label="${lab}" data-n="${nm} ${fmtS(r.date)}" onclick="this.classList.toggle('open')">${sy}</span></div>`})}catch(e){}
   const ti=(fromYmd(TODAY).getTime()+432e5-t0)/span*100;
   let ovP="";try{ovP=MODE_ORD.filter(m=>SCORE_ON.includes(m)).map(md=>sysPath(smoothPath(days.map(d=>modeO(d,md)),N,W,H,1),md)).join("")}catch(e){}
   if(false){const os=[],OP=os.map((_,i)=>{const w=os.slice(Math.max(0,i-1),i+2),a=w.reduce((s,x)=>s+x,0)/w.length;return [(i+0.5)/N*W,H-a/13*H]});ovP=`M${OP[0][0].toFixed(1)},${OP[0][1].toFixed(1)}`;for(let i=0;i<OP.length-1;i++){const p0=OP[i-1]||OP[i],p1=OP[i],p2=OP[i+1],p3=OP[i+2]||p2;ovP+=` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`}}
@@ -2415,27 +2421,29 @@ document.querySelectorAll("#lvK button").forEach(b=>b.onclick=()=>{lvK=b.dataset
       <label>Birth time (local)<input id="pfT" type="time"></label>
       <label style="flex-direction:row;align-items:center;gap:6px"><input id="pfU" type="checkbox"> Time unknown</label>
     </div>
-    <div class="pform" style="margin-top:10px"><label style="grid-column:1/-1">Birthplace<input id="pfC" autocomplete="off" placeholder="Start typing a town or city"></label></div>
+    <p style="display:flex;gap:16px;align-items:center;margin:10px 0 0"><b style="font-weight:600">Birthplace</b><label style="display:inline-flex;gap:6px;align-items:center"><input type="radio" name="pfMode" value="town" checked> Town</label><label style="display:inline-flex;gap:6px;align-items:center"><input type="radio" name="pfMode" value="coord"> Coordinates</label></p>
+    <div class="pform" id="pfTown" style="margin-top:6px"><label style="grid-column:1/-1"><input id="pfC" autocomplete="off" placeholder="Start typing a town or city" aria-label="Birthplace"></label></div>
     <div id="pfR" class="cres" hidden></div>
     <p class="note" id="pfPicked"></p>
-    <details class="ctx" id="pfMan"><summary>Place not in the list? Enter coordinates</summary>
-      <div class="pform"><label>Place name<input id="pfMN"></label><label>Latitude (N +, S −)<input id="pfLat" inputmode="decimal"></label><label>Longitude (E +, W −)<input id="pfLon" inputmode="decimal"></label>
-      <label>Time zone<select id="pfTz">${tzs.map(z=>`<option${z==="Europe/Stockholm"?" selected":""}>${z}</option>`).join("")}</select></label></div></details>
+    <div id="pfMan" hidden>
+      <div class="pform" style="margin-top:6px"><label>Place name<input id="pfMN"></label><label>Latitude (N +, S −)<input id="pfLat" inputmode="decimal"></label><label>Longitude (E +, W −)<input id="pfLon" inputmode="decimal"></label>
+      <label>Time zone<select id="pfTz">${tzs.map(z=>`<option${z==="Europe/Stockholm"?" selected":""}>${z}</option>`).join("")}</select></label></div></div>
     <p style="display:flex;gap:8px;margin-top:10px"><button type="button" class="pbtn on" id="pfSave">Save and show</button><button type="button" class="pbtn" id="pfX">Cancel</button></p>
     <p class="note" id="pfMsg">Saved only in this browser. Nothing is sent anywhere.</p>`;
     const $=id=>document.getElementById(id);
     $("pfU").onchange=e=>{$("pfT").disabled=e.target.checked};
+    document.querySelectorAll('input[name="pfMode"]').forEach(r=>r.onchange=()=>{const c=r.value==="coord"&&r.checked;if(r.checked){$("pfMan").hidden=!c;$("pfTown").hidden=c;$("pfR").hidden=true;$("pfPicked").hidden=c}});
     $("pfX").onclick=()=>{box.hidden=true};
     const res=$("pfR");
     $("pfC").oninput=e=>{const q=fold(e.target.value.trim());if(q.length<2){res.hidden=true;return}
       loadC().then(C=>{const raw=e.target.value.trim().toLowerCase();let out=[];for(const c of C.c){if(fold(c[0]).startsWith(q)){out.push(c);if(out.length>=60)break}}out=out.filter(c=>c[0].toLowerCase().startsWith(raw)).concat(out.filter(c=>!c[0].toLowerCase().startsWith(raw))).slice(0,25);
         res.hidden=!out.length;res.innerHTML=out.map((c,i)=>`<button type="button" data-i="${i}">${esc(c[0])}, ${esc(cn(c[1]))}${/^[A-Z]+$/.test(c[2])?" ("+esc(c[2])+")":""}</button>`).join("");
         res.querySelectorAll("button").forEach(b=>b.onclick=()=>{const c=out[+b.dataset.i];pick={name:`${c[0]}, ${cn(c[1])}`,cc:c[1],lat:c[3],lon:c[4],tz:C.tz[c[5]]};$("pfC").value=pick.name;res.hidden=true;$("pfPicked").textContent=`${pick.lat}°, ${pick.lon}° · ${pick.tz}`})})
-      .catch(()=>{res.hidden=false;res.innerHTML='<p class="note" style="padding:6px 10px">Couldn\'t load the city list. Use coordinates below.</p>'})};
+      .catch(()=>{res.hidden=false;res.innerHTML='<p class="note" style="padding:6px 10px">Couldn\'t load the city list. Pick Coordinates instead.</p>'})};
     $("pfSave").onclick=()=>{
       const msg=$("pfMsg"),n=$("pfN").value.trim(),dv=$("pfD").value,tv=$("pfT").value,nt=$("pfU").checked;
-      let place=pick;const la=parseFloat(($("pfLat").value||"").replace(",",".")),lo=parseFloat(($("pfLon").value||"").replace(",","."));
-      if(!place&&!isNaN(la)&&!isNaN(lo))place={name:$("pfMN").value.trim()||`${la}, ${lo}`,cc:"",lat:la,lon:lo,tz:$("pfTz").value};
+      const coordMode=!$("pfMan").hidden;let place=coordMode?null:pick;const la=parseFloat(($("pfLat").value||"").replace(",",".")),lo=parseFloat(($("pfLon").value||"").replace(",","."));
+      if(coordMode&&!isNaN(la)&&!isNaN(lo))place={name:$("pfMN").value.trim()||`${la}, ${lo}`,cc:"",lat:la,lon:lo,tz:$("pfTz").value};
       if(!n||!dv||(!nt&&!tv)||!place){msg.textContent="Needs a name, a birth date, a birth time (or tick Time unknown) and a birthplace.";return}
       const[y,mo,d]=dv.split("-").map(Number),[h,mi]=nt?[12,0]:tv.split(":").map(Number);
       const p={id:"p"+Date.now().toString(36),name:n,y,mo,d,h,mi,noTime:nt,place};
