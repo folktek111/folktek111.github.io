@@ -7,13 +7,15 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>Folktek</title>
-<meta name="description" content="Folktek: a long-term research project into the simple, low-impact technologies anyone can build and develop.">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<meta name="description" content="Folktek: a long-term research project into what technology is, and the simple, low-impact technologies anyone can build and develop.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#f3efe6; --ink:#141210; --muted:#6b645a; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#141210; --ink:#f3efe6; --muted:#a39b8f; } }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#141210; --ink:#f3efe6; --muted:#a39b8f; } }
+  :root[data-theme="dark"] { --bg:#141210; --ink:#f3efe6; --muted:#a39b8f; }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { min-height: 100vh; display: flex; align-items: center; justify-content: center;
@@ -21,30 +23,52 @@
     font-size: 1.125rem; line-height: 1.65; padding: 3rem 1.5rem; }
   main { max-width: 34rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.4rem; }
   .sun { width: min(46vw, 13rem); height: auto; color: var(--ink); }
-  h1 { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; font-size: clamp(2.6rem, 9vw, 3.6rem);
-    letter-spacing: -0.02em; line-height: 1; margin: 0 0 .4rem; }
+  h1, h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; line-height: 1.1; margin: 0; text-wrap: balance; }
+  h1 { font-size: clamp(2.8rem, 10vw, 4rem); margin-bottom: .2rem; }
+  h2 { font-size: clamp(1.9rem, 6vw, 2.5rem); margin-top: 1.4rem; }
   p { margin: 0; }
-  h2 { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; font-size: 1.25rem; margin: 1rem 0 0; }
-  .theory { font-style: italic; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  li { margin: .3rem 0; }
   a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-  .wip { margin-top: 1.6rem; font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size: .8rem;
-    letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .wip { margin-top: 1.4rem; font-size: 1.45rem; font-weight: 600; }
+  footer { margin-top: 2.6rem; display: flex; flex-direction: column; align-items: center; gap: .3rem; color: var(--muted); font-size: .95rem; }
+  .theme { margin-top: .8rem; font: inherit; font-size: .9rem; color: var(--muted); background: none;
+    border: 1px solid var(--muted); border-radius: 999px; padding: .3rem 1rem; cursor: pointer; }
+  .theme:hover { color: var(--ink); border-color: var(--ink); }
+  footer .sun { width: 2.6rem; color: var(--muted); }
 </style>
 </head>
 <body>
 <main>
-  <svg class="sun" viewBox="0 0 256 256" role="img" aria-label="Folktek sun">
-    <path fill="currentColor" fill-rule="evenodd" d="M113,195 119,219 121,223 127,251 128,251 142,195ZM89,185 74,170 69,167 40,215 88,187ZM185,166 166,186 195,204 214,214 187,167ZM194,144 250,130 195,116 194,117ZM61,113 41,117 37,119 6,126 6,127 60,141 61,140ZM118,69 107,72 98,76 92,80 80,92 73,104 70,113 69,138 72,149 78,161 92,176 98,180 112,186 125,187 126,188 138,187 149,184 165,175 177,162 183,151 187,138 187,119 185,110 179,97 174,90 165,81 151,73 142,70ZM215,43 167,71 166,73 186,92ZM43,40 72,89 91,70 91,68 55,46ZM129,6 116,57 116,61 139,62 143,61 143,58 130,6Z"/>
-  </svg>
+  <svg class="sun" viewBox="-205 -205 410 410" role="img" aria-label="Folktek sun"><circle r="96" fill="currentColor"/><path fill="currentColor" d="M0.0,-200.0 24.0,-107.0 -24.0,-107.0ZM141.4,-141.4 92.6,-58.7 58.7,-92.6ZM200.0,-0.0 107.0,24.0 107.0,-24.0ZM141.4,141.4 58.7,92.6 92.6,58.7ZM0.0,200.0 -24.0,107.0 24.0,107.0ZM-141.4,141.4 -92.6,58.7 -58.7,92.6ZM-200.0,0.0 -107.0,-24.0 -107.0,24.0ZM-141.4,-141.4 -58.7,-92.6 -92.6,-58.7Z"/></svg>
   <h1>Folktek</h1>
-  <p>Folktek is a long-term research project, worked on for many years, to identify the technologies people need to live in a resilient, simple, low-impact way: technologies that anyone can build and develop.</p>
+  <p>Folktek is a long-term research project, many years in the making. It is a study to really analyse what technology is, and what we need as people to live in a resilient, simple, low-impact way: technologies that anyone can build and develop.</p>
+  <ul>
+    <li>Low-impact: the smallest footprint in materials, energy and ecology.</li>
+    <li>Simplest first: no electricity where possible; add complexity only when the simple way fails.</li>
+    <li>Doable at home: buildable, repairable and understandable with local materials.</li>
+    <li>Open and reusable: shared knowledge, old computers, repairable tools.</li>
+  </ul>
   <h2>What is technology?</h2>
   <p>We tend to picture technology as something advanced and highly intellectual: screens and circuits, made by experts, owned by companies, and impossible to fix yourself.</p>
   <p>But the word comes from the Greek <i>tekhnē</i>: craft, skill, the art of making. A sharpened stick is technology. So is a clay oven, a woven basket, a waterwheel, a seed saved from last year's harvest, or a circle of people deciding something together.</p>
-  <p>Folktek is a study into what technology really is, and a search for technologies that are simpler, more basic, more rudimentary, and accessible to all people everywhere: things you can understand, build, repair and share with whatever is at hand.</p>
-  <p class="wip">Under construction</p>
-  <p>Folktek is in motion. The website is under construction and there's more coming soon. Any questions? Write to <a href="mailto:info@folktek.org">info@folktek.org</a>.</p>
-  <p class="theory">While you're waiting, let's start with the big picture. Would you like to know our current theory of life, the universe and everything? <a href="/wobbliness/">Follow this link.</a></p>
+  <p class="wip">This site is under construction.</p>
+  <p>Any questions? Write to <a href="mailto:info@folktek.org">info@folktek.org</a>.</p>
+  <p>So, whilst you're waiting, let's start with the fundamentals. On this journey we have discovered the theory of life, the universe and everything. <a href="/wobbliness/">Follow this link.</a></p>
+  <p>Other, quite literally more interplanetary, spaced-out projects are the <a href="https://claude.ai/artifact/8By9zGDY1hjyxCYEeyGGyX">Celestial Archive</a> and the <a href="https://claude.ai/artifact/51mZzuHKHPAPn4CQt1Ltrn">Interplanetary Day Graph</a>.</p>
+  <footer>
+    <svg class="sun" viewBox="-205 -205 410 410" aria-hidden="true"><circle r="96" fill="currentColor"/><path fill="currentColor" d="M0.0,-200.0 24.0,-107.0 -24.0,-107.0ZM141.4,-141.4 92.6,-58.7 58.7,-92.6ZM200.0,-0.0 107.0,24.0 107.0,-24.0ZM141.4,141.4 58.7,92.6 92.6,58.7ZM0.0,200.0 -24.0,107.0 24.0,107.0ZM-141.4,141.4 -92.6,58.7 -58.7,92.6ZM-200.0,0.0 -107.0,-24.0 -107.0,24.0ZM-141.4,-141.4 -58.7,-92.6 -92.6,-58.7Z"/></svg>
+    <span>folktek.org</span>
+    <span>Copy and distribute.</span>
+    <button class="theme" type="button" id="theme">Dark / light</button>
+  </footer>
 </main>
+<script>
+document.getElementById("theme").addEventListener("click",function(){
+  var r=document.documentElement, cur=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  var next=cur==="dark"?"light":"dark"; r.dataset.theme=next;
+  try{localStorage.setItem("theme",next);}catch(e){}
+});
+</script>
 </body>
 </html>
