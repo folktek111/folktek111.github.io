@@ -1163,6 +1163,7 @@ if (typeof module !== 'undefined') module.exports = OR;
   function placeOpts(sel, val) { sel.innerHTML = OR.PLACES.map(function (p) { return '<option value="' + p.id + '"' + (p.id === val ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') + '<option value="custom"' + (val === 'custom' ? ' selected' : '') + '>Custom coordinates…</option>'; }
   function placeById(id) { return OR.PLACES.filter(function (p) { return p.id === id; })[0]; }
   var prof = null, loc, personId = store.get('sel', '');
+  var firstVisit = store.get('sky', null) === null;
   var skyCfg = store.get('sky', { id: 'stockholm' });
 
   function personOpts() {
@@ -1207,6 +1208,9 @@ if (typeof module !== 'undefined') module.exports = OR;
   function loadC() { return CITIES ? Promise.resolve(CITIES) : fetch('/celestial-archive/cities.json').then(function (r) { return r.json(); }).then(function (j) { return (CITIES = j); }); }
   function fold(x) { return x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
   var cn = (function () { try { var d = new Intl.DisplayNames(['en'], { type: 'region' }); return function (c) { try { return d.of(c); } catch (e) { return c; } }; } catch (e) { return function (c) { return c; }; } })();
+  function nearest(la, lo) { return loadC().then(function (C) { var best = null, bd = 1e9, k = Math.cos(la * Math.PI / 180);
+    for (var i = 0; i < C.c.length; i++) { var c = C.c[i], dy = c[3] - la, dx = (c[4] - lo) * k, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = c; } }
+    return best ? { name: best[0] + ', ' + cn(best[1]), tz: C.tz[best[5]] } : null; }); }
   function setPlace(name, la, lo, tz) { plName = name; $('pPlaceQ').value = name; $('pLat').value = la; $('pLon').value = lo; tzOpts($('pTz'), tz); $('pRes').hidden = true; }
   $('pPlaceQ').oninput = function () {
     var q = fold(this.value.trim()), res = $('pRes'); plName = '';
@@ -1221,7 +1225,8 @@ if (typeof module !== 'undefined') module.exports = OR;
   $('pLoc').onclick = function () {
     var bt = this; if (!navigator.geolocation) { bt.textContent = 'Location not available'; return; }
     bt.textContent = '⌖ Finding you…';
-    navigator.geolocation.getCurrentPosition(function (pos) { setPlace('My location', Math.round(pos.coords.latitude * 100) / 100, Math.round(pos.coords.longitude * 100) / 100, devTz); bt.textContent = '⌖ My location'; },
+    navigator.geolocation.getCurrentPosition(function (pos) { var la = Math.round(pos.coords.latitude * 100) / 100, lo = Math.round(pos.coords.longitude * 100) / 100;
+      nearest(la, lo).then(function (n) { setPlace(n ? 'Near ' + n.name : 'My location', la, lo, n ? n.tz : devTz); }, function () { setPlace('My location', la, lo, devTz); }); bt.textContent = '⌖ My location'; },
       function () { bt.textContent = '⌖ Couldn\'t get location'; }, { timeout: 10000, maximumAge: 600000 });
   };
   $('pCancel').onclick = function () { if (!prof) return; $('pform').hidden = true; personOpts(); };
@@ -1248,7 +1253,9 @@ if (typeof module !== 'undefined') module.exports = OR;
     btn.disabled = true; btn.textContent = '📍 finding you…';
     try {
       navigator.geolocation.getCurrentPosition(function (pos) {
-        setSky({ id: 'custom', lat: Math.round(pos.coords.latitude * 1000) / 1000, lon: Math.round(pos.coords.longitude * 1000) / 1000, tz: devTz, name: 'My location' }); btn.disabled = false; render();
+        var la = Math.round(pos.coords.latitude * 1000) / 1000, lo = Math.round(pos.coords.longitude * 1000) / 1000;
+        function go(n) { setSky({ id: 'custom', lat: la, lon: lo, tz: n ? n.tz : devTz, name: n ? 'Near ' + n.name : 'My location' }); btn.disabled = false; render(); }
+        nearest(la, lo).then(go, function () { go(null); });
       }, done, { timeout: 8000, maximumAge: 600000 });
     } catch (e) { done(); }
   };
@@ -1274,6 +1281,7 @@ if (typeof module !== 'undefined') module.exports = OR;
   ['date', 'orb', 'solar', 'allang'].forEach(function (id) { $(id).addEventListener('change', render); });
   var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (prof) draw(); }, 150); });
   setSky(skyCfg); setPerson(personId);
+  if (firstVisit) $('locBtn').click();
   $('date').value = todayStr();
   render();
   setInterval(tickNow, 60000);
