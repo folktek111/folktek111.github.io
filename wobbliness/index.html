@@ -364,7 +364,7 @@ xₙ₊₁ = r·xₙ·(1 − xₙ)
 r &lt; 3        →  settles down
 r = 3        →  starts wobbling between two values
 r ≈ 3.57     →  <b>chaos</b></div>
-  <div class="verdict">∴ Everything is wobbly.<small>Feed a tiny wobble back into itself and it grows until nothing makes sense. Wonky, with a butterfly on it.</small></div>
+  <div class="verdict">∴ Wonky time.<small>Feed a tiny wobble back into itself and it grows until nothing makes sense. Wonky, with a butterfly on it.</small></div>
 </article>
 
 <!-- 8 -->
@@ -388,7 +388,7 @@ r(t) = r₀ · e<sup>αt</sup>
 |loop gain| ≥ 1   and   loop phase = 0 (mod 2π)
 <span class="c">Hopf bifurcation: the moment α crosses zero,</span>
 <span class="c">a calm wobble turns into a runaway one.</span></div>
-  <div class="verdict">∴ Everything is wobbly.<small>Wonky isn't a lack of wobble. It's wobble that's started feeding itself.</small></div>
+  <div class="verdict">∴ Wonky time.<small>Wonky isn't a lack of wobble. It's wobble that's started feeding itself.</small></div>
 </article>
 
 <!-- 9 -->
@@ -410,7 +410,7 @@ T = 0.1   →  P = e<sup>−10</sup> ≈ 0.000045    <span class="c">frozen in t
 T<sub>k</sub> ∝ 1 / ln(k)
 <span class="c">and you are guaranteed to find the deepest, steadiest state.</span>
 <span class="c">Cool too fast and you freeze into the first rut you find.</span></div>
-  <div class="verdict">∴ Everything is wobbly.<small>Shake it up to get out of the rut. Then cool down gently. Get serious too early and you freeze the wonk in place.</small></div>
+  <div class="verdict">∴ The way of the wibble.<small>Shake it up to get out of the rut. Then cool down gently. Get serious too early and you freeze the wonk in place.</small></div>
 </article>
 
 <!-- 10 -->
@@ -432,7 +432,7 @@ r = 1   →  everyone in step
 <span class="c">Above it (natural tempos spread with half-width γ, K<sub>c</sub> = 2γ):</span>
 r = √(1 − K<sub>c</sub>/K)
 <span class="c">Worked example: K = 2·K<sub>c</sub>  ⇒  r = √½ ≈ <b>0.71</b></span></div>
-  <div class="verdict">∴ Everything is wobbly.<small>Coherence isn't forced on the wobble. It comes out of it.</small></div>
+  <div class="verdict">∴ The way of the wibble.<small>Coherence isn't forced on the wobble. It comes out of it.</small></div>
 </article>
 
 <!-- 11 -->
@@ -454,7 +454,7 @@ S[x] = ∫ ( ½m·ẋ² − V(x) ) dt
 
 <span class="c">In Level 8 terms, wibbling is whatever brings α back below zero:</span>
 r(t) = r₀ · e<sup>−|α|t</sup>      <span class="c">(the spiral turns inward)</span></div>
-  <div class="verdict">∴ Everything is wobbly.<small>The way out of wonky is to wibble. Order is whatever survives the wobbling.</small></div>
+  <div class="verdict">∴ The way of the wibble.<small>The way out of wonky is to wibble. Order is whatever survives the wobbling.</small></div>
 </article>
 
 <!-- 12 -->
@@ -606,7 +606,7 @@ M² = (2/α′) (N + Ñ − 2)
   document.querySelectorAll('.maths').forEach(function(m){ m.innerHTML=m.innerHTML.split('\n').map(function(l){ return l.trim()?'<span class="ml'+(l.indexOf('<span class="c">')===0?' mlc':'')+'">'+l+'</span>':l; }).join('\n'); });
   document.querySelectorAll('.verdict').forEach(function(v){
     var n=v.firstChild; if(!n||n.nodeType!==3) return;
-    var s=document.createElement('span'); s.className='vt'; s.innerHTML='∴ Everything is <span class="rd">wobbly</span>.';
+    var s=document.createElement('span'); s.className='vt'; s.innerHTML=n.nodeValue.replace(/\b(wobbly|wonky|wibble)\b/i,'<span class="rd">$1</span>');
     if(v.hasAttribute('data-fakeverdict')) s.setAttribute('data-fake','∴ Nothing is wobbly. (Experts agree.)');
     v.replaceChild(s,n);
   });
