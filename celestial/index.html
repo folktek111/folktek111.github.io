@@ -2040,7 +2040,7 @@ const spanTabs=()=>`<div class="tabs" id="spanSeg" role="tablist" aria-label="Ti
 function vChart(d,r){
   if(span>365)return vChartLong(d,r);
   const n=span===30?new Date(d.date.getFullYear(),d.date.getMonth()+1,0).getDate():span;
-  const base=span===7?addDays(d.date,-((d.date.getDay()+6)%7)):span===30?new Date(d.date.getFullYear(),d.date.getMonth(),1):start;
+  const base=span===7?addDays(d.date,-((d.date.getDay()+6)%7)):span===30?new Date(d.date.getFullYear(),d.date.getMonth(),1):d.date;
   const days=[...Array(n)].map((_,i)=>{const dt=addDays(base,i);if(n>31)return lite(dt);const cd=calcDay(dt),cc=cd.auto.comb;return{...reading(cd),key:ymd(dt),date:dt,all:cc&&cc.sys?{...cc.sys,comb:{o:cc.o,m:cc.m,c:cc.c,s:cc.s,w:cc.w,b:cc.b,cr:cc.cr}}:null}});
   const long=n>31;
   const bars=days.map(y=>{const v=y[k];return `<button type="button" class="bar${y.key<TODAY?" past":""}${y.key===TODAY?" today":""}" data-k="${y.key}" aria-current="${y.key===d.key}" aria-label="${fmtD(y.date)}: ${K[k]} ${v}" title="${fmtD(y.date)}: ${v}"><div class="fill" style="height:${v/13*100}%;background:${col(v)}">${long?"":v}</div></button>`}).join("");
