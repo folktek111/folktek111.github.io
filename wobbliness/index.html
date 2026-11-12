@@ -48,9 +48,6 @@ header h1{text-align:center}
 #st .w{display:inline-block;opacity:0;transition:opacity 1.4s ease}
 #st .w.on{opacity:1}
 #st .c{display:inline-block;white-space:pre}
-#st.wob .c{animation:wl3 3.4s ease-in-out infinite}
-@keyframes wl3{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-3px) rotate(-4deg)}75%{transform:translateY(3px) rotate(4deg)}}
-#st.fall .c{transition:transform 4.5s cubic-bezier(.35,0,.65,1),opacity 4.5s ease-in;opacity:0}
 .wavebox svg{position:absolute;inset:0;height:100%;width:100%}
 @keyframes drift{to{transform:translateX(-50%)}}
 .claim{font-family:var(--f-mono);font-weight:500;font-size:clamp(1.8rem,6.5vw,2.7rem);line-height:1.1;color:var(--wobbly);margin:6px 0 4px}
@@ -719,34 +716,36 @@ document.querySelectorAll('.palbtns button').forEach(function(b){
   var st=document.getElementById('st'); if(!st) return;
   var words=['Everything','is','wobbly.'];
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cs=[];
   function build(){
-    st.className='';st.innerHTML='';
+    st.innerHTML='';cs=[];
     words.forEach(function(w,wi){
       var s=document.createElement('span');s.className='w';s.setAttribute('aria-hidden','true');
-      (w+(wi<2?' ':'')).split('').forEach(function(ch,i){var c=document.createElement('span');c.className='c';c.textContent=ch;c.style.animationDelay=(-(wi*10+i)*0.22)+'s';s.appendChild(c);});
+      (w+(wi<2?' ':'')).split('').forEach(function(ch,i){var c=document.createElement('span');c.className='c';c.textContent=ch;c._o=(wi*10+i)*0.4;s.appendChild(c);cs.push(c);});
       st.appendChild(s);
     });
     return st.querySelectorAll('.w');
   }
   if(reduce){ build().forEach(function(w){w.classList.add('on');}); return; }
-  function run(){
-    var ws=build();
-    setTimeout(function(){ws[0].classList.add('on')},1200);
-    setTimeout(function(){ws[1].classList.add('on')},3200);
-    setTimeout(function(){ws[2].classList.add('on')},5200);
-    setTimeout(function(){st.classList.add('wob')},10000);
-    setTimeout(function(){
-      st.querySelectorAll('.c').forEach(function(c){
-        var dx=(Math.random()*2-1)*25, dy=30+Math.random()*45, r=(Math.random()*2-1)*45;
-        c.style.animation='none';
-        c.style.transitionDelay=(Math.random()*1.5)+'s';
-        c.style.transform='translate('+dx+'px,'+dy+'px) rotate('+r+'deg)';
-      });
-      st.classList.add('fall');
-    },17000);
-    setTimeout(run,24500);
+  /* wobble speeds up in steps, then the line fades out and starts again */
+  var STEPS=[3.4,2.4,1.6,1.05,0.65], STEP_S=2.6, T_WOB=7, T_IN=[1.2,3.2,5.2];
+  var T_OUT=T_WOB+STEPS.length*STEP_S, T_END=T_OUT+2;
+  var t0=null, last=null, ph=0, ws=build(), shown=0, faded=false;
+  function frame(now){
+    now/=1000; if(t0==null){t0=now;last=now;}
+    var t=now-t0, dt=Math.min(0.05,now-last); last=now;
+    while(shown<3&&t>=T_IN[shown]){ws[shown].classList.add('on');shown++;}
+    if(t>=T_WOB){
+      var k=Math.min(STEPS.length-1,Math.floor((t-T_WOB)/STEP_S));
+      ph+=dt*2*Math.PI/STEPS[k];
+    }
+    var amp=t>=T_WOB?Math.min(1,(t-T_WOB)/1.2):0;
+    for(var i=0;i<cs.length;i++){var v=Math.sin(ph-cs[i]._o)*amp;cs[i].style.transform='translateY('+(-3*v)+'px) rotate('+(-4*v)+'deg)';}
+    if(!faded&&t>=T_OUT){faded=true;ws.forEach(function(w){w.classList.remove('on');});}
+    if(t>=T_END){t0=now;ph=0;shown=0;faded=false;ws=build();}
+    requestAnimationFrame(frame);
   }
-  run();
+  requestAnimationFrame(frame);
 })();
 (function(){
   var svg=document.getElementById('wv'); if(!svg) return;
