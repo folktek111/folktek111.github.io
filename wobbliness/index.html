@@ -728,8 +728,8 @@ document.querySelectorAll('.palbtns button').forEach(function(b){
   }
   if(reduce){ build().forEach(function(w){w.classList.add('on');}); return; }
   /* wobble speeds up in steps, then the line fades out and starts again */
-  var STEPS=[3.4,2.4,1.6,1.05,0.65], STEP_S=2.6, T_WOB=7, T_IN=[1.2,3.2,5.2];
-  var T_OUT=T_WOB+STEPS.length*STEP_S, T_END=T_OUT+2;
+  var STEPS=[3.4,2.2,1.3,0.75,0.4,0.2], STEP_S=2.2, T_WOB=4, T_IN=[0.2,1.2,2.2];
+  var T_OUT=T_WOB+STEPS.length*STEP_S, T_END=T_OUT+1.4;
   var t0=null, last=null, ph=0, ws=build(), shown=0, faded=false;
   function frame(now){
     now/=1000; if(t0==null){t0=now;last=now;}
