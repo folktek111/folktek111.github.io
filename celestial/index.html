@@ -2115,7 +2115,7 @@ function vOverview(d,r){
       <div class="scores">${Object.keys(K).map(q=>`<div class="score"><span class="nm">${K[q]}</span><div class="track"><b style="width:${r[q]/13*100}%;background:${col(r[q])}"></b></div><span class="n">${r[q]}</span></div>`).join("")}</div>
       <p class="note">${r.hand?"Hand-written reading. ":""}1–13 scale; the notch marks 7 (average).</p>
       <div class="dd"><div class="do" title="Do"><ul>${r.do.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div><div class="dont" title="Don't"><ul>${r.no.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div></div>
-      <details class="why"><summary>The cosmic gossip: who said what</summary>${r.comb?`<p>${esc(r.v)}</p>`:""}
+      <details class="why"><summary>The cosmic gossip: who said that?</summary>${r.comb?`<p>${esc(r.v)}</p>`:""}
         <div class="list">${r.why.map(w=>`<div class="item ${w.k}"><div class="t">${esc(w.t)}</div><div class="s">${esc(w.s)}</div></div>`).join("")}</div>
       </details>
     </div>
