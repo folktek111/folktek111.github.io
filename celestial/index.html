@@ -284,6 +284,7 @@ details.fold[open]>summary.fold-h{margin-bottom:12px}
 .ovgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 18px;margin-bottom:10px}
 #lifeBox{margin-top:14px}
 #lifeBox h3{margin:16px 0 8px}
+#lifeBox .lpmore>h3{font-size:1.3rem;font-weight:500}
 #lifeBox .item .chip{margin-right:4px}
 :root[data-theme="dark"]{--hd-p:#ebe9f5;--hd-d:#f07a6c;--hd-t:#6cc4e6}
 
@@ -1450,7 +1451,7 @@ function lifePath(strip,more){
   const s1=x=>{const m=String(x).replace(/<[^>]+>/g,"").match(/^.*?[.!?](\s|$)/);return m?m[0].trim():""};
   out.push(`<p class="lpp" style="font-size:1.02rem">${esc(short)} ${esc(s1(P1[2]))} ${esc(s1(P1[3]))} ${esc(s1(P1[4])||"")}</p>`);
   if(strip)out.push(strip);
-  out.push(`<details class="ctx lpmore"><summary>More about me, me, me</summary>`);
+  out.push(`<details class="ctx lpmore"><summary style="font:500 1.3rem 'Lora',Georgia,serif">More about me, me, me</summary>`);
   P1.forEach((p,i)=>out.push(`<h3>${H[i]}</h3><p class="lpp">${p}</p>`));
   if(rep.length)out.push(`<h3>What keeps coming back</h3><p class="lpp">${cap(rep.join("; "))}.</p>`);
   out.push(`<p class="note">All systems read together. The detail for each one is under Your charts, one tab per system. Built from rules, not hand-written; sign, Day Master, centre and numerology meanings are from general knowledge.</p>`);
@@ -1796,7 +1797,7 @@ const SL_MEAN={
   Uranus:{good:"fresh starts and welcome change",hard:"sudden shake-ups and breaking free",conj:"a big wake-up and change of course"},
   Neptune:{good:"inspiration and softening",hard:"fog, doubt, things dissolving",conj:"dreams and confusion mixed together"},
   Pluto:{good:"deep empowerment",hard:"power struggles and deep transformation",conj:"deep, slow transformation"}};
-const TODAY=ymd(new Date());
+let TODAY=ymd(new Date());
 let start=addDays(fromYmd(TODAY),-7),selKey=TODAY,tab="overview",k="o",draw=null,span=30;
 try{const z=+localStorage.getItem("orakel-span");if(z===21)span=30;else if([7,30,91,182,365,1096,2557].includes(z))span=z}catch(e){}
 try{const s=localStorage.getItem("orakel-tab");if(s)tab=s;const q=localStorage.getItem("orakel-k");if(q&&K[q])k=q}catch(e){}
@@ -1970,7 +1971,7 @@ function spanOverview(base,n){
     P.push(n===7?`Tarot: ${cards.map(c=>`${c.name} (${lcx(c.short.split(". ")[0].replace(/\.$/,""))})`).join(", then ")}.`:`Tarot: ${cards.map(c=>c.name).join(", then ")}.`)}
   const srt=days.slice().sort((a,b)=>b.o-a.o||(b.m+b.c+b.s)-(a.m+a.c+a.s)),bt=srt[0],wt=srt[srt.length-1];
   const db=x=>`<button type="button" class="linkbtn ovday" data-day="${x.key}">${fmtD(fromYmd(x.key)).replace(/ \d{4}$/,"")}</button>`;
-  return `<div class="ov"><h3 class="brief-h">The ${({week:"Weekly",month:"Monthly",year:"Yearly","three months":"Three-Month","six months":"Six-Month"})[lbl]||lbl} Small Print</h3><p>${esc(B)} Best day: ${db(bt)}. Go easy around ${db(wt)}.</p>${P.length?`<details class="ctx"><summary>The cosmic gossip: who said what</summary><p>${P.map(esc).join(" ")}</p></details>`:""}</div>`;
+  return `<div class="ov"><h3 class="brief-h">The ${({week:"Weekly",month:"Monthly",year:"Yearly","three months":"Three-Month","six months":"Six-Month"})[lbl]||lbl} Small Print</h3><p>${esc(B)} Best day: ${db(bt)}. Go easy around ${db(wt)}.</p>${P.length?`<details class="ctx"><summary>Who's pulling the strings</summary><p>${P.map(esc).join(" ")}</p></details>`:""}</div>`;
 }
 const KD_CACHE={};
 function renderKeyDates(base,n){
@@ -2124,7 +2125,7 @@ function vOverview(d,r){
       ${dayCard(d,true)}
 
       <h3 style="margin:10px 0 0;font-size:1rem">The slow lane</h3>
-      ${(()=>{const q=runeOfDate(d.date),f=x=>fmtD(x).replace(/ \d{4}$/,"");return `<div style="display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)"><div class="runebox">${runeChip(q.r,true)}</div><div><div class="eyebrow">Rune of these 15 days</div><div style="font-weight:700;font-size:1.05rem">${q.r[0]}</div><p style="margin:4px 0">${q.r[2]}</p><p class="note">Half-month ${f(q.from)} – ${f(q.to)}. One rune per half-month, starting with Fehu on 29 June.</p></div></div>`})()}
+      ${(()=>{const q=runeOfDate(d.date),f=x=>fmtD(x).replace(/ \d{4}$/,"");return `<div style="display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)"><div class="runebox">${runeChip(q.r,true)}</div><div><div class="eyebrow">Rune of these 15 days</div>${(()=>{const m=RUNE_MORE[q.r[0]]||[],t=(m[3]||"").replace("Good day to","Good time to").replace("Not a day to","Not a time to").replace(/^A ([^.]*?) day\./,"A $1 stretch.");return `<div style="font-weight:700;font-size:1.05rem">${q.r[0]}</div><div class="note" style="font-weight:600;color:var(--accent)">${RUNE_KW[q.r[0]]||""}</div><p style="margin:4px 0">${m[2]||q.r[2]}</p>${t?`<p style="margin:4px 0"><b>These 15 days:</b> ${t}</p>`:""}`})()}<p class="note">Half-month ${f(q.from)} – ${f(q.to)}. One rune per half-month, starting with Fehu on 29 June.</p></div></div>`})()}
       ${(()=>{const sl=norm(d.pos.Sun),c=cardOfDecan(Math.floor(sl/30),Math.floor((sl%30)/10));if(!c)return"";const left=Math.ceil((10-sl%10)/0.9856),from=Math.floor((sl%10)/0.9856),f=x=>fmtD(addDays(d.date,x)).replace(/ \d{4}$/,"");
         return `<div class="tencard" style="display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)"><img src="cards/${c.suit.toLowerCase()}${String(c.num).padStart(2,"0")}.jpg" alt="${esc(c.name)}" style="width:78px;border-radius:5px;flex:none"><div><div class="eyebrow">Card of these ten days</div><div style="font-weight:700;font-size:1.05rem">${esc(c.name)}</div><p style="margin:4px 0"><b>${esc(c.short)}</b> ${esc(c.ask)}</p><p class="note">${f(-from)} – ${f(left-1)}. Ten days is one decan: each sign is split into three 10° slices, and the Sun moves about 1° a day.</p></div></div>`})()}
 
@@ -2269,6 +2270,8 @@ document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tab=b.dataset.t;try{
 document.getElementById("prev").onclick=()=>go(addDays(start,-N));
 document.getElementById("next").onclick=()=>go(addDays(start,N));
 document.getElementById("todaybtn").onclick=()=>{selKey=TODAY;go(addDays(fromYmd(TODAY),-7),true)};
+function checkToday(){const t=ymd(new Date());if(t!==TODAY){const wasToday=selKey===TODAY;TODAY=t;if(wasToday)selKey=t;go(addDays(fromYmd(wasToday?t:selKey),-7),true)}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkToday()});addEventListener("focus",checkToday);addEventListener("pageshow",checkToday);setInterval(checkToday,60000);
 document.getElementById("datein").onchange=e=>{if(e.target.value){const d=fromYmd(e.target.value);if(d.getFullYear()>=1900&&d.getFullYear()<=2100){selKey=e.target.value;go(addDays(d,-7),true)}}};
 function runesHtml(){return `<h3>Your runes</h3><div class="list">${[["Birth rune (your half-month)",runeOfDate(new Date(ACTIVE.y,ACTIVE.mo-1,ACTIVE.d)).r],["Moon rune",runeOfLon(NATAL.Moon)]].concat(NATAL.Asc!==undefined?[["Rising rune",runeOfLon(NATAL.Asc)]]:[]).map(([lab,r])=>`<div class="item key" style="display:flex;gap:12px;align-items:center">${runeChip(r)}<div><div class="t">${lab}: ${r[0]}</div><div class="s">${r[2]}</div></div></div>`).join("")}</div>`}
 function lifeStrip(){const {greerCards,majorNo,BIRTH}=ORK,g=greerCards(BIRTH),ch=g.chain.length>2?[g.chain[0],g.chain[g.chain.length-1]]:g.chain,br=runeOfDate(new Date(ACTIVE.y,ACTIVE.mo-1,ACTIVE.d)).r;
