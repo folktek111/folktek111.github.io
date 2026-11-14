@@ -60,7 +60,7 @@
   .controls button { cursor:pointer; }
   .controls label { font-size:13px; color:var(--muted); display:flex; gap:6px; align-items:center; }
   #summary { margin:0; background:var(--card); border:1px solid var(--line); border-radius:10px; }
-  .trow { display:grid; grid-template-columns:78px minmax(0,220px) 1fr; gap:4px 14px; padding:8px 12px; border-top:1px solid var(--line); font-size:14px; }
+  .trow { display:grid; grid-template-columns:78px 1fr minmax(0,280px); gap:4px 14px; padding:8px 12px; border-top:1px solid var(--line); font-size:14px; }
   .trow:first-child { border-top:0; } .fact { color:var(--muted); font-size:13px; }
   @media (max-width:640px) { .trow { grid-template-columns:78px 1fr; } .tmean { grid-column:1 / -1; } }
   #summary b { color:var(--accent); font-weight:600; margin-right:4px; }
@@ -144,13 +144,37 @@
   .chip { font:inherit; font-size:13px; color:var(--fg); border:1px solid var(--muted); border-radius:14px; padding:4px 12px; cursor:pointer; opacity:.4; text-decoration:line-through; }
   .chip.on { opacity:1; text-decoration:none; }
   .tag { font-size:11px; padding:1px 6px; border-radius:9px; background:var(--neutral); white-space:nowrap; }
-  .t-Moon { background:color-mix(in srgb, var(--wave) 22%, transparent); } .t-Angles { background:color-mix(in srgb, var(--lo) 20%, transparent); } .t-HD { background:color-mix(in srgb, var(--c-chan) 22%, transparent); } .t-BaZi { background:color-mix(in srgb, var(--accent) 22%, transparent); } .t-Rising { background:color-mix(in srgb, var(--hi2) 20%, transparent); } .t-Sky { background:color-mix(in srgb, var(--mid) 25%, transparent); } .t-Hours { background:color-mix(in srgb, var(--hi) 20%, transparent); }
+  .t-Moon { background:color-mix(in srgb, var(--wave) 22%, transparent); } .t-Angles { background:color-mix(in srgb, var(--lo) 20%, transparent); } .t-HD { background:color-mix(in srgb, var(--c-chan) 22%, transparent); } .t-BaZi { background:color-mix(in srgb, var(--accent) 22%, transparent); } .t-Rising { background:color-mix(in srgb, var(--hi2) 20%, transparent); } .t-Sky { background:color-mix(in srgb, var(--mid) 25%, transparent); } .t-Hours { background:color-mix(in srgb, var(--hi) 20%, transparent); } .t-Body { background:color-mix(in srgb, var(--gold) 22%, transparent); }
   @media (prefers-color-scheme: dark){:root:not([data-theme]){--head:#fff}}
   :root[data-theme="dark"],:root[data-theme$="-dark"]{--head:#fff}
   details { margin-top:18px; font-size:13px; color:var(--muted); } details p { margin:6px 0; }
 
   #combined summary { list-style:none; } #combined summary::-webkit-details-marker { display:none; }
   #combined summary::before { content:''; display:inline-block; width:16px; height:16px; margin-right:8px; vertical-align:-2px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1 -1 42 42' fill='white' stroke='%23555' stroke-width='1.3' stroke-linejoin='round'%3E%3Ccircle cx='20' cy='20' r='8'/%3E%3Cpolygon points='18.2,10.7 20.0,0.5 21.8,10.7'/%3E%3Cpolygon points='25.3,12.1 33.8,6.2 27.9,14.7'/%3E%3Cpolygon points='29.3,18.2 39.5,20.0 29.3,21.8'/%3E%3Cpolygon points='27.9,25.3 33.8,33.8 25.3,27.9'/%3E%3Cpolygon points='21.8,29.3 20.0,39.5 18.2,29.3'/%3E%3Cpolygon points='14.7,27.9 6.2,33.8 12.1,25.3'/%3E%3Cpolygon points='10.7,21.8 0.5,20.0 10.7,18.2'/%3E%3Cpolygon points='12.1,14.7 6.2,6.2 14.7,12.1'/%3E%3C/svg%3E") center/contain no-repeat; transition:transform .25s; } #combined details[open] > summary::before { transform:rotate(22.5deg); }
+  #graphArea { display:flex; gap:10px; align-items:flex-start; margin-top:4px; }
+  #graphMain { flex:1 1 auto; min-width:0; }
+  #layerPanel { flex:0 0 150px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:12.5px; margin-top:12px; }
+  #layerPanel .lph { font-family:var(--f-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 4px; }
+  #layerPanel label { display:flex; align-items:center; gap:6px; padding:3px 0; cursor:pointer; }
+  @media (max-width:760px) { #graphArea { flex-direction:column; align-items:stretch; } #graphMain { width:100%; } #layerPanel { flex:none; width:100%; display:flex; flex-wrap:wrap; gap:0 14px; margin-top:8px; } #layerPanel .lph { flex-basis:100%; } }
+  .sleepz { pointer-events:none; }
+  .def { border-bottom:1px dotted var(--muted); cursor:help; }
+  .tonekey button { font:inherit; font-size:12px; color:var(--fg); background:none; border:1px solid var(--line); border-radius:12px; padding:2px 9px; cursor:pointer; }
+  .tonekey button.off { opacity:.4; text-decoration:line-through; }
+  .wl { font-size:13px; color:var(--muted); margin:0 0 8px; }
+  details.defs { margin:0 0 10px; } details.defs ul { margin:4px 0; padding-left:18px; } details.defs li { margin:3px 0; }
+  .qd { cursor:pointer; vertical-align:1px; }
+  .tech { display:block; font-size:12px; color:var(--muted); margin-top:2px; }
+  .calcbody h4 { font-size:13px; color:var(--ink); margin:12px 0 2px; }
+  .advctl { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; margin:8px 0; }
+  .advctl select { font:inherit; color:var(--fg); background:var(--bg); border:1px solid var(--line); border-radius:7px; padding:3px 7px; }
+  .gcols { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 12px; font-size:.8rem; }
+  .gcols > b { font:500 .8rem var(--f-body); color:var(--muted); margin-right:2px; }
+  .gcols button { font:500 .8rem var(--f-body); border:1px solid var(--line); background:var(--panel); color:var(--ink); border-radius:999px; padding:4px 11px; cursor:pointer; min-height:32px; }
+  .gcols button[aria-pressed="true"] { border-color:var(--accent); box-shadow:0 0 0 1.5px var(--accent); }
+  .gpick { display:flex; flex-wrap:wrap; gap:6px 14px; width:100%; }
+  .gpick label { display:inline-flex; align-items:center; gap:6px; color:var(--muted); }
+  .gpick input[type=color] { width:34px; height:26px; padding:0; border:1px solid var(--line); border-radius:6px; background:none; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -179,45 +203,55 @@
     <input type="date" id="date">
     <button id="next" aria-label="Next day">▶</button>
     <button id="today">Today</button>
-    <label>Moon orb <select id="orb"><option value="1">1°</option><option value="2">2°</option><option value="3">3°</option></select></label>
-    <label><input type="checkbox" id="solar"> BaZi on solar time</label>
-    <label><input type="checkbox" id="allang"> Add DSC &amp; IC rows (sunset point &amp; below-your-feet point)</label>
   </div>
   <h2 class="sumh">Hour by Hour Häxcast</h2>
   <div id="combined"></div>
+  <div id="graphArea">
+  <div id="layerPanel"></div>
+  <div id="graphMain">
   <div class="zoombar"><span class="mn">Zoom</span><button id="zOut" aria-label="Zoom out">−</button><span id="zoomLvl">1×</span><button id="zIn" aria-label="Zoom in">+</button></div>
   <div id="gwrap"><div id="labels"></div><div id="scroll"><svg id="chart" xmlns="http://www.w3.org/2000/svg"></svg></div></div>
+  </div>
+  </div>
   <div id="tip"></div>
   <div class="legend">
-    <span><b>BaZi:</b></span><span><i style="background:var(--c-trine)"></i>trine</span><span><i style="background:var(--c-harm)"></i>combine</span><span><i style="background:var(--c-clash)"></i>clash</span>
-    <span><b>HD:</b></span><span><i style="background:var(--c-chan)"></i>completes a channel</span><span><i style="background:var(--c-own)"></i>your own gate</span>
-    <span><b>Moon:</b></span><span><i style="background:var(--a-conj)"></i>☌</span><span><i style="background:var(--a-sext)"></i>⚹</span><span><i style="background:var(--a-sq)"></i>□</span><span><i style="background:var(--a-tri)"></i>△</span><span><i style="background:var(--a-opp)"></i>☍</span>
-    <span>shaded = night · red line = now · hover or tap any box for its meaning</span>
+    <span><b>Chinese hour:</b></span><span class="def" data-def="Big energy boost: good for doing, watch overdoing it."><i style="background:var(--c-trine)"></i>big boost</span><span class="def" data-def="Smooth: good for meeting people and agreements."><i style="background:var(--c-harm)"></i>smooth</span><span class="def" data-def="Stirred up: good for breaking something open, bad for signing or settling."><i style="background:var(--c-clash)"></i>stirred up</span>
+    <span><b>Human Design:</b></span><span class="def" data-def="The Moon's gate links with one of your own gates into a full channel for a few hours: you get a temporary extra trait."><i style="background:var(--c-chan)"></i>switches on a channel</span><span class="def" data-def="The Moon is in one of the gates you were born with, so that theme is louder."><i style="background:var(--c-own)"></i>your own gate</span>
+    <span><b>Moon:</b></span><span><i style="background:var(--a-conj)"></i>☌ together: blended</span><span><i style="background:var(--a-sext)"></i>⚹ 60°: easy opening</span><span><i style="background:var(--a-sq)"></i>□ 90°: friction</span><span><i style="background:var(--a-tri)"></i>△ 120°: flowing</span><span><i style="background:var(--a-opp)"></i>☍ 180°: pulled two ways</span>
+    <span>shaded = night · striped = sleep · red line = now · hover or tap any box for its meaning</span>
   </div>
   <details class="fold"><summary><h2>Department by Department</h2></summary>
   <div id="summary"></div>
   </details>
   <details class="fold"><summary><h2>The Wobble Log</h2></summary>
-  <div id="chipbar"><span class="chiplab">Show:</span><div id="chips"></div></div>
-  <div class="tonekey"><span><i class="tk good"></i>helpful</span><span><i class="tk tricky"></i>tricky</span><span><i class="tk intense"></i>intense / loud</span><span><i class="tk"></i>neutral</span></div>
+  <p class="wl">Everything that happens today, in time order. Tap a button to hide or show it.</p>
+  <div id="chipbar"><span class="chiplab">Systems:</span><div id="chips"></div></div>
+  <div class="tonekey" id="tones"><span class="chiplab">Mood:</span><button data-t="good"><i class="tk good"></i>helpful</button><button data-t="tricky"><i class="tk tricky"></i>tricky</button><button data-t="intense"><i class="tk intense"></i>intense / loud</button><button data-t="none"><i class="tk"></i>neutral</button></div>
+  <details class="defs"><summary>What these mean</summary><ul id="chipdefs"></ul></details>
   <table><tbody id="events"></tbody></table>
   </details>
   </div>
-  <details class="howto"><summary>How the Häxcast is worked out</summary>
-  <div class="calcbody"><p>Counts what lines up at each minute: BaZi combinations and trines, Moon trines/sextiles, HD channel completions and Venus/Jupiter hours count up; clashes, Moon squares/oppositions and Saturn/Mars hours count down. A rough blend, not a verdict.</p></div>
-  </details>
-  <details class="howto"><summary>How it's calculated</summary>
-  <div class="calcbody">
+  <details class="howto"><summary>Advanced</summary>
+  <div class="advctl">
+    <label><span class="def" data-def="How close the Moon has to be to an exact angle with your birth planet before it counts. 1° = only the tight ones (shorter bars). 3° = more of them, longer bars.">Moon orb</span> <select id="orb"><option value="1">1°</option><option value="2">2°</option><option value="3">3°</option></select></label>
+    <label><input type="checkbox" id="solar"> <span class="def" data-def="Chinese hours are normally read off the clock. Ticked, they follow the sun's real position at your place instead. That shifts the blocks by minutes in winter and up to about an hour in summer time. Practitioners disagree on which is right.">Chinese hours on sun time</span></label>
+  </div>
+  <details class="howto"><summary>How the Häxcast works</summary><div class="calcbody">
+    <p>Every minute of the day gets points. +1 when something lines up well (a smooth or boosting Chinese hour, an easy Moon angle, a Human Design channel switching on). −1 when something grates (a Chinese clash, a hard Moon angle). Venus and Jupiter hours add ½, Saturn and Mars hours take off ½. Stretches of at least 30 minutes that score +1.5 or more are "best windows"; −1.5 or less are "tricky". Sleep hours are left out. A rough blend, not a verdict.</p>
+  </div></details>
+  <details class="howto"><summary>How it's calculated</summary><div class="calcbody">
     <p>Places in the list use approximate town-centre coordinates. Charts are calculated in the page from the birth data you enter, which stays in your browser only.</p>
     <p>Positions come from the Astronomy Engine library (geocentric, tropical, true ecliptic of date), computed minute by minute in your browser.</p>
-    <p>Angles: Ascendant/MC over the chosen sky place; a hit is the exact moment an angle crosses a natal point (±1° window). Moon aspects: conjunction, sextile, square, trine and opposition to natal planets, node, ASC and MC.</p>
+    <p>Angles: Ascendant, Midheaven and Descendant over the chosen place; a hit is the exact moment an angle crosses a natal point (±1° window). Moon aspects: conjunction, sextile, square, trine and opposition to natal planets, node, Ascendant and Midheaven.</p>
     <p>Planetary hours: sunrise-to-sunset and sunset-to-sunrise each split into 12, Chaldean order, day ruler by weekday. Hours before sunrise belong to the previous day's night.</p>
-    <p>BaZi: double hours on Swedish clock time by default; "solar time" uses true local solar time instead (practitioners differ on which to use). Day pillar from the 60-day cycle (1 Jan 2000 = 戊午), the same method as the natal day pillar. Checked: clashes, six combinations and three-branch trines against the four natal branches. Hidden stems and punishments aren't included.</p>
+    <p>Chinese hours (BaZi): two-hour blocks on Swedish clock time by default; "sun time" uses the sun’s real position instead (practitioners differ on which to use). Day pillar from the 60-day cycle (1 Jan 2000 = Earth Horse day), the same method as your natal day pillar. Checked: clashes, pairings (six combinations) and the Tiger–Horse–Dog fire trine against your four branches. Hidden stems and punishments aren't included.</p>
     <p>Meanings are short plain-language readings from general knowledge.</p>
     <p>Human Design: Moon gate/line from the standard 64-gate wheel (Gate 41 starts at 2° Aquarius). A channel is "completed" when the Moon's gate pairs with one of your natal gates. Gate names are from general knowledge.</p>
-  </div>
+    <p>Body clock: the common Ayurvedic split into fixed 4-hour blocks by clock time (Kapha 06–10, Pitta 10–14, Vata 14–18, then again 18–22, 22–02, 02–06). Some teachers anchor the blocks to sunrise instead, which shifts them in winter and summer.</p>
+    <p>Sleep zone: 22:00–06:00, following the Ayurvedic advice to be asleep by 22. Best and tricky windows ignore these hours.</p>
+  </div></details>
   </details>
-  <footer><div class="palettes" id="palettes" role="group" aria-label="Colour scheme" style="margin:26px 0 14px"></div><a id="ftLink" href="https://folktek.org" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;font-family:var(--f-mono)"><svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true" style="fill:var(--ink)"><circle cx="20" cy="20" r="8"/><polygon points="18.19,10.67 20.00,0.50 21.81,10.67"/><polygon points="25.31,12.12 33.79,6.21 27.88,14.69"/><polygon points="29.33,18.19 39.50,20.00 29.33,21.81"/><polygon points="27.88,25.31 33.79,33.79 25.31,27.88"/><polygon points="21.81,29.33 20.00,39.50 18.19,29.33"/><polygon points="14.69,27.88 6.21,33.79 12.12,25.31"/><polygon points="10.67,21.81 0.50,20.00 10.67,18.19"/><polygon points="12.12,14.69 6.21,6.21 14.69,12.12"/></svg>folktek.org</a><a href="https://folktek.org/wobbliness/" target="_blank" rel="noopener" style="display:block;margin-top:8px;color:var(--accent);font-family:var(--f-mono);font-size:.85rem">The Unified Theory of Wobbliness ↗</a><div style="margin-top:8px;font-size:.8rem;color:var(--muted)"><span style="display:inline-block;transform:scaleX(-1);font-size:1rem" aria-label="Copyleft">©</span> Copyleft: open source, free to copy and distribute.</div></footer>
+  <footer><div class="gcols" id="gcols" style="margin-top:26px"></div><div class="palettes" id="palettes" role="group" aria-label="Colour scheme" style="margin:0 0 14px"></div><a id="ftLink" href="https://folktek.org" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;font-family:var(--f-mono)"><svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true" style="fill:var(--ink)"><circle cx="20" cy="20" r="8"/><polygon points="18.19,10.67 20.00,0.50 21.81,10.67"/><polygon points="25.31,12.12 33.79,6.21 27.88,14.69"/><polygon points="29.33,18.19 39.50,20.00 29.33,21.81"/><polygon points="27.88,25.31 33.79,33.79 25.31,27.88"/><polygon points="21.81,29.33 20.00,39.50 18.19,29.33"/><polygon points="14.69,27.88 6.21,33.79 12.12,25.31"/><polygon points="10.67,21.81 0.50,20.00 10.67,18.19"/><polygon points="12.12,14.69 6.21,6.21 14.69,12.12"/></svg>folktek.org</a><a href="https://folktek.org/wobbliness/" target="_blank" rel="noopener" style="display:block;margin-top:8px;color:var(--accent);font-family:var(--f-mono);font-size:.85rem">The Unified Theory of Wobbliness ↗</a><div style="margin-top:8px;font-size:.8rem;color:var(--muted)"><span style="display:inline-block;transform:scaleX(-1);font-size:1rem" aria-label="Copyleft">©</span> Copyleft: open source, free to copy and distribute.</div></footer>
 </main>
 <script>/*
  MIT
@@ -585,7 +619,9 @@ var OR = (function () {
   var STEM_PY = ['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'];
   var ELEM = ['Wood','Fire','Earth','Metal','Water'];
   function stemEl(s) { return Math.floor(s / 2); }
-  function stemTxt(s) { return (s % 2 ? 'Yin ' : 'Yang ') + ELEM[stemEl(s)]; }
+  var STEM_IMG = ['tree Wood','plant Wood','sun Fire','candle Fire','mountain Earth','field Earth','axe Metal','jewel Metal','ocean Water','rain Water'];
+  function stemTxt(s) { return STEM_IMG[s]; }
+  function pillarPlain(q) { return ELEM[stemEl(q.s)] + ' ' + ANIMAL[q.b]; }
   var BR = '子丑寅卯辰巳午未申酉戌亥'.split('');
   var ANIMAL = ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
   var BR_EL = [4, 2, 0, 0, 2, 1, 1, 2, 3, 3, 2, 4];
@@ -600,11 +636,11 @@ var OR = (function () {
       if (tr.indexOf(b) < 0 || tr.indexOf(b) > 2) return;
       var others = tr.slice(0, 3).filter(function (x) { return x !== b; });
       if (others.every(function (o) { return natalBr.some(function (n) { return n.b === o; }); }))
-        out.push({ t: 'trine', el: tr[3], txt: 'completes your ' + tr[3] + ' trine (' + tr.slice(0, 3).map(function (x) { return ANIMAL[x]; }).join('–') + ')' });
+        out.push({ t: 'trine', el: tr[3], txt: 'completes your group of three (' + tr.slice(0, 3).map(function (x) { return ANIMAL[x]; }).join('–') + ')' });
     });
     natalBr.forEach(function (n) {
-      if (Math.abs(b - n.b) === 6) out.push({ t: 'clash', p: n.p, txt: 'clashes your ' + n.p + ' ' + ANIMAL[n.b] });
-      HARMONY.forEach(function (h) { if ((h[0] === b && h[1] === n.b) || (h[1] === b && h[0] === n.b)) out.push({ t: 'harmony', p: n.p, txt: 'combines with your ' + n.p + ' ' + ANIMAL[n.b] }); });
+      if (Math.abs(b - n.b) === 6) out.push({ t: 'clash', p: n.p, a: ANIMAL[n.b], txt: 'clashes with your ' + ANIMAL[n.b] });
+      HARMONY.forEach(function (h) { if ((h[0] === b && h[1] === n.b) || (h[1] === b && h[0] === n.b)) out.push({ t: 'harmony', p: n.p, a: ANIMAL[n.b], txt: 'pairs with your ' + ANIMAL[n.b] }); });
     });
     return out;
   }
@@ -673,6 +709,7 @@ var OR = (function () {
     trine: function (t) { return cap(t) + ' flows easily. A good window to lean on it.'; },
     opposite: function (t) { return cap(t) + ' shows up through other people: a tug-of-war between what you feel and what’s in front of you.'; }
   };
+  var ANG_FULL = { ASC: 'Ascendant', MC: 'Midheaven', DSC: 'Descendant', IC: 'IC' };
   var ANG_M = { ASC: 'sits on the eastern horizon: it shows in how you come across and in the body', MC: 'sits at the top of the sky: it shows in what you do in public or at work', DSC: 'sits on the western horizon: it shows through other people and one-to-one contact', IC: 'sits at the bottom of the chart: it shows at home and inside' };
   var RISE_M = ['Quick, direct, impatient.', 'Slow, steady, sensual. Good for practical, hands-on work.', 'Chatty, curious, scattered. Good for messages and errands.', 'Home-oriented and protective, with feelings close to the surface.', 'Warm and expressive, wants to be seen. Good for performing and play.', 'Detail-minded and practical. Good for fixing, sorting and routines.', 'Social and balancing, wants fairness and nice surroundings.', 'Intense and focused, digs below the surface.', 'Big-picture and restless, wants space and meaning.', 'Serious and goal-driven. Good for planning and finishing.', 'Detached and inventive. Good for odd ideas and group stuff.', 'Dreamy, soft, porous. Good for music and rest, bad for paperwork.'];
   var MOON_SIGN_M = ['impulsive and quick-tempered', 'calm, wanting comfort', 'restless and talky', 'sensitive and home-y', 'warm, wanting attention', 'fussy but productive', 'sociable, wanting harmony', 'intense and private', 'upbeat, wanting space', 'sober and work-minded', 'cool and detached', 'dreamy and tender'];
@@ -687,20 +724,28 @@ var OR = (function () {
     else if (prof.sunSign === sign) n.push('It’s your Sun sign.');
     return n.join(' ');
   }
+  function elKind(otherStem, prof) {
+    var e = stemEl(prof.dm), o = stemEl(otherStem);
+    if (o === e) return 'same'; if ((e + 1) % 5 === o) return 'output'; if ((e + 2) % 5 === o) return 'wealth'; if ((o + 2) % 5 === e) return 'power'; return 'resource';
+  }
   function elMean(otherStem, prof) {
-    var e = stemEl(prof.dm), o = stemEl(otherStem), DM = STEM_PY[prof.dm] + ' ' + ELEM[e], O = ELEM[o];
-    if (o === e) return 'Companion (more ' + O + '): peers, competition, energy high. Watch the overspill.';
-    if ((e + 1) % 5 === o) return 'Output (your ' + DM + ' feeds ' + O + '): energy flows into making, performing, teaching.';
-    if ((e + 2) % 5 === o) return 'Wealth (your ' + DM + ' works ' + O + '): money, practical results, things you can shape.';
-    if ((o + 2) % 5 === e) return 'Power (' + O + ' checks your ' + DM + '): rules, pressure, responsibility. Good for discipline.';
-    return 'Resource (' + O + ' feeds your ' + DM + '): support, learning, rest.';
+    var DM = STEM_IMG[prof.dm], O = ELEM[stemEl(otherStem)];
+    return {
+      same: 'More ' + O + ', the same element as your core ' + DM + ': energy high, people around, a bit of competition. Watch the overspill.',
+      output: 'Your core ' + DM + ' feeds ' + O + ': energy goes out into making, performing, teaching.',
+      wealth: 'Your core ' + DM + ' works on ' + O + ': practical results, money, shaping things.',
+      power: O + ' keeps your core ' + DM + ' in check: rules, pressure, responsibility. Good for discipline.',
+      resource: O + ' feeds your core ' + DM + ': support, learning, rest.'
+    }[elKind(otherStem, prof)];
   }
   function relMean(rel) {
-    return rel.map(function (r) {
-      if (r.t === 'trine') return cap(r.txt) + ': ' + r.el + ' energy surges. Good for doing; watch overdoing it.';
-      if (r.t === 'clash') return 'Clashes your ' + r.p + ' pillar (' + PILLAR_M[r.p] + '): things get stirred up and moved. Good for breaking something open, bad for settling or signing.';
-      return 'Combines with your ' + r.p + ' pillar (' + PILLAR_M[r.p] + '): smooth and cooperative. Good for meeting people and agreements.';
-    }).join(' ');
+    if (rel.some(function (r) { return r.t === 'clash'; })) return 'Stirred up. Good for breaking something open, bad for settling or signing.';
+    if (rel.some(function (r) { return r.t === 'trine'; })) return 'Big energy boost. Good for doing; watch overdoing it.';
+    if (rel.length) return 'Smooth. Good for meeting people and agreements.';
+    return '';
+  }
+  function elShort(otherStem, prof) {
+    return { same: 'high energy, people around', output: 'making, performing, teaching', wealth: 'practical results, money', power: 'rules, pressure, discipline', resource: 'support, learning, rest' }[elKind(otherStem, prof)];
   }
   function hdInfo(gate, prof) {
     var G = prof.hd.gates, comps = [];
@@ -755,7 +800,7 @@ var OR = (function () {
       moon.push(moonLon(t));
       var a = angles(t, LAT, LON); asc.push(a.asc); mc.push(a.mc);
       if (baziSolar) solH.push((A.HourAngle(A.Body.Sun, new Date(t), OBS) + 12) % 24);
-      else locMin.push(((t + tzOffMin(t, TZ) * 60000) / 60000) % 1440);
+      locMin.push(((t + tzOffMin(t, TZ) * 60000) / 60000) % 1440);
     }
     var out = { date: dateStr, start: start, end: end, events: [], lanes: {}, tz: TZ };
     function segs(keyFn) {
@@ -771,7 +816,7 @@ var OR = (function () {
       NATAL.forEach(function (n) {
         windows(times, series.map(function (x) { return norm(x + add); }), n.lon, [0], angOrb).forEach(function (w) {
           if (w.exact === null) return;
-          hits.push({ t: w.exact, start: w.start, end: w.end, angle: name, natal: n, label: n.g, tip: 'Transiting ' + name + ' on natal ' + n.k + ' (' + fmtDeg(n.lon) + '), exact ' + hhmm(w.exact) });
+          hits.push({ t: w.exact, start: w.start, end: w.end, angle: name, natal: n, label: n.g, tip: ANG_FULL[name] + ' crosses your birth ' + n.k + ' (' + fmtDeg(n.lon) + '), exact ' + hhmm(w.exact) });
         });
       });
       return hits.sort(function (a, b) { return a.t - b.t; });
@@ -839,11 +884,25 @@ var OR = (function () {
       var st = hourStem(late ? dpn.s : dp.s, b);
       var rel = branchRel(b, prof.natalBr);
       var cls = rel.some(function (r) { return r.t === 'clash'; }) ? 'clash' : rel.some(function (r) { return r.t === 'trine'; }) ? 'trine' : rel.some(function (r) { return r.t === 'harmony'; }) ? 'harmony' : 'neutral';
-      var tip = STEMS[st] + BR[b] + ' ' + STEM_PY[st] + ' ' + ANIMAL[b] + ' hour (' + stemTxt(st) + ') ' + hhmm(s.start) + '–' + hhmm(s.end);
-      if (late) tip += '\nLate Zi hour: stem taken from the next day (schools differ)';
-      return { start: s.start, end: s.end, b: b, stem: st, cls: cls, rel: rel, label: BR[b], tip: tip };
+      var tip = ANIMAL[b] + ' hour, ' + hhmm(s.start) + '–' + hhmm(s.end);
+      if (late) tip += '\nLate Rat hour: element taken from the next day (traditions differ)';
+      return { start: s.start, end: s.end, b: b, stem: st, cls: cls, rel: rel, label: ANIMAL[b], tip: tip };
     });
-    out.dayPillar = { txt: STEMS[dp.s] + BR[dp.b] + ' ' + STEM_PY[dp.s] + ' ' + ANIMAL[dp.b] + ' (' + stemTxt(dp.s) + ')', rel: branchRel(dp.b, prof.natalBr) };
+    out.dayPillar = { txt: pillarPlain(dp) + ' day', rel: branchRel(dp.b, prof.natalBr) };
+
+    // Ayurvedic body clock + sleep zone (clock time)
+    var AY = [
+      { d: 'Vata', lab: 'Vata · deep rest', m: 'Airy and light. Deep sleep and dreams; early risers get up towards the end of it.' },
+      { d: 'Kapha', lab: 'Kapha · steady', m: 'Heavy, slow, stable. Get moving: exercise, warm breakfast. Lying in makes you sluggish.' },
+      { d: 'Pitta', lab: 'Pitta · fire', m: 'Hot and sharp: digestion and focus peak. Hardest work and the main meal.' },
+      { d: 'Vata', lab: 'Vata · airy', m: 'Light, quick, creative. Ideas, writing, talking; energy can scatter.' },
+      { d: 'Kapha', lab: 'Kapha · wind down', m: 'Slowing down again. Light dinner, calm things, aim to be in bed by 22.' },
+      { d: 'Pitta', lab: 'Pitta · repair', m: 'The body digests the day and repairs itself. Best spent asleep; staying up brings a second wind that\u2019s hard to switch off.' }
+    ];
+    out.lanes.ayur = segs(function (i) { return Math.floor(((Math.floor(locMin[i] / 60) - 2 + 24) % 24) / 4); }).map(function (s) { var a = AY[s.key]; return { start: s.start, end: s.end, d: a.d, label: a.lab, m: a.m, tip: a.d + ' time ' + hhmm(s.start) + '–' + hhmm(s.end) }; });
+    var sleepMin = new Uint8Array(N);
+    for (var q0 = 0; q0 < N; q0++) sleepMin[q0] = (opts.sleep && (locMin[q0] >= 1320 || locMin[q0] < 360)) ? 1 : 0;
+    out.sleep = opts.sleep ? segs(function (i) { return sleepMin[i]; }).filter(function (s) { return s.key === 1; }) : [];
 
     var noon = start + 12 * 3600000, sl = sunLon(noon), sg = gateLine(sl);
     out.sun = { pos: fmtDeg(sl), gate: sg.gate + '.' + sg.line, gname: GATE_NAMES[sg.gate] };
@@ -852,10 +911,11 @@ var OR = (function () {
     // ---------- event list ----------
     var ev = out.events, nid = 0;
     function add(item, layer, t, title, mean, tone) { var id = 'ev' + (nid++); ev.push({ id: id, t: t, layer: layer, txt: title, mean: mean, tone: tone || '' }); if (item) item.ev = id; return id; }
+    out.lanes.ayur.forEach(function (s, i) { add(s, 'Body', s.start, s.d + ' time (' + s.label.split(' · ')[1] + ')' + (i === 0 ? ', from before midnight' : '') + ', until ' + hhmm(s.end), s.m); });
     out.lanes.rising.forEach(function (s, i) { add(s, 'Rising', s.start, SIGNS[s.sign] + (i === 0 ? ' rising (from before midnight)' : ' rises') + ', until ' + hhmm(s.end), (RISE_M[s.sign] + ' ' + signNote(s.sign, prof)).trim()); });
     ['asc', 'mc', 'dsc', 'ic'].forEach(function (k) {
-      if ((k === 'dsc' || k === 'ic') && !opts.allAngles) return;
-      out.lanes[k].forEach(function (h) { add(h, 'Angles', h.t, h.angle + ' on natal ' + h.natal.k, 'For a few minutes ' + TH[h.natal.k] + ' ' + ANG_M[h.angle] + '.', { Venus: 'good', Jupiter: 'good', Sun: 'good', Saturn: 'tricky', Mars: 'tricky', Pluto: 'tricky', Uranus: 'intense', Neptune: 'intense' }[h.natal.k]); });
+      if (k === 'ic') return;
+      out.lanes[k].forEach(function (h) { add(h, 'Angles', h.t, ANG_FULL[h.angle] + ' crosses your birth ' + h.natal.k, 'For a few minutes ' + TH[h.natal.k] + ' ' + ANG_M[h.angle] + '.', { Venus: 'good', Jupiter: 'good', Sun: 'good', Saturn: 'tricky', Mars: 'tricky', Pluto: 'tricky', Uranus: 'intense', Neptune: 'intense' }[h.natal.k]); });
     });
     ma.forEach(function (x) { add(x, 'Moon', x.exact !== null ? x.exact : x.start, 'Moon ' + x.asp.k + ' natal ' + x.natal.k + (x.exact !== null ? ' (exact; ' + hhmm(x.start) + '–' + hhmm(x.end) + ')' : x.clipStart ? ' (fading, ends ' + hhmm(x.end) + ')' : ' (building from ' + hhmm(x.start) + ')'), ASP_M[x.asp.k](TH[x.natal.k]), { trine: 'good', sextile: 'good', square: 'tricky', opposite: 'tricky', conjunct: 'intense' }[x.asp.k]); });
     out.lanes.moonSign.forEach(function (s, i) { add(s, 'Moon', s.start, (i === 0 ? 'Moon in ' : 'Moon enters ') + SIGNS[s.sign], 'Background mood turns ' + MOON_SIGN_M[s.sign] + '.'); });
@@ -866,7 +926,7 @@ var OR = (function () {
     out.lanes.bazi.forEach(function (s) {
       var r = relMean(s.rel), m = elMean(s.stem, prof);
       if (prof.strongEl >= 0 && stemEl(s.stem) === prof.strongEl) m += ' Adds to your already strong ' + ELEM[prof.strongEl] + '.';
-      add(s, 'BaZi', s.start, STEMS[s.stem] + BR[s.b] + ' ' + ANIMAL[s.b] + ' hour, until ' + hhmm(s.end), (r ? r + ' ' : '') + 'Stem: ' + m, s.cls === 'clash' ? 'tricky' : (s.cls === 'trine' || s.cls === 'harmony') ? 'good' : '');
+      add(s, 'BaZi', s.start, ANIMAL[s.b] + ' hour, until ' + hhmm(s.end), (r ? r + ' ' : '') + 'Also: ' + elShort(s.stem, prof) + '.', s.cls === 'clash' ? 'tricky' : (s.cls === 'trine' || s.cls === 'harmony') ? 'good' : '');
     });
     out.lanes.hd.forEach(function (s, i) {
       var c = CENTRE[s.gate];
@@ -886,7 +946,6 @@ var OR = (function () {
     // ---------- top lines ----------
     var top = [];
     var dRel = relMean(out.dayPillar.rel);
-    top.push({ k: 'BaZi day', fact: out.dayPillar.txt, mean: elMean(dp.s, prof) + (dRel ? ' ' + dRel : '') });
     var sl2 = sunLon(noon + 864e5), spd = norm(sl2 - sl), sm = '';
     var ss = Math.floor(sl / 30);
     if (ss === prof.sunSign) sm += SIGNS[ss] + ' season: the Sun is in your own Sun sign' + ((prof.signCount[ss] || 0) >= 3 ? ' and stellium' : '') + ', so its themes are strong for you right now. ';
@@ -901,48 +960,50 @@ var OR = (function () {
       });
     });
     var shd = hdInfo(sg.gate, prof);
-    sm += 'HD Sun in Gate ' + sg.gate + ' (' + GATE_NAMES[sg.gate] + ') sets the background theme for everyone for about 6 days' + (shd.natal ? '; it’s one of your own gates, so it’s turned up for you.' : '.');
-    top.push({ k: 'Sun', fact: out.sun.pos + ' · HD/GK ' + out.sun.gate, mean: sm.trim() });
+    sm += 'Human Design: the Sun in Gate ' + sg.gate + ' (' + GATE_NAMES[sg.gate] + ') sets the background theme for everyone for about 6 days' + (shd.natal ? '; it’s one of your own gates, so it’s turned up for you.' : '.');
+    top.push({ k: 'Sun', fact: out.sun.pos + ' · Human Design / Gene Keys gate ' + out.sun.gate, mean: sm.trim() });
     var ms = out.lanes.moonSign;
     top.push({ k: 'Moon', fact: SIGNS[ms[0].sign] + (ms.length > 1 ? ' → ' + SIGNS[ms[1].sign] + ' at ' + hhmm(ms[1].start) : ''), mean: 'Mood ' + MOON_SIGN_M[ms[0].sign] + (ms.length > 1 ? ', turning ' + MOON_SIGN_M[ms[1].sign] + ' later.' : '.') });
     var WD = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     top.push({ k: 'Day', fact: WD[wd] + ' = ' + out.dayRuler + ' day' + (out.polar ? '' : ' · sunrise ' + hhmm(out.sunrise) + ', sunset ' + hhmm(out.sunset)), mean: cap(PH_M[out.dayRuler]) + '.' });
+    top.unshift(top.pop());
+    top.push({ k: 'Chinese day', fact: out.dayPillar.txt, mean: (dRel ? dRel + ' ' : '') + 'Good for ' + elShort(dp.s, prof) + '.' });
     out.top = top;
 
     // ---------- combined read: score each minute across systems ----------
     var score = new Float32Array(N), why = [];
     for (var q = 0; q < N; q++) why.push([]);
-    function mark(a, b, v, label) {
+    function mark(a, b, v, label, plain) {
       var i0 = Math.max(0, Math.round((a - start) / 60000)), i1 = Math.min(N, Math.round((b - start) / 60000));
-      for (var q = i0; q < i1; q++) { score[q] += v; why[q].push({ v: v, l: label }); }
+      for (var q = i0; q < i1; q++) { score[q] += v; why[q].push({ v: v, l: label, p: plain || label }); }
     }
-    out.lanes.bazi.forEach(function (s) { s.rel.forEach(function (r) { mark(s.start, s.end, r.t === 'clash' ? -1 : 1, ANIMAL[s.b] + ' hour ' + (r.t === 'trine' ? 'completes your ' + r.el + ' trine' : r.t === 'clash' ? 'clashes your ' + r.p + ' pillar' : 'combines with your ' + r.p + ' pillar')); }); });
+    out.lanes.bazi.forEach(function (s) { s.rel.forEach(function (r) { mark(s.start, s.end, r.t === 'clash' ? -1 : 1, 'Chinese ' + ANIMAL[s.b] + ' hour ' + (r.t === 'trine' ? 'completes your ' + r.el + ' group of three' : r.t === 'clash' ? 'clashes with your ' + r.a : 'pairs with your ' + r.a), r.t === 'trine' ? 'big energy boost' : r.t === 'clash' ? 'stirred up (not for signing)' : 'smooth with people'); }); });
     ma.forEach(function (x) {
       var v = { trine: 1, sextile: 1, square: -1, opposite: -1, conjunct: 0 }[x.asp.k];
-      if (v) mark(x.start, x.end, v, 'Moon ' + x.asp.k + ' your ' + x.natal.k);
-      else mark(x.start, x.end, 0, 'Moon conjunct your ' + x.natal.k + ' (intense)');
+      var th = TH[x.natal.k] || x.natal.k;
+      if (v) mark(x.start, x.end, v, 'Moon ' + x.asp.k + ' your ' + x.natal.k, (v > 0 ? 'easy mood around ' : 'friction around ') + th);
+      else mark(x.start, x.end, 0, 'Moon conjunct your ' + x.natal.k + ' (intense)', 'strong feelings around ' + th);
     });
-    out.lanes.hd.forEach(function (s) { if (s.info.comps.length) mark(s.start, s.end, 1, 'Moon completes HD channel ' + s.info.comps.map(function (c) { return c.ch; }).join(', ')); });
-    out.lanes.planetary.forEach(function (s) { var pl = CHAL[s.ruler]; var v = (pl === 'Venus' || pl === 'Jupiter') ? 0.5 : (pl === 'Saturn' || pl === 'Mars') ? -0.5 : 0; if (pl === prof.chartRuler) v += 0.5; if (v) mark(s.start, s.end, v, pl + ' hour'); });
+    out.lanes.hd.forEach(function (s) { if (s.info.comps.length) mark(s.start, s.end, 1, 'Moon completes Human Design channel ' + s.info.comps.map(function (c) { return c.ch; }).join(', '), 'a temporary extra trait switched on'); });
+    out.lanes.planetary.forEach(function (s) { var pl = CHAL[s.ruler]; var v = (pl === 'Venus' || pl === 'Jupiter') ? 0.5 : (pl === 'Saturn' || pl === 'Mars') ? -0.5 : 0; if (pl === prof.chartRuler) v += 0.5; if (v) mark(s.start, s.end, v, pl + ' hour', pl + ' hour: ' + PH_M[pl]); });
     function runs(test) {
       var r = [], cur = null;
       for (var q = 0; q < N; q++) {
-        if (test(score[q])) { if (!cur) cur = { a: q, b: q, sum: 0 }; cur.b = q; cur.sum += Math.abs(score[q]); }
+        if (!sleepMin[q] && test(score[q])) { if (!cur) cur = { a: q, b: q, sum: 0 }; cur.b = q; cur.sum += Math.abs(score[q]); }
         else if (cur) { r.push(cur); cur = null; }
       }
       if (cur) r.push(cur);
       return r.filter(function (x) { return x.b - x.a >= 30; }).sort(function (a, b) { return b.sum - a.sum; }).slice(0, 3).sort(function (a, b) { return a.a - b.a; }).map(function (x) {
-        var mid = Math.floor((x.a + x.b) / 2), seen = {}, labels = [];
-        for (var q = x.a; q <= x.b; q += 10) why[q].forEach(function (w) { if (!seen[w.l] && (test(score[x.a]) ? Math.sign(w.v) === Math.sign(score[mid]) || w.v === 0 : true)) { seen[w.l] = 1; labels.push(w.l); } });
-        return { from: hhmm(times[x.a]), to: hhmm(times[Math.min(x.b + 1, N)]), why: labels };
+        var mid = Math.floor((x.a + x.b) / 2), seen = {}, labels = [], plain = [];
+        for (var q = x.a; q <= x.b; q += 10) why[q].forEach(function (w) { if (!seen[w.l] && (test(score[x.a]) ? Math.sign(w.v) === Math.sign(score[mid]) || w.v === 0 : true)) { seen[w.l] = 1; labels.push(w.l); if (plain.indexOf(w.p) < 0) plain.push(w.p); } });
+        return { from: hhmm(times[x.a]), to: hhmm(times[Math.min(x.b + 1, N)]), why: labels, plain: plain };
       });
     }
-    var avg = 0; for (var q = 0; q < N; q++) avg += score[q]; avg /= N;
+    var avg = 0, awake = 0; for (var q = 0; q < N; q++) if (!sleepMin[q]) { avg += score[q]; awake++; } avg /= (awake || 1);
     var good = runs(function (v) { return v >= 1.5; }), bad = runs(function (v) { return v <= -1.5; });
     var tone = avg > 0.4 ? 'mostly smooth' : avg < -0.4 ? 'on the bumpy side' : 'mixed, with ups and downs';
-    var dg = elMean(dp.s, prof).split(':')[0].replace(/ \(.*\)/, '');
-    var dgShort = { Resource: 'a supportive, recharging', Companion: 'a high-energy, competitive', Output: 'a making-and-doing', Wealth: 'a practical, results-focused', Power: 'a disciplined, pressured' }[dg] || 'an ordinary';
-    var para = 'Overall ' + tone + '. In BaZi it\u2019s ' + dgShort + ' day for you' + (out.dayPillar.rel.length ? ': it ' + out.dayPillar.rel.map(function (r) { return r.txt; }).join(' and ') : '') + '. The Moon keeps the mood ' + MOON_SIGN_M[ms[0].sign] + (ms.length > 1 ? ', then ' + MOON_SIGN_M[ms[1].sign] : '') + ', on a ' + out.dayRuler + ' day (' + PH_M[out.dayRuler].split(',')[0] + ').';
+    var dgShort = { resource: 'a supportive, recharging', same: 'a high-energy, competitive', output: 'a making-and-doing', wealth: 'a practical, results-focused', power: 'a disciplined, pressured' }[elKind(dp.s, prof)] || 'an ordinary';
+    var para = 'Overall ' + tone + '. On the Chinese calendar it\u2019s ' + dgShort + ' day for you. The Moon keeps the mood ' + MOON_SIGN_M[ms[0].sign] + (ms.length > 1 ? ', then ' + MOON_SIGN_M[ms[1].sign] : '') + ', on a ' + out.dayRuler + ' day (' + PH_M[out.dayRuler].split(',')[0] + ').';
     var sunBits = []; NATAL.forEach(function (n) { ASPECTS.forEach(function (asp) { asp.offs.forEach(function (off) { if (Math.abs(wrap180(sl - n.lon - off)) <= 2) sunBits.push('the Sun ' + asp.k + ' your natal ' + n.k); }); }); });
     if (sunBits.length) para += ' In the background, ' + sunBits.join(' and ') + ' colours the whole week.';
     out.combined = { para: para, good: good, bad: bad };
@@ -951,8 +1012,7 @@ var OR = (function () {
 
   function profileSummary(prof) {
     var b = prof.birth, hd = prof.hd;
-    var pil = prof.pillars.map(function (q) { return STEMS[q.s] + BR[q.b]; }).join(' ');
-    return 'Sun ' + SIGNS[prof.sunSign] + (prof.ascSign !== null ? ', ' + SIGNS[prof.ascSign] + ' rising' : '') + ' · HD ' + hd.type + ', ' + hd.authority + ', ' + hd.profile + ' · BaZi ' + pil + ' (Day Master ' + STEM_PY[prof.dm] + ' ' + ELEM[stemEl(prof.dm)] + ')';
+    return 'Sun ' + SIGNS[prof.sunSign] + (prof.ascSign !== null ? ', ' + SIGNS[prof.ascSign] + ' rising' : '') + ' · Human Design ' + hd.type + ', ' + hd.authority + ', ' + hd.profile + ' · Chinese sign ' + pillarPlain(prof.pillars[0]);
   }
 
   return { compute: compute, buildProfile: buildProfile, profileSummary: profileSummary, PLACES: PLACES,
@@ -963,34 +1023,49 @@ if (typeof module !== 'undefined') module.exports = OR;
 <script>(function () {
   var $ = function (id) { return document.getElementById(id); };
   var HELP = {
-    rising: 'The zodiac sign coming up over the eastern horizon right now. The whole zodiac rolls past once a day, so it changes every 1\u20133 hours and sets the flavour of those hours.',
-    asc: 'ASC (Ascendant) = the spot on the eastern horizon where the Sun rises. As the sky turns, each of your birth planets passes this spot once a day. Each line is that moment (a few minutes): that planet\u2019s theme shows in you \u2014 your body, mood, how you come across.',
-    mc: 'MC (Midheaven) = the highest point overhead, where the Sun is at midday. Each line is when one of your birth planets passes overhead: that planet\u2019s theme shows in work and in how the world sees you.',
-    dsc: 'DSC (Descendant) = the western horizon, where the Sun sets. Each line is when one of your birth planets passes that spot: its theme shows through other people \u2014 partners, friends, anyone you deal with one-to-one.',
-    ic: 'IC = the point straight below your feet, on the other side of the Earth (where the Sun is at midnight). Each line is when one of your birth planets passes that spot: its theme shows at home, in family and in your private self.',
-    moon: 'The Moon moves fast, so every few hours it lines up at an angle with one of your birth planets. Same spot = conjunct (blended), 60\u00B0 = sextile (easy opening), 90\u00B0 = square (friction), 120\u00B0 = trine (flowing), 180\u00B0 = opposite (pulled two ways). Bar = when it\u2019s in effect, tick = exact moment. Moon stuff is mood and lasts hours.',
-    planetary: 'Old European tradition: daylight and night are each cut into 12 \u201Chours\u201D, each ruled by a planet in a fixed order. Each planet\u2019s hour suits its kind of activity (Venus = pleasure and art, Mars = physical work, Mercury = messages, and so on).',
-    bazi: 'Chinese astrology splits the day into 12 two-hour blocks, each an animal. The colour shows how that animal gets on with the four animals in your own chart: combine = smooth, trine = big energy boost, clash = stirred up. Grey = nothing special.',
-    hd: 'Human Design divides the zodiac into 64 \u201Cgates\u201D. The Moon passes through about two a day. One colour = one of your own gates (that theme is louder). The other = it joins one of your gates into a full channel for those hours (you get a temporary extra trait).'
+    ayur: 'Ayurvedic body clock. The day is split into six 4-hour blocks, each ruled by one of three qualities: Kapha (heavy, steady), Pitta (hot, sharp) and Vata (airy, quick). Each block suits different things: tap a block for its advice.',
+    rising: 'The zodiac sign coming up over the eastern horizon right now. The whole zodiac rolls past once a day, so it changes every 1–3 hours and sets the flavour of those hours.',
+    asc: 'Ascendant = the spot on the eastern horizon where the Sun rises. As the sky turns, each of your birth planets passes this spot once a day. Each line is that moment (a few minutes): that planet’s theme shows in you — your body, mood, how you come across.',
+    mc: 'Midheaven = the highest point overhead, where the Sun is at midday. Each line is when one of your birth planets passes overhead: that planet’s theme shows in work and in how the world sees you.',
+    dsc: 'Descendant = the western horizon, where the Sun sets. Each line is when one of your birth planets passes that spot: its theme shows through other people — partners, friends, anyone you deal with one-to-one.',
+    moon: 'The Moon moves fast, so every few hours it lines up at an angle with one of your birth planets. Same spot = together (blended), 60° = easy opening, 90° = friction, 120° = flowing, 180° = pulled two ways. Bar = when it’s in effect, tick = exact moment. Moon stuff is mood and lasts hours.',
+    planetary: 'Old European tradition: daylight and night are each cut into 12 “hours”, each ruled by a planet in a fixed order. Each planet’s hour suits its kind of activity (Venus = pleasure and art, Mars = physical work, Mercury = messages, and so on).',
+    bazi: 'Chinese hours: the day is split into 12 two-hour blocks, each an animal. Colour = how it sits with you: big boost, smooth or stirred up. Grey = nothing special.',
+    hd: 'Human Design divides the zodiac into 64 “gates”. The Moon passes through about two a day. One colour = one of your own gates (that theme is louder). The other = it joins one of your gates into a full channel for those hours (you get a temporary extra trait).',
+    sleep: 'Sleep zone, 22:00–06:00. Ayurveda says be asleep by 22. These hours are striped on the graph and left out of the best and tricky windows.'
   };
   var LANES = [
-    { k: 'rising', name: 'Rising sign', h: 30, help: 'Which sign is on the eastern horizon where you are. Changes roughly every 1–3 hours.' },
-    { k: 'asc', name: 'ASC hits', h: 44, help: 'Moments the rising degree crosses one of your natal planets. Each lasts minutes.' },
-    { k: 'mc', name: 'MC hits', h: 44, help: 'Moments the top of the sky crosses one of your natal planets. Each lasts minutes.' },
-    { k: 'dsc', name: 'DSC hits', h: 44, opt: true, help: 'Setting degree crosses a natal planet.' },
-    { k: 'ic', name: 'IC hits', h: 44, opt: true, help: 'Lowest point crosses a natal planet.' },
-    { k: 'moon', name: 'Moon aspects', h: 44, help: 'Transiting Moon aspecting your natal chart. Bar = window, tick = exact.' },
-    { k: 'planetary', name: 'Planet hour', h: 30, help: 'Traditional planetary hours from sunrise and sunset.' },
-    { k: 'bazi', name: 'BaZi hour', h: 34, help: 'The 12 Chinese double hours against your four branches.' },
-    { k: 'hd', name: 'HD Moon gate', h: 34, help: 'The gate the Moon is in, against your HD chart.' }
+    { k: 'ayur', name: 'Body clock', h: 30 },
+    { k: 'rising', name: 'Rising sign', h: 30 },
+    { k: 'asc', name: 'Ascendant', h: 44 },
+    { k: 'mc', name: 'Midheaven', h: 44 },
+    { k: 'dsc', name: 'Descendant', h: 44 },
+    { k: 'moon', name: 'Moon', h: 44 },
+    { k: 'planetary', name: 'Planet hour', h: 30 },
+    { k: 'bazi', name: 'Chinese hour', h: 34 },
+    { k: 'hd', name: 'Human Design', h: 34 }
   ];
+  var AY_COL = { Kapha: 'var(--hi)', Pitta: 'var(--lo)', Vata: 'var(--hi2)' };
+  var LAYER_NAME = { Body: 'Body clock', Rising: 'Rising sign', Angles: 'Angles', Moon: 'Moon', Hours: 'Planet hours', BaZi: 'Chinese hours', HD: 'Human Design', Sky: 'Sun up/down' };
+  var LAYER_DEF = {
+    Body: 'Ayurvedic body clock: six 4-hour blocks of Kapha (steady), Pitta (hot, sharp) and Vata (airy, quick), each with its own advice.',
+    Rising: 'Which zodiac sign is coming up over the eastern horizon. Changes every 1–3 hours and sets the flavour of those hours.',
+    Angles: 'Moments when one of your birth planets crosses the Ascendant (eastern horizon), Midheaven (top of the sky) or Descendant (western horizon). Each lasts a few minutes.',
+    Moon: 'The Moon lining up with one of your birth planets, or changing sign. Lasts hours and colours the mood.',
+    Hours: 'Old European planetary hours: day and night each cut into 12, each ruled by a planet that suits certain jobs.',
+    BaZi: 'Chinese two-hour blocks, each an animal: big boost, smooth, stirred up or nothing special for you.',
+    HD: 'Human Design: which gate the Moon is in, and whether it links up with your own gates.',
+    Sky: 'Sunrise and sunset.'
+  };
+  var DEF_CHINESE = 'Your Chinese sign is the animal and element of your birth year. Behind the scenes the graph still checks each day and hour against your full Chinese birth chart (year, month, day and hour).';
   var EL_VAR = ['--el-fire', '--el-earth', '--el-air', '--el-water'];
   function signFill(i) { return 'var(' + EL_VAR[i % 4] + ')'; }
   var PH_COL = { Saturn: 'var(--mid)', Jupiter: 'var(--hi2)', Mars: 'var(--lo)', Sun: 'var(--gold, var(--accent))', Venus: 'var(--hi)', Mercury: 'color-mix(in srgb, var(--wave) 50%, var(--hi2))', Moon: 'color-mix(in srgb, var(--wave) 45%, var(--bg))' };
   var BZ_COL = { clash: 'var(--c-clash)', trine: 'var(--c-trine)', harmony: 'var(--c-harm)', neutral: 'var(--neutral)' };
   var ASP_COL = { conjunct: 'var(--a-conj)', sextile: 'var(--a-sext)', square: 'var(--a-sq)', trine: 'var(--a-tri)', opposite: 'var(--a-opp)' };
-  var LAYERS = ['Rising', 'Angles', 'Moon', 'Hours', 'BaZi', 'HD', 'Sky'];
-  var hidden = {};
+  var LAYERS = ['Body', 'Rising', 'Angles', 'Moon', 'Hours', 'BaZi', 'HD', 'Sky'];
+  var hidden = {}, hiddenTone = {};
+  var vis = (function () { var d = { ayur: true, rising: true, asc: true, mc: true, dsc: false, moon: true, planetary: true, bazi: true, hd: true, sleep: true }; try { var v = JSON.parse(localStorage.getItem('orakelDay.vis') || '{}'); Object.keys(v).forEach(function (k) { d[k] = v[k]; }); } catch (e) {} return d; })();
   var data = null, L = 10, PW = 800;
   var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -1001,7 +1076,7 @@ if (typeof module !== 'undefined') module.exports = OR;
   function ev(s) { return s.ev ? ' data-ev="' + s.ev + '"' : ''; }
 
   function compute() {
-    data = OR.compute($('date').value, { orb: +$('orb').value, baziSolar: $('solar').checked, allAngles: $('allang').checked }, prof, loc);
+    data = OR.compute($('date').value, { orb: +$('orb').value, baziSolar: $('solar').checked, allAngles: true, sleep: vis.sleep }, prof, loc);
   }
 
   var zoom = 1;
@@ -1013,12 +1088,11 @@ if (typeof module !== 'undefined') module.exports = OR;
     $('zoomLvl').textContent = (Math.round(zoom * 10) / 10) + '\u00D7';
   }
   function draw() {
-    var allAngles = $('allang').checked;
-    var lanes = LANES.filter(function (l) { return !l.opt || allAngles; });
+    var lanes = LANES.filter(function (l) { return vis[l.k]; });
     var avail = $('scroll').clientWidth || 700;
     var W = Math.round(Math.max(avail, 760) * zoom); PW = W - 2 * L;
     var H = lanes.reduce(function (a, l) { return a + l.h + 8; }, 0) + 40;
-    var svg = [], lab = [], y = 28;
+    var svg = ['<defs><pattern id="sleepHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--muted);stroke-opacity:.35;stroke-width:2.5"/></pattern></defs>'], lab = [], y = 28;
     var p = data.date.split('-').map(Number), mid = OR.localMidnight(p[0], p[1], p[2], loc.tz);
     for (var h = 0; h <= 24; h++) {
       var t = mid + h * 3600000; if (t > data.end) break;
@@ -1033,15 +1107,17 @@ if (typeof module !== 'undefined') module.exports = OR;
       lab.push('<div class="lab" data-help="' + lane.k + '" style="top:' + y + 'px;height:' + lane.h + 'px">' + lane.name + ' <span class="q">?</span></div>');
       svg.push('<rect x="' + L + '" y="' + y + '" width="' + PW + '" height="' + lane.h + '" class="lanebg"/>');
       var items = data.lanes[lane.k];
-      if (lane.k === 'rising' || lane.k === 'planetary' || lane.k === 'bazi' || lane.k === 'hd') {
+      if (lane.k === 'rising' || lane.k === 'planetary' || lane.k === 'bazi' || lane.k === 'hd' || lane.k === 'ayur') {
         items.forEach(function (s) {
           var x1 = x(s.start), w = Math.max(0, x(s.end) - x1), fill;
-          if (lane.k === 'rising') fill = signFill(s.sign);
+          if (lane.k === 'ayur') fill = AY_COL[s.d];
+          else if (lane.k === 'rising') fill = signFill(s.sign);
           else if (lane.k === 'planetary') fill = PH_COL[OR.CHAL[s.ruler]];
           else if (lane.k === 'bazi') fill = BZ_COL[s.cls];
           else fill = s.info.comps.length ? 'var(--c-chan)' : s.info.natal ? 'var(--c-own)' : 'var(--neutral)';
           svg.push('<rect x="' + x1 + '" y="' + y + '" width="' + w + '" height="' + lane.h + '" style="fill:' + fill + '" class="band' + (lane.k === 'planetary' && s.night ? ' dim' : '') + '" data-tip="' + esc(s.tip) + '"' + ev(s) + '/>');
-          if (w > 16) svg.push('<text x="' + (x1 + w / 2) + '" y="' + (y + lane.h / 2 + 5) + '" class="bl">' + esc(s.label) + '</text>');
+          var lbl = s.label; if (lane.k === 'ayur' && w < 95) lbl = s.d; if (lane.k === 'bazi' && w < 46) lbl = lbl.slice(0, 3);
+          if (w > 16) svg.push('<text x="' + (x1 + w / 2) + '" y="' + (y + lane.h / 2 + 5) + '" class="bl">' + esc(lbl) + '</text>');
         });
       } else if (lane.k === 'moon') {
         var rows = [];
@@ -1059,11 +1135,12 @@ if (typeof module !== 'undefined') module.exports = OR;
         var lastX = [-99, -99, -99];
         items.forEach(function (s) {
           var xx = x(s.t), row = 0; while (row < 2 && xx - lastX[row] < 20) row++; lastX[row] = xx;
-          svg.push('<g class="hit" data-tip="' + esc(s.tip) + '"' + ev(s) + '><line x1="' + xx + '" x2="' + xx + '" y1="' + y + '" y2="' + (y + lane.h) + '" class="tickhit"/><rect x="' + (xx - 9) + '" y="' + y + '" width="18" height="' + lane.h + '" fill="transparent"/><text x="' + xx + '" y="' + (y + 13 + row * 13) + '" class="gl">' + esc(s.label.length > 1 ? 'n.' + s.label : s.label + '︎') + '</text></g>');
+          svg.push('<g class="hit" data-tip="' + esc(s.tip) + '"' + ev(s) + '><line x1="' + xx + '" x2="' + xx + '" y1="' + y + '" y2="' + (y + lane.h) + '" class="tickhit"/><rect x="' + (xx - 9) + '" y="' + y + '" width="18" height="' + lane.h + '" fill="transparent"/><text x="' + xx + '" y="' + (y + 13 + row * 13) + '" class="gl">' + esc(s.label.length > 1 ? ({ ASC: 'Ascendant', MC: 'Midheaven' }[s.label] || s.label) : s.label + '︎') + '</text></g>');
         });
       }
       y += lane.h + 8;
     });
+    (data.sleep || []).forEach(function (z) { var x1 = x(z.start), w = x(z.end) - x1; if (w <= 0) return; svg.push('<rect x="' + x1 + '" y="20" width="' + w + '" height="' + (H - 32) + '" fill="url(#sleepHatch)" class="sleepz"/>'); if (w > 40) svg.push('<text x="' + (x1 + w / 2) + '" y="' + (H - 1) + '" class="hl">sleep</text>'); });
     [['sunrise', '☀︎↑'], ['sunset', '☀︎↓']].forEach(function (q) { if (!data[q[0]]) return; var xx = x(data[q[0]]); svg.push('<line x1="' + xx + '" x2="' + xx + '" y1="20" y2="' + (H - 12) + '" class="sun"/><text x="' + xx + '" y="' + (H - 1) + '" class="hl">' + q[1] + ' ' + HM(data[q[0]]) + '</text>'); });
     svg.push('<line id="now" class="now" y1="20" y2="' + (H - 12) + '" x1="-10" x2="-10"/>');
     var c = $('chart');
@@ -1075,15 +1152,15 @@ if (typeof module !== 'undefined') module.exports = OR;
   }
 
   function fillText() {
-    $('summary').innerHTML = data.top.map(function (r) { return '<div class="trow"><b>' + r.k + '</b><span class="fact">' + esc(r.fact) + '</span><span class="tmean">' + esc(r.mean) + '</span></div>'; }).join('');
+    $('summary').innerHTML = data.top.map(function (r) { return '<div class="trow"><b>' + r.k + '</b><span class="tmean">' + esc(r.mean) + '</span><span class="fact">' + esc(r.fact) + '</span></div>'; }).join('');
     var cb = data.combined;
-    function win(w) { return '<li><b>' + w.from + '\u2013' + w.to + '</b> ' + esc(w.why.join(' \u00B7 ')) + '</li>'; }
-    $('combined').innerHTML = '<p>' + esc(cb.para) + '</p>' +
-      '<details><summary>Best windows<span class="cnt">' + (cb.good.length ? cb.good.map(function (w) { return w.from + '\u2013' + w.to; }).join(', ') : 'none stand out') + '</span></summary>' + (cb.good.length ? '<ul>' + cb.good.map(win).join('') + '</ul>' : '<p class="mn">Nothing stands out as especially smooth.</p>') + '</details>' +
-      '<details><summary>Tricky windows<span class="cnt">' + (cb.bad.length ? cb.bad.map(function (w) { return w.from + '\u2013' + w.to; }).join(', ') : 'none stand out') + '</span></summary>' + (cb.bad.length ? '<ul>' + cb.bad.map(win).join('') + '</ul>' : '<p class="mn">Nothing stands out as especially rough.</p>') + '</details>' +
+    function win(good) { return function (w) { var p = w.plain.slice(0, 3); return '<li><b>' + w.from + '\u2013' + w.to + '</b> ' + (good ? 'Good for: ' : 'Watch for: ') + esc(p.join('; ')) + '. <span class="q qd" title="Show the details">?</span><span class="tech" hidden>' + esc(w.why.join(' \u00B7 ')) + '</span></li>'; }; }
+    $('combined').innerHTML = '<p>' + esc(cb.para) + '</p><p class="mn">Best windows = stretches where several systems agree it\u2019s smooth. Tricky windows = where they agree it\u2019s bumpy.' + (vis.sleep ? ' Sleep hours (22\u201306) are left out.' : '') + ' Tap ? for what\u2019s behind each one.</p>' +
+      '<details><summary>Best windows<span class="cnt">' + (cb.good.length ? cb.good.map(function (w) { return w.from + '\u2013' + w.to; }).join(', ') : 'none stand out') + '</span></summary>' + (cb.good.length ? '<ul>' + cb.good.map(win(true)).join('') + '</ul>' : '<p class="mn">Nothing stands out as especially smooth.</p>') + '</details>' +
+      '<details><summary>Tricky windows<span class="cnt">' + (cb.bad.length ? cb.bad.map(function (w) { return w.from + '\u2013' + w.to; }).join(', ') : 'none stand out') + '</span></summary>' + (cb.bad.length ? '<ul>' + cb.bad.map(win(false)).join('') + '</ul>' : '<p class="mn">Nothing stands out as especially rough.</p>') + '</details>' +
       '';
     $('events').innerHTML = data.events.map(function (e) {
-      return '<tr id="' + e.id + '" data-layer="' + e.layer + '" class="' + (e.tone ? 'tone-' + e.tone : '') + (hidden[e.layer] ? ' off' : '') + '"><td class="tm">' + HM(e.t) + '</td><td><span class="tag t-' + e.layer + '">' + e.layer + '</span></td><td><div class="tt">' + esc(e.txt) + '</div><div class="mn">' + esc(e.mean) + '</div></td></tr>';
+      return '<tr id="' + e.id + '" data-layer="' + e.layer + '" data-tone="' + (e.tone || 'none') + '" class="' + (e.tone ? 'tone-' + e.tone : '') + (hidden[e.layer] || hiddenTone[e.tone || 'none'] ? ' off' : '') + '"><td class="tm">' + HM(e.t) + '</td><td><span class="tag t-' + e.layer + '">' + LAYER_NAME[e.layer] + '</span></td><td><div class="tt">' + esc(e.txt) + '</div><div class="mn">' + esc(e.mean) + '</div></td></tr>';
     }).join('');
   }
 
@@ -1097,11 +1174,23 @@ if (typeof module !== 'undefined') module.exports = OR;
   }
 
   // filter chips
-  $('chips').innerHTML = LAYERS.map(function (l) { return '<button class="chip on t-' + l + '" data-l="' + l + '">' + l + '</button>'; }).join('');
+  function applyFilters() { document.querySelectorAll('#events tr').forEach(function (r) { r.classList.toggle('off', !!hidden[r.getAttribute('data-layer')] || !!hiddenTone[r.getAttribute('data-tone')]); }); }
+  $('chips').innerHTML = LAYERS.map(function (l) { return '<button class="chip on t-' + l + '" data-l="' + l + '" title="' + esc(LAYER_DEF[l]) + '">' + LAYER_NAME[l] + '</button>'; }).join('');
+  $('chipdefs').innerHTML = LAYERS.map(function (l) { return '<li><b>' + LAYER_NAME[l] + ':</b> ' + esc(LAYER_DEF[l]) + '</li>'; }).join('') + '<li><b>Helpful / tricky / intense / neutral:</b> a rough tag for how each item tends to feel. Intense = loud, can go either way.</li>';
   $('chips').addEventListener('click', function (e) {
     var b = e.target.closest('.chip'); if (!b) return;
-    var l = b.getAttribute('data-l'); hidden[l] = !hidden[l]; b.classList.toggle('on', !hidden[l]);
-    document.querySelectorAll('#events tr[data-layer="' + l + '"]').forEach(function (r) { r.classList.toggle('off', !!hidden[l]); });
+    var l = b.getAttribute('data-l'); hidden[l] = !hidden[l]; b.classList.toggle('on', !hidden[l]); applyFilters();
+  });
+  $('tones').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var t = b.getAttribute('data-t'); hiddenTone[t] = !hiddenTone[t]; b.classList.toggle('off', !!hiddenTone[t]); applyFilters();
+  });
+  $('combined').addEventListener('click', function (e) { var q = e.target.closest('.qd'); if (!q) return; var t = q.nextElementSibling; if (t) t.hidden = !t.hidden; });
+  $('layerPanel').innerHTML = '<div class="lph">Show on graph</div>' + LANES.concat([{ k: 'sleep', name: 'Sleep zone' }]).map(function (l) { return '<label><input type="checkbox" data-k="' + l.k + '"' + (vis[l.k] ? ' checked' : '') + '> ' + l.name + '</label>'; }).join('');
+  $('layerPanel').addEventListener('change', function (e) {
+    var k = e.target.getAttribute('data-k'); if (!k) return; vis[k] = e.target.checked;
+    try { localStorage.setItem('orakelDay.vis', JSON.stringify(vis)); } catch (er) {}
+    if (k === 'sleep') render(); else draw();
   });
 
   // popup: meaning first, details under it (hover on computer, tap on phone)
@@ -1138,7 +1227,16 @@ if (typeof module !== 'undefined') module.exports = OR;
     var el = e.target.closest('[data-ev]');
     if (el) { e.stopPropagation(); showPop(el, e.clientX, e.clientY); } else hidePop();
   });
-  document.addEventListener('click', function (e) { if (!e.target.closest('#chart') && !e.target.closest('#labels')) hidePop(); });
+  function showDef(el, cx, cy) {
+    tip.innerHTML = '<div class="pm">' + esc(el.getAttribute('data-def')) + '</div>';
+    tip.style.display = 'block';
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    tip.style.left = Math.max(6, Math.min(cx + 12, window.innerWidth - tw - 6)) + 'px';
+    var topY = cy + 16; if (topY + th > window.innerHeight - 6) topY = Math.max(6, cy - th - 12);
+    tip.style.top = topY + 'px';
+  }
+  document.addEventListener('click', function (e) { var d = e.target.closest('[data-def]'); if (d) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') { e.preventDefault(); } showDef(d, e.clientX, e.clientY); return; } if (!e.target.closest('#chart') && !e.target.closest('#labels')) hidePop(); });
+  if (fine) document.addEventListener('mouseover', function (e) { var d = e.target.closest('[data-def]'); if (d) showDef(d, e.clientX, e.clientY); else if (d === null && e.target.closest('.legend, .advctl, #profline')) hidePop(); });
   $('scroll').addEventListener('scroll', hidePop, { passive: true });
   window.addEventListener('scroll', function () { if (!fine) hidePop(); }, { passive: true });
   if (fine) {
@@ -1170,7 +1268,7 @@ if (typeof module !== 'undefined') module.exports = OR;
     id = b.id; personId = id; store.set('sel', id);
     prof = OR.buildProfile(b);
     var bb = prof.birth;
-    $('profline').innerHTML = '<b>' + esc(prof.name) + '</b> · born ' + bb.date + ' ' + (bb.timeKnown ? bb.time : '(time unknown)') + ' ' + esc(bb.placeName || (bb.lat + ', ' + bb.lon)) + ' · ' + esc(OR.profileSummary(prof)) + (bb.timeKnown ? '' : '<br><span class="warn">Birth time unknown: Ascendant/MC, the hour pillar and natal angle hits are left out; the natal Moon can be off by up to ~6°.</span>') +  ' <button class="link" id="editP">edit</button>';
+    $('profline').innerHTML = '<b>' + esc(prof.name) + '</b> · born ' + bb.date + ' ' + (bb.timeKnown ? bb.time : '(time unknown)') + ' ' + esc(bb.placeName || (bb.lat + ', ' + bb.lon)) + ' · ' + esc(OR.profileSummary(prof)) + ' <span class="q" style="cursor:help" data-def="' + esc(DEF_CHINESE) + '">?</span>' + (bb.timeKnown ? '' : '<br><span class="warn">Birth time unknown: Ascendant/MC, the hour pillar and natal angle hits are left out; the natal Moon can be off by up to ~6°.</span>') + ' <button class="link" id="editP">edit</button>';
     if ($('editP')) $('editP').onclick = function () { openForm(b); };
     personOpts();
   }
@@ -1254,7 +1352,7 @@ if (typeof module !== 'undefined') module.exports = OR;
   $('prev').onclick = function () { shift(-1); };
   $('next').onclick = function () { shift(1); };
   $('today').onclick = function () { $('date').value = todayStr(); render(); };
-  ['date', 'orb', 'solar', 'allang'].forEach(function (id) { $(id).addEventListener('change', render); });
+  ['date', 'orb', 'solar'].forEach(function (id) { $(id).addEventListener('change', render); });
   var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (prof) draw(); }, 150); });
   setSky(skyCfg); setPerson(personId);
   $('date').value = todayStr();
@@ -1274,6 +1372,24 @@ if (typeof module !== 'undefined') module.exports = OR;
     box.querySelectorAll("[data-pal]").forEach(b=>b.onclick=()=>{try{localStorage.setItem("orakel-pal",b.dataset.pal)}catch(e){}apply()});
     box.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{try{localStorage.setItem("orakel-mode",b.dataset.mode)}catch(e){}apply()})};
   draw();try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",apply)}catch(e){}
+})();</script>
+<script>/* ===== Graph colours (preset / custom) ===== */
+(function(){
+  var KEYS=[["hi","Helpful"],["lo","Tricky"],["wave","Intense"],["accent","Boost"],["hi2","Cool"],["gold","Warm"]];
+  var PRESETS={purple:{hi:"#6f5fc0",lo:"#b0406e",wave:"#3b2f8f",accent:"#a04fc4",hi2:"#8a86aa",gold:"#d4b23a"}};
+  var box=document.getElementById("gcols");if(!box)return;
+  function load(){try{return JSON.parse(localStorage.getItem("orakel-gcols")||"null")||{mode:"theme",c:PRESETS.purple}}catch(e){return{mode:"theme",c:PRESETS.purple}}}
+  function save(st){try{localStorage.setItem("orakel-gcols",JSON.stringify(st))}catch(e){}}
+  var st=load();
+  function apply(){var r=document.documentElement;KEYS.forEach(function(k){var v=st.mode==="purple"?PRESETS.purple[k[0]]:st.mode==="custom"?st.c[k[0]]:"";if(v)r.style.setProperty("--"+k[0],v);else r.style.removeProperty("--"+k[0]);});}
+  function draw(){
+    box.innerHTML="<b>Graph colours</b>"+[["theme","Match theme"],["purple","Purple & grey"],["custom","Custom"]].map(function(m){return '<button type="button" data-m="'+m[0]+'" aria-pressed="'+(st.mode===m[0])+'">'+m[1]+'</button>'}).join("")+
+      (st.mode==="custom"?'<div class="gpick">'+KEYS.map(function(k){return '<label><input type="color" data-k="'+k[0]+'" value="'+st.c[k[0]]+'"> '+k[1]+'</label>'}).join("")+'<button type="button" id="gReset">Reset to purple &amp; grey</button></div>':"");
+    box.querySelectorAll("[data-m]").forEach(function(b){b.onclick=function(){st.mode=b.dataset.m;save(st);apply();draw();}});
+    box.querySelectorAll("[data-k]").forEach(function(i){i.oninput=function(){st.c[i.dataset.k]=i.value;save(st);apply();}});
+    var rs=document.getElementById("gReset");if(rs)rs.onclick=function(){st.c=JSON.parse(JSON.stringify(PRESETS.purple));save(st);apply();draw();};
+  }
+  apply();draw();
 })();</script>
 </body>
 </html>
