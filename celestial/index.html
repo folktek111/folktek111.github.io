@@ -1812,12 +1812,10 @@ function reading(d){if(SCORE_MODE!=="orig"&&d.auto.comb){const c=d.auto.comb,md=
     const r={...d.auto,...b,...combActs(d,b,md),hand:false,comb:true,mode:md};r.brief=combBrief(d,r,md);c.cache[md]=r}
   return c.cache[md]}const h=false;return h?{...d.auto,...h,hand:true}:{...d.auto,hand:false}}
 
-function moonGlyph(p,r){
-  const rad=p*Math.PI/180,rx=Math.abs(Math.cos(rad))*r;let path;
-  if(p<=180){const sw=p<90?0:1;path=`M0,${-r}A${r},${r} 0 0 1 0,${r}A${rx},${r} 0 0 ${sw} 0,${-r}Z`}
-  else{const sw=p>270?1:0;path=`M0,${-r}A${r},${r} 0 0 0 0,${r}A${rx},${r} 0 0 ${sw} 0,${-r}Z`}
-  return `<svg viewBox="${-r-1} ${-r-1} ${2*r+2} ${2*r+2}" width="${2*r+2}" height="${2*r+2}" aria-hidden="true"><circle r="${r}" fill="var(--moon-dark)" stroke="var(--line)" stroke-width="0.8"/><path d="${path}" fill="var(--moon-lit)"/></svg>`;
-}
+const MOONF=[[.031,'w'],[.076,'w'],[.134,'w'],[.21,'w'],[.307,'w'],[.341,'w'],[.42,'w'],[.579,'w'],[.739,'w'],[.803,'w'],[.915,'w'],[.965,'w'],[.995,'f'],[.968,'f'],[.915,'x'],[.834,'x'],[.73,'x'],[.664,'x'],[.534,'x'],[.335,'x'],[.233,'x'],[.179,'x'],[.101,'x']];
+function moonFrame(p){p=norm(p);const f=(1-Math.cos(p*Math.PI/180))/2;if(f<.012)return"new";const ok=p<=180?['w','f']:['x','f'];let best=-1,bd=9;MOONF.forEach((m,i)=>{if(!ok.includes(m[1]))return;const d=Math.abs(m[0]-f);if(d<bd){bd=d;best=i}});return String(best).padStart(2,"0")}
+function moonGlyph(p,r){const s=2*r+2;return `<img src="moon/${moonFrame(p)}.png" width="${s}" height="${s}" alt="" aria-hidden="true" style="display:block;border-radius:50%;flex:none">`}
+
 
 function renderTimeline(){
   const days=[...Array(N)].map((_,i)=>calcDay(addDays(start,i)));
@@ -2103,7 +2101,7 @@ Dagaz:["d","day / dawn","Dawn: breakthrough, sudden clarity and change, the turn
 const RUNES=[["Fehu","ᚠ","Wealth that moves: earned, used and shared.",6,29],["Ur","ᚢ","Raw strength, health and wild vitality.",7,14],["Thurisaz","ᚦ","Force and defence; the thorn that breaks through.",7,29],["Ansuz","ᚨ","Words, inspiration and messages.",8,13],["Raido","ᚱ","The journey; rhythm and right order.",8,29],["Kenaz","ᚲ","The torch: skill, craft and insight.",9,13],["Gebo","ᚷ","The gift: exchange, partnership and balance.",9,28],["Wunjo","ᚹ","Joy, harmony and belonging.",10,13],["Hagall","ᚺ","Hail: a disruption that clears the ground.",10,28],["Naud","ᚾ","Need: friction and constraint that teach.",11,13],["Isa","ᛁ","Ice: stillness, pause and holding.",11,28],["Jera","ᛃ","The year's harvest: cycles and reward in season.",12,13],["Eihwaz","ᛇ","The yew: endurance, ending and renewal.",12,28],["Perthro","ᛈ","The lot-cup: chance, mystery and what's hidden.",1,13],["Algiz","ᛉ","Protection and a line to something higher.",1,28],["Sól","ᛊ","The sun: clarity, success and wholeness.",2,12],["Tiwaz","ᛏ","Courage, justice and doing the right thing.",2,27],["Bjarkan","ᛒ","The birch: birth, growth and nurture.",3,14],["Ehwaz","ᛖ","The horse: trust and moving together.",3,30],["Mannaz","ᛗ","The human: self, others and community.",4,14],["Laguz","ᛚ","Water: flow, intuition and the unconscious.",4,29],["Ingwaz","ᛜ","Seed: inner growth and gestation.",5,14],["Odal","ᛟ","Heritage: home, roots and belonging.",5,29],["Dagaz","ᛞ","Day: dawn, breakthrough and change.",6,14]];
 function runeOfDate(dt){const y=dt.getFullYear();let best=null,bd=null;for(const yy of [y-1,y])RUNES.forEach((r,i)=>{const s=new Date(yy,r[3]-1,r[4]);if(s<=dt&&(!bd||s>bd)){bd=s;best=i}});const nx=RUNES[(best+1)%24],ns=new Date(bd.getFullYear()+(nx[3]<RUNES[best][3]?1:0),nx[3]-1,nx[4]);return{i:best,r:RUNES[best],from:bd,to:addDays(ns,-1)}}
 const runeOfLon=l=>RUNES[Math.floor(norm(l-97)/15)];
-const runeChip=(r,big)=>`<span style="font:${big?"2.4rem":"1.5rem"}/1 serif;color:var(--accent);min-width:1.2em;text-align:center;display:inline-block">${r[1]}</span>`;
+const runeChip=(r,big)=>`<span class="stone" style="font:${big?"2.2rem":"1.4rem"}/1 serif;color:#2a2238;width:${big?"2.4em":"1.6em"};height:${big?"2.85em":"2.05em"};display:inline-flex;align-items:center;justify-content:center;background:url(stone/runes/${r[0].toLowerCase()}.png) center/contain no-repeat;flex:none"></span>`;
 const cap1=s=>s.charAt(0).toUpperCase()+s.slice(1);
 function moonLine(n){n=String(n||"");return /New/.test(n)?"New moon: low energy. Good for quiet starts and setting intentions.":/Full/.test(n)?"Full moon: feelings peak and things come to a head.":/Waxing|First/.test(n)?"Growing Moon: energy builds. Good for starting, adding and building.":"Shrinking Moon: energy eases off. Good for finishing, clearing out and letting go."}
 function vOverview(d,r){
@@ -2458,4 +2456,13 @@ document.querySelectorAll("#lvK button").forEach(b=>b.onclick=()=>{lvK=b.dataset
 })();
 </script>
 
+<script>
+(function(){
+const RS=["023_041","025_043","026_045","027_047","028_049","029_051","030_053","031_055","032_057","033_059","034_061","035_063","036_065","037_067","038_069","039_071","040_073","041_075","042_077","043_079","044_081","045_083","048_090","049_091","050_092","051_093","052_094","053_095","054_096","055_097","056_098","057_099","058_100","059_101","060_102","061_103","063_107","064_108","065_109","066_110","067_111","068_112","069_113","070_114","071_115","072_116","073_117","074_118","075_119","076_120","078_124","079_125","080_126","081_127","082_128","083_129","084_130","085_131","086_132","087_133","088_134","089_135","090_136","091_137","093_141","094_142","095_143","096_144","097_145","098_146","099_147","100_148","101_149","102_150","103_151","104_152","105_153","106_154"];
+const BASE={Wands:22,Pentacles:36,Swords:50,Cups:64};
+function fixImgs(){document.querySelectorAll('img').forEach(img=>{const s=img.getAttribute('src')||'';const m=s.match(/^cards\/([a-z]*)(\d+)\.jpg$/i);if(!m)return;const w=m[1].toLowerCase();const suit=w?w.charAt(0).toUpperCase()+w.slice(1):'';const num=parseInt(m[2],10);const i=suit?BASE[suit]+num-1:num;const f=RS[i];if(f)img.setAttribute('src','cards-restyled/image_'+f.replace('_','_page_')+'.png')})}
+fixImgs();
+new MutationObserver(fixImgs).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body></html>
