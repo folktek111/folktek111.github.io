@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#101820">
+<title>AR Tape Measure</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root { color-scheme: dark; --panel:rgba(8,18,26,.88); --accent:#ffe45c; --text:#fff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; width:100%; height:100%; overflow:hidden; background:#101820; color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; touch-action: manipulation; }
+  #app { position:fixed; inset:0; }
+  #start { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    padding:28px; text-align:center; background:linear-gradient(145deg,#102330,#101820); z-index:5; }
+  h1 { font-size:clamp(2rem,8vw,3.2rem); margin:0 0 12px; }
+  #start p { max-width:34rem; line-height:1.5; color:#d7e2e8; }
+  button { border:0; border-radius:15px; min-height:54px; padding:13px 19px; font:700 1rem system-ui;
+    color:#101820; background:var(--accent); cursor:pointer; }
+  button:disabled { opacity:.45; }
+  #startBtn { font-size:1.2rem; min-height:66px; padding:16px 30px; margin-top:16px; }
+  #status { color:#ffd76a; min-height:3em; max-width:38rem; white-space:pre-wrap; }
+  #overlay { position:absolute; inset:0; pointer-events:none; display:none; }
+  .top { position:absolute; top:calc(12px + env(safe-area-inset-top,0px)); left:12px; right:12px; display:flex;
+    justify-content:space-between; align-items:center; gap:8px; }
+  #hint { background:var(--panel); border-radius:12px; padding:10px 13px; font-weight:650; font-size:.95rem; }
+  .top button,.controls button { pointer-events:auto; }
+  #bottom { position:absolute; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    background:var(--panel); border:1px solid #52616b; border-radius:18px; padding:12px; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; }
+  .stat { min-width:0; }
+  .stat small { display:block; color:#c3d0d8; font-size:.78rem; margin-bottom:3px; }
+  .stat strong { display:block; font-size:clamp(1rem,4.5vw,1.35rem); overflow-wrap:anywhere; }
+  .controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; justify-content:center; }
+  .controls button { flex:1 1 auto; min-width:82px; min-height:50px; }
+  .controls .secondary { background:#dce7ed; }
+  .controls .danger { background:#ff9c8c; }
+  #addBtn { font-size:1.45rem; min-width:64px; }
+  #closeBtn { background:#b9e6c5; }
+  #modeBtn.active { background:#ffbd66; }
+  @media (orientation:landscape) {
+    #bottom { left:auto; width:min(390px,45vw); top:70px; bottom:10px; overflow:auto; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <section id="start">
+    <h1>AR Tape Measure</h1>
+    <p>Measure distances and areas using your phone camera. Move slowly over a textured floor or surface, then tap ＋ to place measurement points.</p>
+    <div id="status">Checking WebXR support…</div>
+    <button id="startBtn" disabled>Start measuring</button>
+    <p style="font-size:.85rem">Requires Chrome on Android, an ARCore-supported device, HTTPS, and a top-level page (not an embedded frame).</p>
+  </section>
+
+  <div id="overlay">
+    <div class="top">
+      <div id="hint">Sweep the phone slowly over the floor</div>
+      <button id="exitBtn" class="secondary">Exit</button>
+    </div>
+    <div id="bottom">
+      <div class="stats">
+        <div class="stat"><small id="segmentTitle">Segment</small><strong id="segmentValue">—</strong></div>
+        <div class="stat"><small>Total</small><strong id="totalValue">—</strong></div>
+        <div class="stat"><small>Area</small><strong id="areaValue">—</strong></div>
+      </div>
+      <div class="controls">
+        <button id="addBtn" aria-label="Add point">＋</button>
+        <button id="undoBtn" class="secondary">Undo</button>
+        <button id="clearBtn" class="danger">Clear all</button>
+        <button id="closeBtn" disabled>Close shape</button>
+      </div>
+      <div class="controls">
+        <button id="modeBtn" class="secondary">Height mode: off</button>
+        <button id="unitBtn" class="secondary">Units: m / cm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Three.js (MIT licence) is bundled in ./vendor so the app does not depend on a CDN. -->
+<script type="module">
+import * as THREE from './vendor/three.module.js';
+
+const $ = id => document.getElementById(id);
+const start = $('start'), startBtn = $('startBtn'), status = $('status');
+const overlay = $('overlay'), hint = $('hint');
+const segmentTitle = $('segmentTitle'), segmentValue = $('segmentValue'), totalValue = $('totalValue'), areaValue = $('areaValue');
+const addBtn = $('addBtn'), undoBtn = $('undoBtn'), clearBtn = $('clearBtn');
+const closeBtn = $('closeBtn'), exitBtn = $('exitBtn'), modeBtn = $('modeBtn'), unitBtn = $('unitBtn');
+
+let renderer, scene, camera, session, hitSource, localSpace, viewerSpace;
+let reticle, previewLine, previewLabel;
+let points = [], segmentObjects = [], closed = false;
+let currentHit = null, currentViewerPose = null, heightMode = false, millimetres = false;
+let heightLine = null, heightLabel = null, heightLocked = false, lastHeight = NaN;
+let hintHoldUntil = 0;
+
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffe45c, depthTest: false });
+const previewMaterial = new THREE.LineBasicMaterial({ color: 0x55e6ff, depthTest: false });
+const heightMaterial = new THREE.LineBasicMaterial({ color: 0xff9c4a, depthTest: false });
+const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xffe45c, depthTest: false });
+const markerGeometry = new THREE.SphereGeometry(0.02, 16, 12);
+const UP = new THREE.Vector3(0, 1, 0);
+
+function setStatus(message) { status.textContent = message; }
+function setHint(text, holdMs = 0) {
+  // A held hint (e.g. an instruction after a button press) is not overwritten by the per-frame hint for a moment.
+  const now = performance.now();
+  if (!holdMs && now < hintHoldUntil) return;
+  if (holdMs) hintHoldUntil = now + holdMs;
+  if (hint.textContent !== text) hint.textContent = text;
+}
+
+async function checkSupport() {
+  if (!window.isSecureContext) {
+    setStatus('WebXR needs a secure HTTPS page. Open this page from its https:// address.');
+    return;
+  }
+  if (!navigator.xr) {
+    setStatus('This browser does not expose WebXR. Use current Chrome on an ARCore-supported Android phone.');
+    return;
+  }
+  try {
+    const supported = await navigator.xr.isSessionSupported('immersive-ar');
+    if (!supported) {
+      setStatus('Immersive AR is not available here. Check Chrome, Google Play Services for AR (ARCore), camera permission, and device support.');
+      return;
+    }
+    setStatus('AR is available. Ready to measure.');
+    startBtn.disabled = false;
+  } catch (error) {
+    setStatus('Could not check AR support: ' + error.message);
+  }
+}
+checkSupport();
+
+function drawLabel(canvas, text, color) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 512, 128);
+  ctx.fillStyle = 'rgba(5,15,22,.86)';
+  ctx.beginPath(); ctx.roundRect(8, 8, 496, 112, 24); ctx.fill();
+  // Shrink the font until the text fits, so long values like "12.34 m / 1234 cm" are not clipped.
+  let size = 54;
+  do { ctx.font = `bold ${size}px system-ui`; size -= 2; } while (ctx.measureText(text).width > 460 && size > 20);
+  ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, 256, 66);
+}
+function makeLabel(text, color = '#ffffff') {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 128;
+  drawLabel(canvas, text, color);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
+  sprite.scale.set(0.3, 0.075, 1);
+  sprite.renderOrder = 30;
+  return sprite;
+}
+function updateLabel(sprite, text, color = '#ffffff') {
+  if (sprite.userData.text === text) return; // skip redrawing the texture when nothing changed
+  sprite.userData.text = text;
+  drawLabel(sprite.material.map.image, text, color);
+  sprite.material.map.needsUpdate = true;
+}
+function disposeLabel(sprite) { sprite.material.map.dispose(); sprite.material.dispose(); }
+function makeLine(a, b, material) {
+  const geometry = new THREE.BufferGeometry().setFromPoints([a.clone(), b.clone()]);
+  const line = new THREE.Line(geometry, material);
+  line.renderOrder = 10;
+  return line;
+}
+function setLine(line, a, b) {
+  // Update the two vertices in place instead of creating a new geometry every frame.
+  const pos = line.geometry.attributes.position;
+  pos.setXYZ(0, a.x, a.y, a.z); pos.setXYZ(1, b.x, b.y, b.z);
+  pos.needsUpdate = true; line.geometry.computeBoundingSphere();
+}
+function fmt(m) {
+  if (!Number.isFinite(m)) return '—';
+  if (millimetres) return `${(m * 1000).toFixed(0)} mm`;
+  return `${m.toFixed(2)} m / ${(m * 100).toFixed(0)} cm`;
+}
+function fmtArea(a) {
+  if (!Number.isFinite(a)) return '—';
+  if (millimetres) return `${(a * 1e6).toFixed(0)} mm²`;
+  return `${a.toFixed(2)} m²`;
+}
+function distance(a, b) { return a.distanceTo(b); }
+function midpoint(a, b, lift) { return a.clone().add(b).multiplyScalar(0.5).addScaledVector(UP, lift); }
+
+function initScene() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera();
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.xr.enabled = true;
+  renderer.xr.setReferenceSpaceType('local');
+  renderer.setClearColor(0x000000, 0);
+  Object.assign(renderer.domElement.style, { position: 'absolute', inset: '0', width: '100%', height: '100%', pointerEvents: 'none' });
+  $('app').appendChild(renderer.domElement);
+
+  // The reticle is a thin ring and a small centre cross, lying flat on the detected surface.
+  reticle = new THREE.Group();
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.09, 48),
+    new THREE.MeshBasicMaterial({ color: 0x55e6ff, side: THREE.DoubleSide, depthTest: false }));
+  ring.rotation.x = -Math.PI / 2;
+  ring.renderOrder = 20;
+  reticle.add(ring);
+  const cross = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-0.035, 0.002, 0), new THREE.Vector3(0.035, 0.002, 0),
+    new THREE.Vector3(0, 0.002, -0.035), new THREE.Vector3(0, 0.002, 0.035)
+  ]), new THREE.LineBasicMaterial({ color: 0xffffff, depthTest: false }));
+  cross.renderOrder = 21;
+  reticle.add(cross);
+  reticle.visible = false; scene.add(reticle);
+
+  previewLine = makeLine(new THREE.Vector3(), new THREE.Vector3(), previewMaterial); previewLine.visible = false; scene.add(previewLine);
+  previewLabel = makeLabel(''); previewLabel.visible = false; scene.add(previewLabel);
+  renderer.setAnimationLoop(render);
+}
+function addMarker(position) {
+  const mesh = new THREE.Mesh(markerGeometry, markerMaterial);
+  mesh.position.copy(position); mesh.renderOrder = 15; scene.add(mesh);
+  return mesh;
+}
+function placePoint() {
+  const p = currentHit.clone();
+  points.push({ position: p, marker: addMarker(p) });
+  if (points.length > 1) {
+    const previous = points[points.length - 2].position;
+    const line = makeLine(previous, p, lineMaterial); scene.add(line);
+    const label = makeLabel(fmt(distance(previous, p)));
+    label.position.copy(midpoint(previous, p, 0.04));
+    scene.add(label);
+    segmentObjects.push({ line, label });
+  }
+  refreshStats();
+}
+function addPoint() {
+  if (heightMode) {
+    // Height mode: ＋ places the base point if there is none; after that it locks / unlocks the reading.
+    if (!points.length) {
+      if (!currentHit || !reticle.visible) { setHint('Find the floor first (wait for the ring)', 2500); return; }
+      placePoint();
+      setHint('Now tilt up to the top, tap ＋ to lock', 3000);
+      return;
+    }
+    heightLocked = !heightLocked;
+    setHint(heightLocked ? 'Height locked. Tap ＋ to measure again' : 'Tilt up to the top, tap ＋ to lock', 3000);
+    return;
+  }
+  if (closed) { setHint('Shape is closed. Undo or Clear to continue', 2500); return; }
+  if (!currentHit || !reticle.visible) { setHint('No surface yet. Sweep slowly until the ring appears', 2500); return; }
+  placePoint();
+}
+function refreshStats() {
+  let total = 0;
+  for (let i = 1; i < points.length; i++) total += distance(points[i - 1].position, points[i].position);
+  if (closed && points.length > 2) total += distance(points[points.length - 1].position, points[0].position);
+  totalValue.textContent = points.length > 1 ? fmt(total) : '—';
+  if (!heightMode) {
+    segmentTitle.textContent = 'Segment';
+    segmentValue.textContent = points.length > 1 ? fmt(distance(points[points.length - 2].position, points[points.length - 1].position)) : '—';
+  }
+  closeBtn.disabled = points.length < 3 || closed || heightMode;
+  areaValue.textContent = closed ? fmtArea(polygonArea()) : '—';
+}
+// Polygon area in 3D: half the length of the summed cross products (exact for a flat polygon).
+function polygonArea() {
+  if (points.length < 3) return 0;
+  const sum = new THREE.Vector3(), c = new THREE.Vector3();
+  for (let i = 0; i < points.length; i++) {
+    sum.add(c.crossVectors(points[i].position, points[(i + 1) % points.length].position));
+  }
+  return sum.length() * 0.5;
+}
+function closeShape() {
+  if (points.length < 3 || closed) return;
+  const a = points[points.length - 1].position, b = points[0].position;
+  const line = makeLine(a, b, lineMaterial); scene.add(line);
+  const label = makeLabel(fmt(distance(a, b)));
+  label.position.copy(midpoint(a, b, 0.04)); scene.add(label);
+  segmentObjects.push({ line, label }); closed = true; refreshStats();
+}
+function removeSegment(s) { scene.remove(s.line, s.label); s.line.geometry.dispose(); disposeLabel(s.label); }
+function undo() {
+  if (heightMode && heightLine) { clearHeight(); refreshStats(); return; } // first undo only removes the height line
+  if (closed) {
+    removeSegment(segmentObjects.pop());
+    closed = false;
+  } else if (points.length) {
+    scene.remove(points.pop().marker);
+    if (segmentObjects.length) removeSegment(segmentObjects.pop());
+  }
+  refreshStats();
+}
+function clearAll() {
+  clearHeight();
+  points.forEach(p => scene.remove(p.marker)); points = [];
+  segmentObjects.forEach(removeSegment); segmentObjects = [];
+  closed = false; refreshStats();
+}
+function clearHeight() {
+  if (heightLine) { scene?.remove(heightLine); heightLine.geometry.dispose(); heightLine = null; }
+  if (heightLabel) { scene?.remove(heightLabel); disposeLabel(heightLabel); heightLabel = null; }
+  heightLocked = false; lastHeight = NaN;
+}
+function updateHeight() {
+  if (!heightMode || !points.length || !currentViewerPose) return;
+  const anchor = points[points.length - 1].position;
+  let height = lastHeight;
+  if (!heightLocked) {
+    const m = new THREE.Matrix4().fromArray(currentViewerPose.transform.matrix);
+    const origin = new THREE.Vector3().setFromMatrixPosition(m);
+    const direction = new THREE.Vector3(0, 0, -1).transformDirection(m);
+    // Find the point on the camera's centre ray that is nearest the vertical line above the base point.
+    const dx = anchor.x - origin.x, dz = anchor.z - origin.z;
+    const denom = direction.x * direction.x + direction.z * direction.z;
+    if (denom < 1e-5) { setHint('Step back a little: aim at the top, not straight up', 1500); return; }
+    const t = (dx * direction.x + dz * direction.z) / denom;
+    if (t <= 0) { setHint('Point the phone towards the base point', 1500); return; }
+    height = Math.max(0, origin.y + t * direction.y - anchor.y);
+    lastHeight = height;
+  }
+  if (!Number.isFinite(height)) return;
+  const top = anchor.clone().addScaledVector(UP, height);
+  if (!heightLine) {
+    heightLine = makeLine(anchor, top, heightMaterial); scene.add(heightLine);
+    heightLabel = makeLabel(''); scene.add(heightLabel);
+  } else setLine(heightLine, anchor, top);
+  heightLabel.position.copy(midpoint(anchor, top, 0));
+  updateLabel(heightLabel, fmt(height), '#ffbd66');
+  segmentTitle.textContent = heightLocked ? 'Height (locked)' : 'Height';
+  segmentValue.textContent = fmt(height);
+}
+function render(_time, frame) {
+  if (frame && session && localSpace) {
+    currentViewerPose = frame.getViewerPose(localSpace);
+    const hits = hitSource ? frame.getHitTestResults(hitSource) : [];
+    const hitPose = hits.length ? hits[0].getPose(localSpace) : null;
+    if (hitPose) {
+      const matrix = new THREE.Matrix4().fromArray(hitPose.transform.matrix);
+      reticle.position.setFromMatrixPosition(matrix);
+      reticle.quaternion.setFromRotationMatrix(matrix);
+      reticle.visible = true;
+      currentHit = reticle.position.clone();
+      if (heightMode) setHint(points.length ? (heightLocked ? 'Height locked. Tap ＋ to measure again' : 'Tilt up to the top, tap ＋ to lock') : 'Tap ＋ to place the base point');
+      else setHint(closed ? 'Shape closed. Undo or Clear to continue' : 'Tap ＋ to place a point');
+      if (!heightMode && points.length && !closed) {
+        const last = points[points.length - 1].position;
+        setLine(previewLine, last, currentHit); previewLine.visible = true;
+        previewLabel.position.copy(midpoint(last, currentHit, 0.05));
+        updateLabel(previewLabel, fmt(distance(last, currentHit))); previewLabel.visible = true;
+        segmentValue.textContent = fmt(distance(last, currentHit));
+      } else { previewLine.visible = false; previewLabel.visible = false; }
+    } else {
+      reticle.visible = false; currentHit = null; previewLine.visible = false; previewLabel.visible = false;
+      if (!(heightMode && points.length)) setHint('Sweep the phone slowly over the floor');
+    }
+    updateHeight();
+  }
+  renderer.render(scene, camera);
+}
+
+async function startAR() {
+  startBtn.disabled = true;
+  try {
+    if (window.top !== window.self) throw new Error('This page is inside an iframe. Open its address directly in Chrome.');
+    initScene();
+    overlay.style.display = 'block'; // the DOM overlay root should be visible when the session starts
+    session = await navigator.xr.requestSession('immersive-ar', {
+      requiredFeatures: ['hit-test'],
+      optionalFeatures: ['dom-overlay'],
+      domOverlay: { root: overlay }
+    });
+    session.addEventListener('end', endAR);
+    await renderer.xr.setSession(session);
+    // Use the same 'local' space three.js uses for the camera, so hits and camera poses share one origin.
+    localSpace = renderer.xr.getReferenceSpace();
+    viewerSpace = await session.requestReferenceSpace('viewer');
+    hitSource = await session.requestHitTestSource({ space: viewerSpace });
+    start.style.display = 'none';
+    refreshStats();
+  } catch (error) {
+    if (session) { session.removeEventListener('end', endAR); session.end().catch(() => {}); session = null; }
+    teardown();
+    setStatus('Could not start AR: ' + error.message + '\nCheck HTTPS, Chrome camera permission, ARCore / Google Play Services for AR, and that the page is not embedded.');
+    startBtn.disabled = false;
+  }
+}
+function teardown() {
+  if (hitSource) { hitSource.cancel(); hitSource = null; }
+  clearHeight();
+  if (scene) {
+    segmentObjects.forEach(s => { s.line.geometry.dispose(); disposeLabel(s.label); });
+    if (previewLabel) disposeLabel(previewLabel);
+  }
+  if (renderer) { renderer.setAnimationLoop(null); renderer.dispose(); renderer.domElement.remove(); renderer = null; }
+  scene = null; points = []; segmentObjects = []; closed = false;
+  currentHit = null; currentViewerPose = null; localSpace = null; viewerSpace = null;
+  overlay.style.display = 'none'; start.style.display = 'flex';
+}
+function endAR() {
+  session = null;
+  teardown();
+  startBtn.disabled = false; setStatus('AR session ended. Start again when ready.');
+}
+startBtn.addEventListener('click', startAR);
+addBtn.addEventListener('click', addPoint);
+undoBtn.addEventListener('click', undo);
+clearBtn.addEventListener('click', clearAll);
+closeBtn.addEventListener('click', closeShape);
+exitBtn.addEventListener('click', () => session?.end());
+modeBtn.addEventListener('click', () => {
+  heightMode = !heightMode; modeBtn.classList.toggle('active', heightMode);
+  modeBtn.textContent = 'Height mode: ' + (heightMode ? 'on' : 'off');
+  clearHeight();
+  if (previewLine) { previewLine.visible = false; previewLabel.visible = false; }
+  setHint(heightMode ? (points.length ? 'Measuring up from the last point. Tilt up to the top' : 'Tap ＋ on the floor to place the base point')
+                     : 'Tap ＋ to place a point', 3000);
+  refreshStats();
+});
+unitBtn.addEventListener('click', () => {
+  millimetres = !millimetres; unitBtn.textContent = 'Units: ' + (millimetres ? 'mm' : 'm / cm');
+  segmentObjects.forEach((s, i) => {
+    const a = points[i].position, b = points[(i + 1) % points.length].position; // last segment wraps when closed
+    updateLabel(s.label, fmt(distance(a, b)));
+  });
+  if (heightLabel && Number.isFinite(lastHeight)) updateLabel(heightLabel, fmt(lastHeight), '#ffbd66');
+  refreshStats();
+});
+window.addEventListener('resize', () => { if (renderer && !renderer.xr.isPresenting) renderer.setSize(innerWidth, innerHeight); });
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
