@@ -2,12 +2,15 @@
 <!--
 Made by:  Claude
 Model:    Claude Opus 5.5
-Version:  v1.0.2
-Created:  2026-11-20 01:55 CET (Europe/Stockholm, UTC+1)
+Version:  v1.1.0
+Created:  2026-11-20 CET (Europe/Stockholm, UTC+1)
 About:    AR Tape Measure — WebXR measuring tool for Chrome on Android (distance, area, height). Part of the Folktek Vibe Coding Lab, live at folktek.org/measure.
-Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink, add version tags, export to VIBE/V, remove all orange.
+Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink, add version tags, export to VIBE/V, remove all orange, grey-pink palette with a hue slider.
 
 Changelog:
+  v1.1.0 (2026-11-20) New grey-pink palette (black, grey, dusty pink, soft purple, plum).
+                      Hue slider + Reset on the start screen: shifts the colours for people who like
+                      other colours; greys stay; saved on the phone. Default stays grey-pink.
   v1.0.2 (2026-11-20) No orange or peach: height mode, height line and label now hot pink (#ff5fb0),
                       Clear all red (#ff4d6d), status text yellow.
   v1.0.1 (2026-11-19) Buttons pink (#ff9ecf) instead of yellow.
@@ -20,43 +23,49 @@ Changelog:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#101820">
+<meta name="theme-color" content="#121014">
 <title>AR Tape Measure</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <style>
-  :root { color-scheme: dark; --panel:rgba(8,18,26,.88); --accent:#ff9ecf; --text:#fff; }
+  :root { color-scheme: dark; --bg:#121014; --panel:rgba(42,39,45,.92); --line:#4a4550; --grey:#d9d4da; --muted:#b3acb6; --text:#f1edf2;
+    --accent:#d8a7b8; --height:#b9849a; --ring:#9b8ac4; --danger:#8a5a7a; }
   * { box-sizing:border-box; }
-  html,body { margin:0; width:100%; height:100%; overflow:hidden; background:#101820; color:var(--text);
+  html,body { margin:0; width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--text);
     font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; touch-action: manipulation; }
   #app { position:fixed; inset:0; }
   #start { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center;
-    padding:28px; text-align:center; background:linear-gradient(145deg,#102330,#101820); z-index:5; }
+    padding:28px; text-align:center; background:linear-gradient(145deg,#1d1920,var(--bg)); z-index:5; overflow:auto; }
   h1 { font-size:clamp(2rem,8vw,3.2rem); margin:0 0 12px; }
-  #start p { max-width:34rem; line-height:1.5; color:#d7e2e8; }
+  #start p { max-width:34rem; line-height:1.5; color:var(--muted); }
   button { border:0; border-radius:15px; min-height:54px; padding:13px 19px; font:700 1rem system-ui;
-    color:#101820; background:var(--accent); cursor:pointer; }
+    color:#121014; background:var(--accent); cursor:pointer; }
   button:disabled { opacity:.45; }
   #startBtn { font-size:1.2rem; min-height:66px; padding:16px 30px; margin-top:16px; }
-  #status { color:#ffe45c; min-height:3em; max-width:38rem; white-space:pre-wrap; }
+  #status { color:var(--accent); min-height:3em; max-width:38rem; white-space:pre-wrap; }
   #overlay { position:absolute; inset:0; pointer-events:none; display:none; }
   .top { position:absolute; top:calc(12px + env(safe-area-inset-top,0px)); left:12px; right:12px; display:flex;
     justify-content:space-between; align-items:center; gap:8px; }
   #hint { background:var(--panel); border-radius:12px; padding:10px 13px; font-weight:650; font-size:.95rem; }
   .top button,.controls button { pointer-events:auto; }
   #bottom { position:absolute; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom,0px));
-    background:var(--panel); border:1px solid #52616b; border-radius:18px; padding:12px; }
+    background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:12px; }
   .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; }
   .stat { min-width:0; }
-  .stat small { display:block; color:#c3d0d8; font-size:.78rem; margin-bottom:3px; }
+  .stat small { display:block; color:var(--muted); font-size:.78rem; margin-bottom:3px; }
   .stat strong { display:block; font-size:clamp(1rem,4.5vw,1.35rem); overflow-wrap:anywhere; }
   .controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; justify-content:center; }
   .controls button { flex:1 1 auto; min-width:82px; min-height:50px; }
-  .controls .secondary { background:#dce7ed; }
-  .controls .danger { background:#ff4d6d; }
+  .controls .secondary, .top .secondary { background:var(--grey); }
+  .controls .danger { background:var(--danger); color:var(--text); }
   #addBtn { font-size:1.45rem; min-width:64px; }
-  #closeBtn { background:#b9e6c5; }
-  #modeBtn.active { background:#ff5fb0; }
+  #closeBtn { background:var(--ring); }
+  #modeBtn.active { background:var(--height); color:var(--text); }
+  #hue { display:flex; align-items:center; gap:10px; margin-top:18px; width:min(100%,22rem); background:var(--panel);
+    border:1px solid var(--line); border-radius:15px; padding:8px 12px; }
+  #hue label { color:var(--muted); font-size:.9rem; }
+  #hueSlider { flex:1; accent-color:var(--accent); height:28px; }
+  #hueReset { min-height:38px; padding:6px 12px; font-size:.85rem; background:var(--grey); }
   @media (orientation:landscape) {
     #bottom { left:auto; width:min(390px,45vw); top:70px; bottom:10px; overflow:auto; }
   }
@@ -69,6 +78,11 @@ Changelog:
     <p>Measure distances and areas using your phone camera. Move slowly over a textured floor or surface, then tap ＋ to place measurement points.</p>
     <div id="status">Checking WebXR support…</div>
     <button id="startBtn" disabled>Start measuring</button>
+    <div id="hue">
+      <label for="hueSlider">Colour</label>
+      <input id="hueSlider" type="range" min="0" max="359" step="1" value="0" aria-label="Shift the app colours">
+      <button id="hueReset" type="button">Reset</button>
+    </div>
     <p style="font-size:.85rem">Requires Chrome on Android, an ARCore-supported device, HTTPS, and a top-level page (not an embedded frame).</p>
   </section>
 
@@ -115,10 +129,14 @@ let currentHit = null, currentViewerPose = null, heightMode = false, millimetres
 let heightLine = null, heightLabel = null, heightLocked = false, lastHeight = NaN;
 let hintHoldUntil = 0;
 
-const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffe45c, depthTest: false });
-const previewMaterial = new THREE.LineBasicMaterial({ color: 0x55e6ff, depthTest: false });
-const heightMaterial = new THREE.LineBasicMaterial({ color: 0xff5fb0, depthTest: false });
-const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xffe45c, depthTest: false });
+// Base palette (grey-pink). The hue slider rotates only these coloured entries; greys stay as they are.
+const BASE = { accent:'#d8a7b8', height:'#b9849a', ring:'#9b8ac4', danger:'#8a5a7a' };
+const C = { ...BASE };
+const lineMaterial = new THREE.LineBasicMaterial({ color: C.accent, depthTest: false });
+const previewMaterial = new THREE.LineBasicMaterial({ color: C.ring, depthTest: false });
+const heightMaterial = new THREE.LineBasicMaterial({ color: C.height, depthTest: false });
+const markerMaterial = new THREE.MeshBasicMaterial({ color: C.accent, depthTest: false });
+const ringMaterial = new THREE.MeshBasicMaterial({ color: C.ring, side: THREE.DoubleSide, depthTest: false });
 const markerGeometry = new THREE.SphereGeometry(0.02, 16, 12);
 const UP = new THREE.Vector3(0, 1, 0);
 
@@ -157,7 +175,7 @@ checkSupport();
 function drawLabel(canvas, text, color) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, 512, 128);
-  ctx.fillStyle = 'rgba(5,15,22,.86)';
+  ctx.fillStyle = 'rgba(18,16,20,.86)';
   ctx.beginPath(); ctx.roundRect(8, 8, 496, 112, 24); ctx.fill();
   // Shrink the font until the text fits, so long values like "12.34 m / 1234 cm" are not clipped.
   let size = 54;
@@ -221,7 +239,7 @@ function initScene() {
   // The reticle is a thin ring and a small centre cross, lying flat on the detected surface.
   reticle = new THREE.Group();
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.09, 48),
-    new THREE.MeshBasicMaterial({ color: 0x55e6ff, side: THREE.DoubleSide, depthTest: false }));
+    ringMaterial);
   ring.rotation.x = -Math.PI / 2;
   ring.renderOrder = 20;
   reticle.add(ring);
@@ -348,7 +366,7 @@ function updateHeight() {
     heightLabel = makeLabel(''); scene.add(heightLabel);
   } else setLine(heightLine, anchor, top);
   heightLabel.position.copy(midpoint(anchor, top, 0));
-  updateLabel(heightLabel, fmt(height), '#ff5fb0');
+  updateLabel(heightLabel, fmt(height), C.height);
   segmentTitle.textContent = heightLocked ? 'Height (locked)' : 'Height';
   segmentValue.textContent = fmt(height);
 }
@@ -445,10 +463,32 @@ unitBtn.addEventListener('click', () => {
     const a = points[i].position, b = points[(i + 1) % points.length].position; // last segment wraps when closed
     updateLabel(s.label, fmt(distance(a, b)));
   });
-  if (heightLabel && Number.isFinite(lastHeight)) updateLabel(heightLabel, fmt(lastHeight), '#ff5fb0');
+  if (heightLabel && Number.isFinite(lastHeight)) updateLabel(heightLabel, fmt(lastHeight), C.height);
   refreshStats();
 });
 window.addEventListener('resize', () => { if (renderer && !renderer.xr.isPresenting) renderer.setSize(innerWidth, innerHeight); });
+
+function shiftHue(hex, deg) {
+  const c = new THREE.Color(hex), hsl = {};
+  c.getHSL(hsl);
+  c.setHSL(((hsl.h + deg / 360) % 1 + 1) % 1, hsl.s, hsl.l);
+  return '#' + c.getHexString();
+}
+function applyHue(deg) {
+  for (const k in BASE) C[k] = shiftHue(BASE[k], deg);
+  const root = document.documentElement.style;
+  for (const k in C) root.setProperty('--' + k, C[k]);
+  lineMaterial.color.set(C.accent); markerMaterial.color.set(C.accent);
+  previewMaterial.color.set(C.ring); ringMaterial.color.set(C.ring); heightMaterial.color.set(C.height);
+  if (heightLabel && Number.isFinite(lastHeight)) { heightLabel.userData.text = null; updateLabel(heightLabel, fmt(lastHeight), C.height); }
+  try { localStorage.setItem('measureHue', String(deg)); } catch (e) {}
+}
+const hueSlider = $('hueSlider');
+let savedHue = 0;
+try { savedHue = Number(localStorage.getItem('measureHue')) || 0; } catch (e) {}
+hueSlider.value = savedHue; applyHue(savedHue);
+hueSlider.addEventListener('input', () => applyHue(Number(hueSlider.value)));
+$('hueReset').addEventListener('click', () => { hueSlider.value = 0; applyHue(0); });
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>

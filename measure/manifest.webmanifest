@@ -1,12 +1,12 @@
 {
   "name": "AR Tape Measure",
   "short_name": "Measure",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#101820",
-  "theme_color": "#101820",
+  "background_color": "#121014",
+  "theme_color": "#121014",
   "icons": [
     {
       "src": "icon-192.png",
