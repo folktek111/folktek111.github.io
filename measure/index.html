@@ -2,12 +2,14 @@
 <!--
 Made by:  Claude
 Model:    Claude Opus 5.5
-Version:  v1.0.1
-Created:  2026-11-20 01:39 CET (Europe/Stockholm, UTC+1)
+Version:  v1.0.2
+Created:  2026-11-20 01:55 CET (Europe/Stockholm, UTC+1)
 About:    AR Tape Measure — WebXR measuring tool for Chrome on Android (distance, area, height). Part of the Folktek Vibe Coding Lab, live at folktek.org/measure.
-Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink, add version tags and export to VIBE/V.
+Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink, add version tags, export to VIBE/V, remove all orange.
 
 Changelog:
+  v1.0.2 (2026-11-20) No orange or peach: height mode, height line and label now hot pink (#ff5fb0),
+                      Clear all red (#ff4d6d), status text yellow.
   v1.0.1 (2026-11-19) Buttons pink (#ff9ecf) instead of yellow.
   v1.0.0 (2026-11-19) Reviewed and fixed version first published at folktek.org/measure:
                       shared reference space for hits and camera, height mode base point + lock,
@@ -36,7 +38,7 @@ Changelog:
     color:#101820; background:var(--accent); cursor:pointer; }
   button:disabled { opacity:.45; }
   #startBtn { font-size:1.2rem; min-height:66px; padding:16px 30px; margin-top:16px; }
-  #status { color:#ffd76a; min-height:3em; max-width:38rem; white-space:pre-wrap; }
+  #status { color:#ffe45c; min-height:3em; max-width:38rem; white-space:pre-wrap; }
   #overlay { position:absolute; inset:0; pointer-events:none; display:none; }
   .top { position:absolute; top:calc(12px + env(safe-area-inset-top,0px)); left:12px; right:12px; display:flex;
     justify-content:space-between; align-items:center; gap:8px; }
@@ -51,10 +53,10 @@ Changelog:
   .controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; justify-content:center; }
   .controls button { flex:1 1 auto; min-width:82px; min-height:50px; }
   .controls .secondary { background:#dce7ed; }
-  .controls .danger { background:#ff9c8c; }
+  .controls .danger { background:#ff4d6d; }
   #addBtn { font-size:1.45rem; min-width:64px; }
   #closeBtn { background:#b9e6c5; }
-  #modeBtn.active { background:#ffbd66; }
+  #modeBtn.active { background:#ff5fb0; }
   @media (orientation:landscape) {
     #bottom { left:auto; width:min(390px,45vw); top:70px; bottom:10px; overflow:auto; }
   }
@@ -115,7 +117,7 @@ let hintHoldUntil = 0;
 
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffe45c, depthTest: false });
 const previewMaterial = new THREE.LineBasicMaterial({ color: 0x55e6ff, depthTest: false });
-const heightMaterial = new THREE.LineBasicMaterial({ color: 0xff9c4a, depthTest: false });
+const heightMaterial = new THREE.LineBasicMaterial({ color: 0xff5fb0, depthTest: false });
 const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xffe45c, depthTest: false });
 const markerGeometry = new THREE.SphereGeometry(0.02, 16, 12);
 const UP = new THREE.Vector3(0, 1, 0);
@@ -346,7 +348,7 @@ function updateHeight() {
     heightLabel = makeLabel(''); scene.add(heightLabel);
   } else setLine(heightLine, anchor, top);
   heightLabel.position.copy(midpoint(anchor, top, 0));
-  updateLabel(heightLabel, fmt(height), '#ffbd66');
+  updateLabel(heightLabel, fmt(height), '#ff5fb0');
   segmentTitle.textContent = heightLocked ? 'Height (locked)' : 'Height';
   segmentValue.textContent = fmt(height);
 }
@@ -443,7 +445,7 @@ unitBtn.addEventListener('click', () => {
     const a = points[i].position, b = points[(i + 1) % points.length].position; // last segment wraps when closed
     updateLabel(s.label, fmt(distance(a, b)));
   });
-  if (heightLabel && Number.isFinite(lastHeight)) updateLabel(heightLabel, fmt(lastHeight), '#ffbd66');
+  if (heightLabel && Number.isFinite(lastHeight)) updateLabel(heightLabel, fmt(lastHeight), '#ff5fb0');
   refreshStats();
 });
 window.addEventListener('resize', () => { if (renderer && !renderer.xr.isPresenting) renderer.setSize(innerWidth, innerHeight); });
