@@ -1,7 +1,7 @@
 {
   "name": "AR Tape Measure",
   "short_name": "Measure",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

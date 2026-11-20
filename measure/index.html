@@ -2,12 +2,25 @@
 <!--
 Made by:  Claude
 Model:    Claude Opus 5.5
-Version:  v1.1.0
+Version:  v1.2.0
 Created:  2026-11-20 CET (Europe/Stockholm, UTC+1)
-About:    AR Tape Measure — WebXR measuring tool for Chrome on Android (distance, area, height). Part of the Folktek Vibe Coding Lab, live at folktek.org/measure.
-Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink, add version tags, export to VIBE/V, remove all orange, grey-pink palette with a hue slider.
+About:    AR Tape Measure — WebXR measuring tool for Chrome on Android: lines, shapes and areas,
+          flat planes, volume, height and circles. Part of the Folktek Vibe Coding Lab,
+          live at folktek.org/measure. Copyleft: GPL-3.0-or-later (see LICENSE).
+Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink,
+          add version tags, export to VIBE/V, remove all orange, grey-pink palette with a hue slider,
+          simple A-to-B line by default, advanced tools in a More tray, icon buttons, info overlay,
+          Folktek logo, link, eyebrow, code download and copyleft on the start screen.
 
 Changelog:
+  v1.2.0 (2026-11-20) Line tool is the default: two taps = one A-to-B measurement, next tap starts a new line.
+                      More tray with tools: Shape (close, area), Flatten (lines points up on one plane and
+                      shows a see-through surface), Volume (shape area x measured height, drawn as a box),
+                      Height, Circle (3 points on the edge: diameter, circumference, area).
+                      Icon buttons, info (i) overlay explaining every button, Undo works across tools.
+                      Start screen: FOLKTEK VIBE CODING LAB eyebrow, Folktek sun logo + name linking to
+                      folktek.org, download-the-code zip, GitHub source link, copyleft GPL-3.0.
+                      Fonts (IBM Plex Mono, Source Serif 4, OFL) bundled for offline use.
   v1.1.0 (2026-11-20) New grey-pink palette (black, grey, dusty pink, soft purple, plum).
                       Hue slider + Reset on the start screen: shifts the colours for people who like
                       other colours; greys stay; saved on the phone. Default stays grey-pink.
@@ -28,85 +41,195 @@ Changelog:
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <style>
-  :root { color-scheme: dark; --bg:#121014; --panel:rgba(42,39,45,.92); --line:#4a4550; --grey:#d9d4da; --muted:#b3acb6; --text:#f1edf2;
+  @font-face { font-family:"IBM Plex Mono"; font-weight:500; font-display:swap; src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family:"Source Serif 4"; font-weight:600; font-display:swap; src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2"); }
+  :root { color-scheme: dark; --bg:#121014; --panel:rgba(42,39,45,.92); --tray:#36323a; --line:#4a4550; --grey:#d9d4da; --muted:#b3acb6; --text:#f1edf2;
     --accent:#d8a7b8; --height:#b9849a; --ring:#9b8ac4; --danger:#8a5a7a; }
   * { box-sizing:border-box; }
   html,body { margin:0; width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--text);
     font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; touch-action: manipulation; }
+  a { color:var(--accent); }
   #app { position:fixed; inset:0; }
-  #start { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center;
-    padding:28px; text-align:center; background:linear-gradient(145deg,#1d1920,var(--bg)); z-index:5; overflow:auto; }
-  h1 { font-size:clamp(2rem,8vw,3.2rem); margin:0 0 12px; }
-  #start p { max-width:34rem; line-height:1.5; color:var(--muted); }
-  button { border:0; border-radius:15px; min-height:54px; padding:13px 19px; font:700 1rem system-ui;
+  button { border:0; border-radius:15px; min-height:50px; padding:10px 16px; font:700 1rem system-ui;
     color:#121014; background:var(--accent); cursor:pointer; }
-  button:disabled { opacity:.45; }
-  #startBtn { font-size:1.2rem; min-height:66px; padding:16px 30px; margin-top:16px; }
-  #status { color:var(--accent); min-height:3em; max-width:38rem; white-space:pre-wrap; }
-  #overlay { position:absolute; inset:0; pointer-events:none; display:none; }
-  .top { position:absolute; top:calc(12px + env(safe-area-inset-top,0px)); left:12px; right:12px; display:flex;
-    justify-content:space-between; align-items:center; gap:8px; }
-  #hint { background:var(--panel); border-radius:12px; padding:10px 13px; font-weight:650; font-size:.95rem; }
-  .top button,.controls button { pointer-events:auto; }
-  #bottom { position:absolute; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom,0px));
-    background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:12px; }
-  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; }
-  .stat { min-width:0; }
-  .stat small { display:block; color:var(--muted); font-size:.78rem; margin-bottom:3px; }
-  .stat strong { display:block; font-size:clamp(1rem,4.5vw,1.35rem); overflow-wrap:anywhere; }
-  .controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; justify-content:center; }
-  .controls button { flex:1 1 auto; min-width:82px; min-height:50px; }
-  .controls .secondary, .top .secondary { background:var(--grey); }
-  .controls .danger { background:var(--danger); color:var(--text); }
-  #addBtn { font-size:1.45rem; min-width:64px; }
-  #closeBtn { background:var(--ring); }
-  #modeBtn.active { background:var(--height); color:var(--text); }
-  #hue { display:flex; align-items:center; gap:10px; margin-top:18px; width:min(100%,22rem); background:var(--panel);
+  button:disabled { opacity:.4; }
+  svg.i { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; margin:auto; }
+
+  /* Start screen */
+  #start { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; text-align:center;
+    padding:calc(28px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(145deg,#1d1920,var(--bg)); z-index:5; overflow:auto; }
+  #start > * { flex-shrink:0; }
+  .eyebrow { font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500; font-size:.78rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted); margin:auto 0 18px; }
+  .brand { display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:20px; text-decoration:none; color:var(--text); }
+  .brand svg { width:clamp(4.2rem,20vw,6rem); height:auto; }
+  .brand .name { font-family:"Source Serif 4",Georgia,serif; font-weight:600; font-size:clamp(2.1rem,9vw,2.8rem); line-height:1.1; }
+  #start h1 { font-size:clamp(1.4rem,6vw,2rem); margin:0 0 8px; }
+  #start p { max-width:34rem; line-height:1.5; color:var(--muted); margin:6px 0; }
+  #status { color:var(--accent); min-height:3em; max-width:38rem; white-space:pre-wrap; margin:6px 0; }
+  #startBtn { font-size:1.2rem; min-height:62px; padding:14px 30px; }
+  .linkBtn { background:none; color:var(--muted); text-decoration:underline; min-height:44px; font-weight:600; }
+  #hue { display:flex; align-items:center; gap:10px; margin-top:12px; width:min(100%,22rem); background:var(--panel);
     border:1px solid var(--line); border-radius:15px; padding:8px 12px; }
   #hue label { color:var(--muted); font-size:.9rem; }
   #hueSlider { flex:1; accent-color:var(--accent); height:28px; }
   #hueReset { min-height:38px; padding:6px 12px; font-size:.85rem; background:var(--grey); }
+  footer { margin-top:auto; padding-top:22px; font-size:.82rem; color:var(--muted); line-height:1.8; }
+  footer a { color:var(--muted); }
+  .cl { display:inline-block; transform:scaleX(-1); }
+
+  /* AR overlay */
+  #overlay { position:absolute; inset:0; pointer-events:none; display:none; }
+  .top { position:absolute; top:calc(12px + env(safe-area-inset-top,0px)); left:12px; right:12px; display:flex;
+    justify-content:space-between; align-items:flex-start; gap:8px; }
+  #hint { background:var(--panel); border-radius:12px; padding:10px 13px; font-weight:650; font-size:.95rem; }
+  .topBtns { display:flex; gap:8px; flex-shrink:0; }
+  #overlay button { pointer-events:auto; }
+  #bottom { position:absolute; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:10px; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; text-align:center; }
+  .stat { min-width:0; }
+  .stat small { display:block; color:var(--muted); font-size:.75rem; margin-bottom:2px; min-height:1em; }
+  .stat strong { display:block; font-size:clamp(.95rem,4.3vw,1.25rem); overflow-wrap:anywhere; }
+  .row { display:flex; gap:8px; margin-top:10px; }
+  .row button { flex:1; padding:8px; }
+  .grey { background:var(--grey); }
+  .ib { min-width:50px; }
+  #addBtn { flex:1.6; }
+  #addBtn svg { width:32px; height:32px; stroke-width:2.6; }
+  #clearBtn { background:var(--danger); color:var(--text); }
+  #moreBtn.on { background:var(--ring); }
+  #tray { display:none; margin-top:10px; background:var(--tray); border-radius:15px; padding:8px; }
+  #tray.open { display:block; }
+  #tray .row:first-child { margin-top:0; }
+  .tool { background:var(--grey); }
+  .tool.active { background:var(--accent); }
+  .act { background:var(--ring); }
+  #actions { display:none; }
+  #actions.show { display:flex; }
+  #unitBtn { background:var(--grey); }
   @media (orientation:landscape) {
-    #bottom { left:auto; width:min(390px,45vw); top:70px; bottom:10px; overflow:auto; }
+    #bottom { left:auto; width:min(400px,46vw); top:70px; bottom:10px; overflow:auto; }
   }
+
+  /* Info overlay */
+  #info { position:absolute; inset:0; z-index:10; display:none; background:rgba(18,16,20,.94); pointer-events:auto;
+    overflow:auto; padding:calc(18px + env(safe-area-inset-top,0px)) 16px calc(18px + env(safe-area-inset-bottom,0px)); }
+  #info.open { display:block; }
+  #info .card { max-width:34rem; margin:0 auto; background:#1d1a20; border:1px solid var(--line); border-radius:18px; padding:16px; line-height:1.45; }
+  #info h2 { margin:0 0 6px; font-size:1.3rem; }
+  #info h3 { margin:16px 0 4px; font-size:.8rem; font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  #info .it { display:flex; gap:12px; align-items:flex-start; margin:9px 0; }
+  #info .ic { flex:0 0 40px; height:40px; border-radius:11px; background:var(--grey); color:#121014; display:flex; align-items:center; justify-content:center; }
+  #info .ic.p { background:var(--accent); } #info .ic.r { background:var(--ring); } #info .ic.d { background:var(--danger); color:var(--text); }
+  #info .ic svg { width:22px; height:22px; }
+  #info b { color:var(--text); }
+  #info .tx { color:#ddd6de; font-size:.95rem; }
+  #info .closeInfo { width:100%; margin-top:16px; }
 </style>
 </head>
 <body>
+<!-- Icon set: simple line icons, drawn here so they look the same on every phone. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-line" viewBox="0 0 24 24"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M6.5 17.5 17.5 6.5"/></symbol>
+  <symbol id="i-shape" viewBox="0 0 24 24"><path d="M12 3l9 7-3.5 10h-11L3 10z"/></symbol>
+  <symbol id="i-height" viewBox="0 0 24 24"><path d="M12 4v14M8 8l4-4 4 4M5 21h14"/></symbol>
+  <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.5 20 3 10l9-7 9 7-3.5 10"/><path d="M17.5 20h-11" stroke-dasharray="2 2.2"/></symbol>
+  <symbol id="i-flat" viewBox="0 0 24 24"><path d="M3 17 8 7h13l-5 10z"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r="1" fill="currentColor" stroke="none"/></symbol>
+</svg>
+
 <div id="app">
   <section id="start">
+    <div class="eyebrow">Folktek Vibe Coding Lab</div>
+    <a class="brand" href="https://folktek.org" aria-label="Folktek — folktek.org">
+      <svg viewBox="-205 -205 410 410" aria-hidden="true"><circle r="96" fill="currentColor"/><path fill="currentColor" d="M0.0,-200.0 24.0,-107.0 -24.0,-107.0ZM141.4,-141.4 92.6,-58.7 58.7,-92.6ZM200.0,-0.0 107.0,24.0 107.0,-24.0ZM141.4,141.4 58.7,92.6 92.6,58.7ZM0.0,200.0 -24.0,107.0 24.0,107.0ZM-141.4,141.4 -92.6,58.7 -58.7,92.6ZM-200.0,0.0 -107.0,-24.0 -107.0,24.0ZM-141.4,-141.4 -58.7,-92.6 -92.6,-58.7Z"/></svg>
+      <span class="name">Folktek</span>
+    </a>
     <h1>AR Tape Measure</h1>
-    <p>Measure distances and areas using your phone camera. Move slowly over a textured floor or surface, then tap ＋ to place measurement points.</p>
+    <p>Measure lines, shapes, areas, heights and circles with your phone camera. No ads, no account, no subscription.</p>
     <div id="status">Checking WebXR support…</div>
     <button id="startBtn" disabled>Start measuring</button>
+    <button class="linkBtn openInfo" type="button">How to use it</button>
     <div id="hue">
       <label for="hueSlider">Colour</label>
       <input id="hueSlider" type="range" min="0" max="359" step="1" value="0" aria-label="Shift the app colours">
       <button id="hueReset" type="button">Reset</button>
     </div>
-    <p style="font-size:.85rem">Requires Chrome on Android, an ARCore-supported device, HTTPS, and a top-level page (not an embedded frame).</p>
+    <footer>
+      Needs Chrome on an Android phone with ARCore.<br>
+      <a href="ar-tape-measure-v1.2.0.zip" download>Download the code</a> ·
+      <a href="https://github.com/folktek111/folktek111.github.io/tree/main/measure">Source on GitHub</a><br>
+      <span class="cl">©</span> Copyleft · <a href="LICENSE">GPL-3.0</a> · v1.2.0 · <a href="https://folktek.org">folktek.org</a>
+    </footer>
   </section>
 
   <div id="overlay">
     <div class="top">
       <div id="hint">Sweep the phone slowly over the floor</div>
-      <button id="exitBtn" class="secondary">Exit</button>
+      <div class="topBtns">
+        <button class="grey ib openInfo" aria-label="What the buttons do"><svg class="i"><use href="#i-info"/></svg></button>
+        <button id="exitBtn" class="grey">Exit</button>
+      </div>
     </div>
     <div id="bottom">
       <div class="stats">
-        <div class="stat"><small id="segmentTitle">Segment</small><strong id="segmentValue">—</strong></div>
-        <div class="stat"><small>Total</small><strong id="totalValue">—</strong></div>
-        <div class="stat"><small>Area</small><strong id="areaValue">—</strong></div>
+        <div class="stat"><small id="l0">Line</small><strong id="v0">—</strong></div>
+        <div class="stat"><small id="l1">Total</small><strong id="v1">—</strong></div>
+        <div class="stat"><small id="l2">Lines</small><strong id="v2">—</strong></div>
       </div>
-      <div class="controls">
-        <button id="addBtn" aria-label="Add point">＋</button>
-        <button id="undoBtn" class="secondary">Undo</button>
-        <button id="clearBtn" class="danger">Clear all</button>
-        <button id="closeBtn" disabled>Close shape</button>
+      <div class="row">
+        <button id="addBtn" aria-label="Add point"><svg class="i"><use href="#i-plus"/></svg></button>
+        <button id="undoBtn" class="grey ib" aria-label="Undo"><svg class="i"><use href="#i-undo"/></svg></button>
+        <button id="clearBtn" class="ib" aria-label="Clear all"><svg class="i"><use href="#i-trash"/></svg></button>
+        <button id="moreBtn" class="grey ib" aria-label="More tools"><svg class="i"><use href="#i-more"/></svg></button>
       </div>
-      <div class="controls">
-        <button id="modeBtn" class="secondary">Height mode: off</button>
-        <button id="unitBtn" class="secondary">Units: m / cm</button>
+      <div id="tray">
+        <div class="row">
+          <button class="tool active" data-tool="line" aria-label="Line tool"><svg class="i"><use href="#i-line"/></svg></button>
+          <button class="tool" data-tool="shape" aria-label="Shape tool"><svg class="i"><use href="#i-shape"/></svg></button>
+          <button class="tool" data-tool="height" aria-label="Height tool"><svg class="i"><use href="#i-height"/></svg></button>
+          <button class="tool" data-tool="circle" aria-label="Circle tool"><svg class="i"><use href="#i-circle"/></svg></button>
+        </div>
+        <div class="row" id="actions">
+          <button id="closeBtn" class="act" aria-label="Close shape" disabled><svg class="i"><use href="#i-close"/></svg></button>
+          <button id="flatBtn" class="act" aria-label="Flatten to a plane" disabled><svg class="i"><use href="#i-flat"/></svg></button>
+          <button id="volBtn" class="act" aria-label="Volume" disabled><svg class="i"><use href="#i-cube"/></svg></button>
+        </div>
+        <div class="row"><button id="unitBtn">Units: m / cm</button></div>
       </div>
+    </div>
+  </div>
+
+  <div id="info" role="dialog" aria-label="What the buttons do">
+    <div class="card">
+      <h2>How to use it</h2>
+      <div class="tx">Sweep the phone slowly over the floor until a ring appears. Points land where the ring is. Textured surfaces work best; plain white floors, walls and glass are hard for the phone to see.</div>
+      <h3>Main buttons</h3>
+      <div class="it"><div class="ic p"><svg class="i"><use href="#i-plus"/></svg></div><div class="tx"><b>Add point.</b> Puts a point where the ring is.</div></div>
+      <div class="it"><div class="ic"><svg class="i"><use href="#i-undo"/></svg></div><div class="tx"><b>Undo.</b> Takes back the last thing you did.</div></div>
+      <div class="it"><div class="ic d"><svg class="i"><use href="#i-trash"/></svg></div><div class="tx"><b>Clear all.</b> Removes everything and starts over.</div></div>
+      <div class="it"><div class="ic"><svg class="i"><use href="#i-more"/></svg></div><div class="tx"><b>More.</b> Opens the tools below and the units.</div></div>
+      <h3>Tools (in More)</h3>
+      <div class="it"><div class="ic p"><svg class="i"><use href="#i-line"/></svg></div><div class="tx"><b>Line</b> (the default). Two taps make one A-to-B measurement. The next tap starts a new line.</div></div>
+      <div class="it"><div class="ic"><svg class="i"><use href="#i-shape"/></svg></div><div class="tx"><b>Shape.</b> Tap the corners one after another. The lines join up in a chain.</div></div>
+      <div class="it"><div class="ic"><svg class="i"><use href="#i-height"/></svg></div><div class="tx"><b>Height.</b> For the top of something that is up in the air, like a door frame or a ceiling edge. Tap ＋ on the floor right below it, aim the phone at the top, tap ＋ to lock. Tap ＋ again to measure again.</div></div>
+      <div class="it"><div class="ic"><svg class="i"><use href="#i-circle"/></svg></div><div class="tx"><b>Circle.</b> Tap 3 points on the edge of something round. You get the diameter, the distance around, and the area.</div></div>
+      <h3>Shape buttons</h3>
+      <div class="it"><div class="ic r"><svg class="i"><use href="#i-close"/></svg></div><div class="tx"><b>Close shape.</b> After 3 or more corners: joins the last corner back to the first. Area shows the m² inside.</div></div>
+      <div class="it"><div class="ic r"><svg class="i"><use href="#i-flat"/></svg></div><div class="tx"><b>Flatten.</b> Lines all the corners up on one flat plane (a floor, a wall) and shows it as a see-through surface. Undo puts them back.</div></div>
+      <div class="it"><div class="ic r"><svg class="i"><use href="#i-cube"/></svg></div><div class="tx"><b>Volume.</b> Closed shape area × the last height you measured, in m³. Drawn as a box. Measure a height first with the Height tool.</div></div>
+      <div class="it"><div class="ic"><b style="color:#121014;font-size:.8rem">m</b></div><div class="tx"><b>Units.</b> Switches between m / cm and mm.</div></div>
+      <div class="tx" style="margin-top:12px">Move slowly and keep the phone steady for the best results.</div>
+      <button class="closeInfo" id="closeInfo">Close</button>
     </div>
   </div>
 </div>
@@ -117,32 +240,46 @@ import * as THREE from './vendor/three.module.js';
 
 const $ = id => document.getElementById(id);
 const start = $('start'), startBtn = $('startBtn'), status = $('status');
-const overlay = $('overlay'), hint = $('hint');
-const segmentTitle = $('segmentTitle'), segmentValue = $('segmentValue'), totalValue = $('totalValue'), areaValue = $('areaValue');
-const addBtn = $('addBtn'), undoBtn = $('undoBtn'), clearBtn = $('clearBtn');
-const closeBtn = $('closeBtn'), exitBtn = $('exitBtn'), modeBtn = $('modeBtn'), unitBtn = $('unitBtn');
+const overlay = $('overlay'), hint = $('hint'), info = $('info'), tray = $('tray');
+const L = [$('l0'), $('l1'), $('l2')], V = [$('v0'), $('v1'), $('v2')];
+const closeBtn = $('closeBtn'), flatBtn = $('flatBtn'), volBtn = $('volBtn'), unitBtn = $('unitBtn');
 
 let renderer, scene, camera, session, hitSource, localSpace, viewerSpace;
 let reticle, previewLine, previewLabel;
-let points = [], segmentObjects = [], closed = false;
-let currentHit = null, currentViewerPose = null, heightMode = false, millimetres = false;
-let heightLine = null, heightLabel = null, heightLocked = false, lastHeight = NaN;
-let hintHoldUntil = 0;
+let currentHit = null, currentViewerPose = null, millimetres = false, hintHoldUntil = 0;
+let tool = 'line';
+let undoStack = [];
+const labels = new Set();          // every measurement label, so units can redraw them
+
+// Line tool
+let lineStart = null;              // {position, marker}
+let lines = [];                    // {a, b, objs}
+// Shape tool
+let shape = { points: [], segs: [], closed: false, flat: null, plane: null, volume: null };
+// Height tool
+let heightBase = null, heightLine = null, heightLabel = null, heightLocked = false, lastHeight = NaN;
+// Circle tool
+let circlePts = [];                // pending {position, marker}
+let circles = [];                  // {d, objs}
 
 // Base palette (grey-pink). The hue slider rotates only these coloured entries; greys stay as they are.
 const BASE = { accent:'#d8a7b8', height:'#b9849a', ring:'#9b8ac4', danger:'#8a5a7a' };
 const C = { ...BASE };
-const lineMaterial = new THREE.LineBasicMaterial({ color: C.accent, depthTest: false });
-const previewMaterial = new THREE.LineBasicMaterial({ color: C.ring, depthTest: false });
-const heightMaterial = new THREE.LineBasicMaterial({ color: C.height, depthTest: false });
-const markerMaterial = new THREE.MeshBasicMaterial({ color: C.accent, depthTest: false });
-const ringMaterial = new THREE.MeshBasicMaterial({ color: C.ring, side: THREE.DoubleSide, depthTest: false });
+const mat = {
+  line:    new THREE.LineBasicMaterial({ color: C.accent, depthTest: false }),
+  preview: new THREE.LineBasicMaterial({ color: C.ring, depthTest: false }),
+  height:  new THREE.LineBasicMaterial({ color: C.height, depthTest: false }),
+  circle:  new THREE.LineBasicMaterial({ color: C.accent, depthTest: false }),
+  volume:  new THREE.LineBasicMaterial({ color: C.ring, depthTest: false }),
+  marker:  new THREE.MeshBasicMaterial({ color: C.accent, depthTest: false }),
+  ring:    new THREE.MeshBasicMaterial({ color: C.ring, side: THREE.DoubleSide, depthTest: false }),
+  plane:   new THREE.MeshBasicMaterial({ color: C.ring, side: THREE.DoubleSide, transparent: true, opacity: .28, depthTest: false, depthWrite: false })
+};
 const markerGeometry = new THREE.SphereGeometry(0.02, 16, 12);
 const UP = new THREE.Vector3(0, 1, 0);
 
 function setStatus(message) { status.textContent = message; }
 function setHint(text, holdMs = 0) {
-  // A held hint (e.g. an instruction after a button press) is not overwritten by the per-frame hint for a moment.
   const now = performance.now();
   if (!holdMs && now < hintHoldUntil) return;
   if (holdMs) hintHoldUntil = now + holdMs;
@@ -150,67 +287,18 @@ function setHint(text, holdMs = 0) {
 }
 
 async function checkSupport() {
-  if (!window.isSecureContext) {
-    setStatus('WebXR needs a secure HTTPS page. Open this page from its https:// address.');
-    return;
-  }
-  if (!navigator.xr) {
-    setStatus('This browser does not expose WebXR. Use current Chrome on an ARCore-supported Android phone.');
-    return;
-  }
+  if (!window.isSecureContext) { setStatus('WebXR needs a secure HTTPS page. Open this page from its https:// address.'); return; }
+  if (!navigator.xr) { setStatus('This browser does not support WebXR AR. Use Chrome on an ARCore-supported Android phone. (iPhone Safari does not support it.)'); return; }
   try {
     const supported = await navigator.xr.isSessionSupported('immersive-ar');
-    if (!supported) {
-      setStatus('Immersive AR is not available here. Check Chrome, Google Play Services for AR (ARCore), camera permission, and device support.');
-      return;
-    }
+    if (!supported) { setStatus('AR is not available here. Check Chrome, Google Play Services for AR (ARCore), camera permission, and device support.'); return; }
     setStatus('AR is available. Ready to measure.');
     startBtn.disabled = false;
-  } catch (error) {
-    setStatus('Could not check AR support: ' + error.message);
-  }
+  } catch (error) { setStatus('Could not check AR support: ' + error.message); }
 }
 checkSupport();
 
-function drawLabel(canvas, text, color) {
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 512, 128);
-  ctx.fillStyle = 'rgba(18,16,20,.86)';
-  ctx.beginPath(); ctx.roundRect(8, 8, 496, 112, 24); ctx.fill();
-  // Shrink the font until the text fits, so long values like "12.34 m / 1234 cm" are not clipped.
-  let size = 54;
-  do { ctx.font = `bold ${size}px system-ui`; size -= 2; } while (ctx.measureText(text).width > 460 && size > 20);
-  ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(text, 256, 66);
-}
-function makeLabel(text, color = '#ffffff') {
-  const canvas = document.createElement('canvas');
-  canvas.width = 512; canvas.height = 128;
-  drawLabel(canvas, text, color);
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
-  sprite.scale.set(0.3, 0.075, 1);
-  sprite.renderOrder = 30;
-  return sprite;
-}
-function updateLabel(sprite, text, color = '#ffffff') {
-  if (sprite.userData.text === text) return; // skip redrawing the texture when nothing changed
-  sprite.userData.text = text;
-  drawLabel(sprite.material.map.image, text, color);
-  sprite.material.map.needsUpdate = true;
-}
-function disposeLabel(sprite) { sprite.material.map.dispose(); sprite.material.dispose(); }
-function makeLine(a, b, material) {
-  const geometry = new THREE.BufferGeometry().setFromPoints([a.clone(), b.clone()]);
-  const line = new THREE.Line(geometry, material);
-  line.renderOrder = 10;
-  return line;
-}
-function setLine(line, a, b) {
-  // Update the two vertices in place instead of creating a new geometry every frame.
-  const pos = line.geometry.attributes.position;
-  pos.setXYZ(0, a.x, a.y, a.z); pos.setXYZ(1, b.x, b.y, b.z);
-  pos.needsUpdate = true; line.geometry.computeBoundingSphere();
-}
+/* ---------- formatting ---------- */
 function fmt(m) {
   if (!Number.isFinite(m)) return '—';
   if (millimetres) return `${(m * 1000).toFixed(0)} mm`;
@@ -218,8 +306,76 @@ function fmt(m) {
 }
 function fmtArea(a) {
   if (!Number.isFinite(a)) return '—';
-  if (millimetres) return `${(a * 1e6).toFixed(0)} mm²`;
-  return `${a.toFixed(2)} m²`;
+  return millimetres ? `${(a * 1e6).toFixed(0)} mm²` : `${a.toFixed(2)} m²`;
+}
+function fmtVol(v) {
+  if (!Number.isFinite(v)) return '—';
+  return millimetres ? `${(v * 1e9).toExponential(2)} mm³` : `${v.toFixed(2)} m³`;
+}
+function labelText(kind, value) {
+  if (kind === 'dia') return 'Ø ' + fmt(value);
+  if (kind === 'area') return fmtArea(value);
+  if (kind === 'vol') return fmtVol(value);
+  return fmt(value);
+}
+
+/* ---------- 3D helpers ---------- */
+function drawLabel(canvas, text, color) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 512, 128);
+  ctx.fillStyle = 'rgba(18,16,20,.86)';
+  ctx.beginPath(); ctx.roundRect(8, 8, 496, 112, 24); ctx.fill();
+  let size = 54;
+  do { ctx.font = `bold ${size}px system-ui`; size -= 2; } while (ctx.measureText(text).width > 460 && size > 20);
+  ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, 256, 66);
+}
+function makeLabel(text = '', color = '#ffffff') {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 128;
+  drawLabel(canvas, text, color);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
+  sprite.scale.set(0.3, 0.075, 1);
+  sprite.renderOrder = 30;
+  sprite.userData = { text, color };
+  return sprite;
+}
+function updateLabel(sprite, text, color = sprite.userData.color) {
+  if (sprite.userData.text === text && sprite.userData.color === color) return;
+  sprite.userData.text = text; sprite.userData.color = color;
+  drawLabel(sprite.material.map.image, text, color);
+  sprite.material.map.needsUpdate = true;
+}
+// A measurement label remembers what it shows, so it can be redrawn when the units change.
+function measureLabel(kind, value, pos, color = '#ffffff') {
+  const s = makeLabel(labelText(kind, value), color);
+  s.userData.kind = kind; s.userData.value = value;
+  s.position.copy(pos); scene.add(s); labels.add(s);
+  return s;
+}
+function makeLine(points, material, Kind = THREE.Line) {
+  const line = new Kind(new THREE.BufferGeometry().setFromPoints(points.map(p => p.clone())), material);
+  line.renderOrder = 10;
+  return line;
+}
+function setLine(line, a, b) {
+  const pos = line.geometry.attributes.position;
+  pos.setXYZ(0, a.x, a.y, a.z); pos.setXYZ(1, b.x, b.y, b.z);
+  pos.needsUpdate = true; line.geometry.computeBoundingSphere();
+}
+function addMarker(position) {
+  const mesh = new THREE.Mesh(markerGeometry, mat.marker);
+  mesh.position.copy(position); mesh.renderOrder = 15; scene.add(mesh);
+  return mesh;
+}
+// Remove any mix of lines, meshes, markers and labels from the scene and free their memory.
+function removeObjs(objs) {
+  for (const o of objs) {
+    if (!o) continue;
+    scene?.remove(o);
+    if (o.isSprite) { labels.delete(o); o.material.map.dispose(); o.material.dispose(); }
+    else if (o.geometry && o.geometry !== markerGeometry) o.geometry.dispose();
+  }
 }
 function distance(a, b) { return a.distanceTo(b); }
 function midpoint(a, b, lift) { return a.clone().add(b).multiplyScalar(0.5).addScaledVector(UP, lift); }
@@ -236,188 +392,336 @@ function initScene() {
   Object.assign(renderer.domElement.style, { position: 'absolute', inset: '0', width: '100%', height: '100%', pointerEvents: 'none' });
   $('app').appendChild(renderer.domElement);
 
-  // The reticle is a thin ring and a small centre cross, lying flat on the detected surface.
   reticle = new THREE.Group();
-  const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.09, 48),
-    ringMaterial);
-  ring.rotation.x = -Math.PI / 2;
-  ring.renderOrder = 20;
-  reticle.add(ring);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.09, 48), mat.ring);
+  ring.rotation.x = -Math.PI / 2; ring.renderOrder = 20; reticle.add(ring);
   const cross = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-0.035, 0.002, 0), new THREE.Vector3(0.035, 0.002, 0),
     new THREE.Vector3(0, 0.002, -0.035), new THREE.Vector3(0, 0.002, 0.035)
   ]), new THREE.LineBasicMaterial({ color: 0xffffff, depthTest: false }));
-  cross.renderOrder = 21;
-  reticle.add(cross);
+  cross.renderOrder = 21; reticle.add(cross);
   reticle.visible = false; scene.add(reticle);
 
-  previewLine = makeLine(new THREE.Vector3(), new THREE.Vector3(), previewMaterial); previewLine.visible = false; scene.add(previewLine);
+  previewLine = makeLine([new THREE.Vector3(), new THREE.Vector3()], mat.preview); previewLine.visible = false; scene.add(previewLine);
   previewLabel = makeLabel(''); previewLabel.visible = false; scene.add(previewLabel);
   renderer.setAnimationLoop(render);
 }
-function addMarker(position) {
-  const mesh = new THREE.Mesh(markerGeometry, markerMaterial);
-  mesh.position.copy(position); mesh.renderOrder = 15; scene.add(mesh);
-  return mesh;
-}
-function placePoint() {
+
+/* ---------- Line tool ---------- */
+function addLinePoint() {
   const p = currentHit.clone();
-  points.push({ position: p, marker: addMarker(p) });
-  if (points.length > 1) {
-    const previous = points[points.length - 2].position;
-    const line = makeLine(previous, p, lineMaterial); scene.add(line);
-    const label = makeLabel(fmt(distance(previous, p)));
-    label.position.copy(midpoint(previous, p, 0.04));
-    scene.add(label);
-    segmentObjects.push({ line, label });
-  }
-  refreshStats();
-}
-function addPoint() {
-  if (heightMode) {
-    // Height mode: ＋ places the base point if there is none; after that it locks / unlocks the reading.
-    if (!points.length) {
-      if (!currentHit || !reticle.visible) { setHint('Find the floor first (wait for the ring)', 2500); return; }
-      placePoint();
-      setHint('Now tilt up to the top, tap ＋ to lock', 3000);
-      return;
-    }
-    heightLocked = !heightLocked;
-    setHint(heightLocked ? 'Height locked. Tap ＋ to measure again' : 'Tilt up to the top, tap ＋ to lock', 3000);
+  if (!lineStart) {
+    lineStart = { position: p, marker: addMarker(p) };
+    undoStack.push(() => { removeObjs([lineStart.marker]); lineStart = null; });
     return;
   }
-  if (closed) { setHint('Shape is closed. Undo or Clear to continue', 2500); return; }
-  if (!currentHit || !reticle.visible) { setHint('No surface yet. Sweep slowly until the ring appears', 2500); return; }
-  placePoint();
+  const a = lineStart.position, b = p;
+  const objs = [lineStart.marker, addMarker(b), makeLine([a, b], mat.line)];
+  scene.add(objs[2]);
+  objs.push(measureLabel('len', distance(a, b), midpoint(a, b, 0.04)));
+  const entry = { a, b, objs }; lines.push(entry); lineStart = null;
+  undoStack.push(() => {
+    lines.splice(lines.indexOf(entry), 1);
+    removeObjs(objs.slice(1));                       // keep the start marker: undo goes back one tap
+    lineStart = { position: a, marker: objs[0] };
+  });
 }
-function refreshStats() {
-  let total = 0;
-  for (let i = 1; i < points.length; i++) total += distance(points[i - 1].position, points[i].position);
-  if (closed && points.length > 2) total += distance(points[points.length - 1].position, points[0].position);
-  totalValue.textContent = points.length > 1 ? fmt(total) : '—';
-  if (!heightMode) {
-    segmentTitle.textContent = 'Segment';
-    segmentValue.textContent = points.length > 1 ? fmt(distance(points[points.length - 2].position, points[points.length - 1].position)) : '—';
-  }
-  closeBtn.disabled = points.length < 3 || closed || heightMode;
-  areaValue.textContent = closed ? fmtArea(polygonArea()) : '—';
-}
-// Polygon area in 3D: half the length of the summed cross products (exact for a flat polygon).
-function polygonArea() {
-  if (points.length < 3) return 0;
+
+/* ---------- Shape tool ---------- */
+function shapeArea(pts = shape.points.map(p => p.position)) {
+  // Half the length of the summed cross products: the exact area of a flat polygon in 3D.
+  if (pts.length < 3) return 0;
   const sum = new THREE.Vector3(), c = new THREE.Vector3();
-  for (let i = 0; i < points.length; i++) {
-    sum.add(c.crossVectors(points[i].position, points[(i + 1) % points.length].position));
-  }
+  pts.forEach((p, i) => sum.add(c.crossVectors(p, pts[(i + 1) % pts.length])));
   return sum.length() * 0.5;
 }
-function closeShape() {
-  if (points.length < 3 || closed) return;
-  const a = points[points.length - 1].position, b = points[0].position;
-  const line = makeLine(a, b, lineMaterial); scene.add(line);
-  const label = makeLabel(fmt(distance(a, b)));
-  label.position.copy(midpoint(a, b, 0.04)); scene.add(label);
-  segmentObjects.push({ line, label }); closed = true; refreshStats();
+function shapePerimeter() {
+  const pts = shape.points.map(p => p.position);
+  let t = 0;
+  for (let i = 1; i < pts.length; i++) t += distance(pts[i - 1], pts[i]);
+  if (shape.closed && pts.length > 2) t += distance(pts[pts.length - 1], pts[0]);
+  return t;
 }
-function removeSegment(s) { scene.remove(s.line, s.label); s.line.geometry.dispose(); disposeLabel(s.label); }
-function undo() {
-  if (heightMode && heightLine) { clearHeight(); refreshStats(); return; } // first undo only removes the height line
-  if (closed) {
-    removeSegment(segmentObjects.pop());
-    closed = false;
-  } else if (points.length) {
-    scene.remove(points.pop().marker);
-    if (segmentObjects.length) removeSegment(segmentObjects.pop());
+// Rebuild every line and label of the shape from its points (simpler and safer than patching).
+function rebuildShape() {
+  removeObjs(shape.segs); shape.segs = [];
+  const pts = shape.points.map(p => p.position);
+  const n = pts.length, count = shape.closed ? n : n - 1;
+  for (let i = 0; i < count; i++) {
+    const a = pts[i], b = pts[(i + 1) % n];
+    const line = makeLine([a, b], mat.line); scene.add(line);
+    shape.segs.push(line, measureLabel('len', distance(a, b), midpoint(a, b, 0.04)));
   }
-  refreshStats();
+  shape.points.forEach(p => p.marker.position.copy(p.position));
 }
-function clearAll() {
-  clearHeight();
-  points.forEach(p => scene.remove(p.marker)); points = [];
-  segmentObjects.forEach(removeSegment); segmentObjects = [];
-  closed = false; refreshStats();
+function addShapePoint() {
+  if (shape.closed) { setHint('Shape is closed. Undo to add more corners, or Clear', 2500); return; }
+  const p = currentHit.clone();
+  shape.points.push({ position: p, marker: addMarker(p) });
+  rebuildShape();
+  undoStack.push(() => { removeObjs([shape.points.pop().marker]); rebuildShape(); });
 }
-function clearHeight() {
-  if (heightLine) { scene?.remove(heightLine); heightLine.geometry.dispose(); heightLine = null; }
-  if (heightLabel) { scene?.remove(heightLabel); disposeLabel(heightLabel); heightLabel = null; }
-  heightLocked = false; lastHeight = NaN;
+function closeShape() {
+  if (shape.points.length < 3 || shape.closed) return;
+  shape.closed = true; rebuildShape();
+  undoStack.push(() => { removeVolume(); removePlane(); shape.closed = false; rebuildShape(); });
+  refreshUI();
+}
+function removePlane() {
+  if (!shape.flat) return;
+  shape.points.forEach((p, i) => p.position.copy(shape.flat[i]));
+  removeObjs([shape.plane]); shape.flat = null; shape.plane = null;
+}
+function flattenShape() {
+  if (!shape.closed || shape.flat) return;
+  const pts = shape.points.map(p => p.position);
+  // Best-fit plane: Newell normal through the centroid. Each corner is moved straight onto it.
+  const n = new THREE.Vector3(), c = new THREE.Vector3(), tmp = new THREE.Vector3();
+  pts.forEach((p, i) => n.add(tmp.crossVectors(p, pts[(i + 1) % pts.length])));
+  if (n.lengthSq() < 1e-12) { setHint('Corners are in a line; cannot make a plane', 2500); return; }
+  n.normalize();
+  pts.forEach(p => c.add(p)); c.divideScalar(pts.length);
+  shape.flat = pts.map(p => p.clone());
+  pts.forEach(p => p.addScaledVector(n, -tmp.subVectors(p, c).dot(n)));
+  // See-through surface: triangulate the corners in the plane's own 2D coordinates.
+  const u = tmp.subVectors(pts[0], c).normalize().clone(), v = new THREE.Vector3().crossVectors(n, u);
+  const flat2 = pts.map(p => { const d = p.clone().sub(c); return new THREE.Vector2(d.dot(u), d.dot(v)); });
+  const faces = THREE.ShapeUtils.triangulateShape(flat2, []);
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  geo.setIndex(faces.flat());
+  shape.plane = new THREE.Mesh(geo, mat.plane); shape.plane.renderOrder = 5; scene.add(shape.plane);
+  removeVolume(); rebuildShape();
+  undoStack.push(() => { removeVolume(); removePlane(); rebuildShape(); });
+  refreshUI();
+}
+function removeVolume() {
+  if (!shape.volume) return;
+  removeObjs(shape.volume.objs); shape.volume = null;
+}
+function makeVolume() {
+  if (!shape.closed) return;
+  if (!Number.isFinite(lastHeight) || lastHeight <= 0) {
+    setHint('Measure a height first with the Height tool', 3000); return;
+  }
+  removeVolume();
+  const h = lastHeight, pts = shape.points.map(p => p.position);
+  const tops = pts.map(p => p.clone().addScaledVector(UP, h));
+  const segs = [];
+  pts.forEach((p, i) => { segs.push(p, tops[i], tops[i], tops[(i + 1) % tops.length]); });
+  const box = makeLine(segs, mat.volume, THREE.LineSegments); scene.add(box);
+  const centre = tops.reduce((a, t) => a.add(t), new THREE.Vector3()).divideScalar(tops.length);
+  const vol = shapeArea() * h;
+  const label = measureLabel('vol', vol, centre.addScaledVector(UP, 0.05));
+  shape.volume = { h, vol, objs: [box, label] };
+  undoStack.push(() => removeVolume());
+  refreshUI();
+}
+
+/* ---------- Height tool ---------- */
+function clearHeightLine() {
+  removeObjs([heightLine, heightLabel]); heightLine = null; heightLabel = null;
+}
+function heightTap() {
+  if (!heightBase) {
+    if (!currentHit) { setHint('Find the floor first (wait for the ring)', 2500); return; }
+    clearHeightLine(); lastHeight = NaN; heightLocked = false;
+    const p = currentHit.clone();
+    heightBase = { position: p, marker: addMarker(p) };
+    undoStack.push(() => { clearHeightLine(); removeObjs([heightBase.marker]); heightBase = null; heightLocked = false; lastHeight = NaN; });
+    setHint('Aim at the top, tap ＋ to lock', 3000);
+    return;
+  }
+  if (!heightLocked) {
+    if (!Number.isFinite(lastHeight)) { setHint('Aim at the top first', 2000); return; }
+    heightLocked = true;
+    undoStack.push(() => { heightLocked = false; });
+    setHint('Height locked. Tap ＋ to measure again', 3000);
+  } else {
+    heightLocked = false;
+    setHint('Aim at the top, tap ＋ to lock', 3000);
+  }
 }
 function updateHeight() {
-  if (!heightMode || !points.length || !currentViewerPose) return;
-  const anchor = points[points.length - 1].position;
-  let height = lastHeight;
-  if (!heightLocked) {
-    const m = new THREE.Matrix4().fromArray(currentViewerPose.transform.matrix);
-    const origin = new THREE.Vector3().setFromMatrixPosition(m);
-    const direction = new THREE.Vector3(0, 0, -1).transformDirection(m);
-    // Find the point on the camera's centre ray that is nearest the vertical line above the base point.
-    const dx = anchor.x - origin.x, dz = anchor.z - origin.z;
-    const denom = direction.x * direction.x + direction.z * direction.z;
-    if (denom < 1e-5) { setHint('Step back a little: aim at the top, not straight up', 1500); return; }
-    const t = (dx * direction.x + dz * direction.z) / denom;
-    if (t <= 0) { setHint('Point the phone towards the base point', 1500); return; }
-    height = Math.max(0, origin.y + t * direction.y - anchor.y);
-    lastHeight = height;
-  }
-  if (!Number.isFinite(height)) return;
+  if (tool !== 'height' || !heightBase || heightLocked || !currentViewerPose) return;
+  const anchor = heightBase.position;
+  const m = new THREE.Matrix4().fromArray(currentViewerPose.transform.matrix);
+  const origin = new THREE.Vector3().setFromMatrixPosition(m);
+  const direction = new THREE.Vector3(0, 0, -1).transformDirection(m);
+  // The point on the camera's centre ray nearest the vertical line above the base point.
+  const dx = anchor.x - origin.x, dz = anchor.z - origin.z;
+  const denom = direction.x * direction.x + direction.z * direction.z;
+  if (denom < 1e-5) { setHint('Step back a little: aim at the top, not straight up', 1500); return; }
+  const t = (dx * direction.x + dz * direction.z) / denom;
+  if (t <= 0) { setHint('Point the phone towards the base point', 1500); return; }
+  const height = Math.max(0, origin.y + t * direction.y - anchor.y);
+  lastHeight = height;
   const top = anchor.clone().addScaledVector(UP, height);
   if (!heightLine) {
-    heightLine = makeLine(anchor, top, heightMaterial); scene.add(heightLine);
-    heightLabel = makeLabel(''); scene.add(heightLabel);
+    heightLine = makeLine([anchor, top], mat.height); scene.add(heightLine);
+    heightLabel = measureLabel('len', height, midpoint(anchor, top, 0), C.height);
   } else setLine(heightLine, anchor, top);
   heightLabel.position.copy(midpoint(anchor, top, 0));
-  updateLabel(heightLabel, fmt(height), C.height);
-  segmentTitle.textContent = heightLocked ? 'Height (locked)' : 'Height';
-  segmentValue.textContent = fmt(height);
+  heightLabel.userData.value = height;
+  updateLabel(heightLabel, labelText('len', height), C.height);
 }
+
+/* ---------- Circle tool ---------- */
+function addCirclePoint() {
+  const p = currentHit.clone();
+  circlePts.push({ position: p, marker: addMarker(p) });
+  if (circlePts.length < 3) {
+    undoStack.push(() => removeObjs([circlePts.pop().marker]));
+    return;
+  }
+  const [a, b, c] = circlePts.map(q => q.position);
+  const ab = b.clone().sub(a), ac = c.clone().sub(a), n = new THREE.Vector3().crossVectors(ab, ac);
+  if (n.lengthSq() < 1e-10) {
+    removeObjs([circlePts.pop().marker]);
+    setHint('Those 3 points are in a line. Pick points further apart on the edge', 3000);
+    return;
+  }
+  // Circle through 3 points (circumcircle), worked out in 3D.
+  const centre = a.clone().add(
+    new THREE.Vector3().crossVectors(n, ab).multiplyScalar(ac.lengthSq())
+      .add(new THREE.Vector3().crossVectors(ac, n).multiplyScalar(ab.lengthSq()))
+      .divideScalar(2 * n.lengthSq()));
+  const r = centre.distanceTo(a);
+  const u = a.clone().sub(centre).normalize(), w = n.clone().normalize(), v = new THREE.Vector3().crossVectors(w, u);
+  const ringPts = [];
+  for (let i = 0; i <= 64; i++) {
+    const t = i / 64 * Math.PI * 2;
+    ringPts.push(centre.clone().addScaledVector(u, Math.cos(t) * r).addScaledVector(v, Math.sin(t) * r));
+  }
+  const loop = makeLine(ringPts, mat.circle); scene.add(loop);
+  const label = measureLabel('dia', 2 * r, centre.clone().addScaledVector(UP, 0.04));
+  const entry = { d: 2 * r, objs: [...circlePts.map(q => q.marker), loop, label] };
+  const pts = circlePts; circles.push(entry); circlePts = [];
+  undoStack.push(() => {
+    circles.splice(circles.indexOf(entry), 1);
+    removeObjs([loop, label, pts[2].marker]);
+    circlePts = pts.slice(0, 2);
+  });
+}
+
+/* ---------- Main actions ---------- */
+function addPoint() {
+  if (tool === 'height') { heightTap(); refreshUI(); return; }
+  if (!currentHit || !reticle?.visible) { setHint('No surface yet. Sweep slowly until the ring appears', 2500); return; }
+  if (tool === 'line') addLinePoint();
+  else if (tool === 'shape') addShapePoint();
+  else if (tool === 'circle') addCirclePoint();
+  refreshUI();
+}
+function undo() {
+  const fn = undoStack.pop();
+  if (fn) fn(); else setHint('Nothing to undo', 1500);
+  refreshUI();
+}
+function clearAll() {
+  removeObjs([lineStart?.marker, ...lines.flatMap(l => l.objs)]); lineStart = null; lines = [];
+  removeVolume(); removePlane();
+  removeObjs([...shape.points.map(p => p.marker), ...shape.segs]);
+  shape = { points: [], segs: [], closed: false, flat: null, plane: null, volume: null };
+  clearHeightLine(); removeObjs([heightBase?.marker]); heightBase = null; heightLocked = false; lastHeight = NaN;
+  removeObjs([...circlePts.map(q => q.marker), ...circles.flatMap(c => c.objs)]); circlePts = []; circles = [];
+  undoStack = [];
+  refreshUI();
+}
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('.tool').forEach(b => b.classList.toggle('active', b.dataset.tool === t));
+  const names = { line: 'Line: tap ＋ for the start point', shape: 'Shape: tap ＋ on each corner',
+    height: 'Height: tap ＋ on the floor below the top', circle: 'Circle: tap ＋ on 3 points of the edge' };
+  setHint(names[t], 3000);
+  refreshUI();
+}
+
+/* ---------- Stats + buttons ---------- */
+function setStats(rows) {
+  rows.forEach(([label, value], i) => {
+    if (L[i].textContent !== label) L[i].textContent = label;
+    if (V[i].textContent !== value) V[i].textContent = value;
+  });
+}
+function refreshUI(live = NaN) {
+  if (tool === 'line') {
+    const total = lines.reduce((s, l) => s + distance(l.a, l.b), 0);
+    const last = lines.length ? distance(lines[lines.length - 1].a, lines[lines.length - 1].b) : NaN;
+    setStats([['Line', fmt(Number.isFinite(live) ? live : last)], ['Total', lines.length ? fmt(total) : '—'], ['Lines', String(lines.length)]]);
+  } else if (tool === 'shape') {
+    const pts = shape.points;
+    if (shape.volume) setStats([['Area', fmtArea(shapeArea())], ['Height', fmt(shape.volume.h)], ['Volume', fmtVol(shape.volume.vol)]]);
+    else {
+      const seg = Number.isFinite(live) ? live : pts.length > 1 ? distance(pts[pts.length - 2].position, pts[pts.length - 1].position) : NaN;
+      setStats([['Segment', fmt(seg)], ['Total', pts.length > 1 ? fmt(shapePerimeter()) : '—'], ['Area', shape.closed ? fmtArea(shapeArea()) : '—']]);
+    }
+  } else if (tool === 'height') {
+    setStats([['Height', fmt(lastHeight)], ['', heightBase ? (heightLocked ? 'Locked' : 'Live') : ''], ['', '']]);
+  } else {
+    const c = circles[circles.length - 1];
+    setStats([['Diameter', c ? fmt(c.d) : '—'], ['Around', c ? fmt(Math.PI * c.d) : '—'], ['Area', c ? fmtArea(Math.PI * c.d * c.d / 4) : '—']]);
+  }
+  $('actions').classList.toggle('show', tool === 'shape');
+  closeBtn.disabled = shape.points.length < 3 || shape.closed;
+  flatBtn.disabled = !shape.closed || !!shape.flat;
+  volBtn.disabled = !shape.closed;
+}
+
 function render(_time, frame) {
   if (frame && session && localSpace) {
     currentViewerPose = frame.getViewerPose(localSpace);
     const hits = hitSource ? frame.getHitTestResults(hitSource) : [];
     const hitPose = hits.length ? hits[0].getPose(localSpace) : null;
+    let live = NaN;
     if (hitPose) {
       const matrix = new THREE.Matrix4().fromArray(hitPose.transform.matrix);
       reticle.position.setFromMatrixPosition(matrix);
       reticle.quaternion.setFromRotationMatrix(matrix);
       reticle.visible = true;
       currentHit = reticle.position.clone();
-      if (heightMode) setHint(points.length ? (heightLocked ? 'Height locked. Tap ＋ to measure again' : 'Tilt up to the top, tap ＋ to lock') : 'Tap ＋ to place the base point');
-      else setHint(closed ? 'Shape closed. Undo or Clear to continue' : 'Tap ＋ to place a point');
-      if (!heightMode && points.length && !closed) {
-        const last = points[points.length - 1].position;
-        setLine(previewLine, last, currentHit); previewLine.visible = true;
-        previewLabel.position.copy(midpoint(last, currentHit, 0.05));
-        updateLabel(previewLabel, fmt(distance(last, currentHit))); previewLabel.visible = true;
-        segmentValue.textContent = fmt(distance(last, currentHit));
+      // Preview line from the last point of the current tool to the ring.
+      let anchor = null;
+      if (tool === 'line' && lineStart) anchor = lineStart.position;
+      else if (tool === 'shape' && shape.points.length && !shape.closed) anchor = shape.points[shape.points.length - 1].position;
+      else if (tool === 'circle' && circlePts.length) anchor = circlePts[circlePts.length - 1].position;
+      if (anchor) {
+        live = distance(anchor, currentHit);
+        setLine(previewLine, anchor, currentHit); previewLine.visible = true;
+        previewLabel.position.copy(midpoint(anchor, currentHit, 0.05));
+        updateLabel(previewLabel, fmt(live)); previewLabel.visible = true;
       } else { previewLine.visible = false; previewLabel.visible = false; }
+      if (tool === 'line') setHint(lineStart ? 'Tap ＋ for the end point' : 'Tap ＋ for the start point');
+      else if (tool === 'shape') setHint(shape.closed ? 'Closed. Flatten, Volume, or Undo' : shape.points.length >= 3 ? 'Add corners, or close the shape' : 'Tap ＋ on each corner');
+      else if (tool === 'circle') setHint(`Tap ＋ on the edge (${circlePts.length + 1} of 3)`);
+      else setHint(!heightBase ? 'Tap ＋ on the floor below the top' : heightLocked ? 'Locked. Tap ＋ to measure again' : 'Aim at the top, tap ＋ to lock');
     } else {
       reticle.visible = false; currentHit = null; previewLine.visible = false; previewLabel.visible = false;
-      if (!(heightMode && points.length)) setHint('Sweep the phone slowly over the floor');
+      if (!(tool === 'height' && heightBase)) setHint('Sweep the phone slowly over the floor');
+      else setHint(heightLocked ? 'Locked. Tap ＋ to measure again' : 'Aim at the top, tap ＋ to lock');
     }
     updateHeight();
+    refreshUI(live);
   }
   renderer.render(scene, camera);
 }
 
+/* ---------- Session ---------- */
 async function startAR() {
   startBtn.disabled = true;
   try {
     if (window.top !== window.self) throw new Error('This page is inside an iframe. Open its address directly in Chrome.');
     initScene();
-    overlay.style.display = 'block'; // the DOM overlay root should be visible when the session starts
+    overlay.style.display = 'block';
     session = await navigator.xr.requestSession('immersive-ar', {
-      requiredFeatures: ['hit-test'],
-      optionalFeatures: ['dom-overlay'],
-      domOverlay: { root: overlay }
+      requiredFeatures: ['hit-test'], optionalFeatures: ['dom-overlay'], domOverlay: { root: overlay }
     });
     session.addEventListener('end', endAR);
     await renderer.xr.setSession(session);
-    // Use the same 'local' space three.js uses for the camera, so hits and camera poses share one origin.
-    localSpace = renderer.xr.getReferenceSpace();
+    localSpace = renderer.xr.getReferenceSpace();   // same space three.js uses for the camera
     viewerSpace = await session.requestReferenceSpace('viewer');
     hitSource = await session.requestHitTestSource({ space: viewerSpace });
     start.style.display = 'none';
-    refreshStats();
+    setTool('line');
   } catch (error) {
     if (session) { session.removeEventListener('end', endAR); session.end().catch(() => {}); session = null; }
     teardown();
@@ -427,14 +731,10 @@ async function startAR() {
 }
 function teardown() {
   if (hitSource) { hitSource.cancel(); hitSource = null; }
-  clearHeight();
-  if (scene) {
-    segmentObjects.forEach(s => { s.line.geometry.dispose(); disposeLabel(s.label); });
-    if (previewLabel) disposeLabel(previewLabel);
-  }
+  if (scene) { clearAll(); removeObjs([previewLabel, previewLine]); }
   if (renderer) { renderer.setAnimationLoop(null); renderer.dispose(); renderer.domElement.remove(); renderer = null; }
-  scene = null; points = []; segmentObjects = []; closed = false;
-  currentHit = null; currentViewerPose = null; localSpace = null; viewerSpace = null;
+  scene = null; currentHit = null; currentViewerPose = null; localSpace = null; viewerSpace = null;
+  closeInfo(); tray.classList.remove('open'); $('moreBtn').classList.remove('on');
   overlay.style.display = 'none'; start.style.display = 'flex';
 }
 function endAR() {
@@ -442,32 +742,31 @@ function endAR() {
   teardown();
   startBtn.disabled = false; setStatus('AR session ended. Start again when ready.');
 }
+
+/* ---------- Info overlay ---------- */
+function openInfo() { (session ? overlay : $('app')).appendChild(info); info.classList.add('open'); }
+function closeInfo() { info.classList.remove('open'); }
+
 startBtn.addEventListener('click', startAR);
-addBtn.addEventListener('click', addPoint);
-undoBtn.addEventListener('click', undo);
-clearBtn.addEventListener('click', clearAll);
+$('addBtn').addEventListener('click', addPoint);
+$('undoBtn').addEventListener('click', undo);
+$('clearBtn').addEventListener('click', clearAll);
+$('moreBtn').addEventListener('click', () => { const o = tray.classList.toggle('open'); $('moreBtn').classList.toggle('on', o); });
+document.querySelectorAll('.tool').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
 closeBtn.addEventListener('click', closeShape);
-exitBtn.addEventListener('click', () => session?.end());
-modeBtn.addEventListener('click', () => {
-  heightMode = !heightMode; modeBtn.classList.toggle('active', heightMode);
-  modeBtn.textContent = 'Height mode: ' + (heightMode ? 'on' : 'off');
-  clearHeight();
-  if (previewLine) { previewLine.visible = false; previewLabel.visible = false; }
-  setHint(heightMode ? (points.length ? 'Measuring up from the last point. Tilt up to the top' : 'Tap ＋ on the floor to place the base point')
-                     : 'Tap ＋ to place a point', 3000);
-  refreshStats();
-});
+flatBtn.addEventListener('click', flattenShape);
+volBtn.addEventListener('click', makeVolume);
+$('exitBtn').addEventListener('click', () => session?.end());
+document.querySelectorAll('.openInfo').forEach(b => b.addEventListener('click', openInfo));
+$('closeInfo').addEventListener('click', closeInfo);
 unitBtn.addEventListener('click', () => {
   millimetres = !millimetres; unitBtn.textContent = 'Units: ' + (millimetres ? 'mm' : 'm / cm');
-  segmentObjects.forEach((s, i) => {
-    const a = points[i].position, b = points[(i + 1) % points.length].position; // last segment wraps when closed
-    updateLabel(s.label, fmt(distance(a, b)));
-  });
-  if (heightLabel && Number.isFinite(lastHeight)) updateLabel(heightLabel, fmt(lastHeight), C.height);
-  refreshStats();
+  labels.forEach(s => updateLabel(s, labelText(s.userData.kind, s.userData.value)));
+  refreshUI();
 });
 window.addEventListener('resize', () => { if (renderer && !renderer.xr.isPresenting) renderer.setSize(innerWidth, innerHeight); });
 
+/* ---------- Hue slider ---------- */
 function shiftHue(hex, deg) {
   const c = new THREE.Color(hex), hsl = {};
   c.getHSL(hsl);
@@ -478,9 +777,10 @@ function applyHue(deg) {
   for (const k in BASE) C[k] = shiftHue(BASE[k], deg);
   const root = document.documentElement.style;
   for (const k in C) root.setProperty('--' + k, C[k]);
-  lineMaterial.color.set(C.accent); markerMaterial.color.set(C.accent);
-  previewMaterial.color.set(C.ring); ringMaterial.color.set(C.ring); heightMaterial.color.set(C.height);
-  if (heightLabel && Number.isFinite(lastHeight)) { heightLabel.userData.text = null; updateLabel(heightLabel, fmt(lastHeight), C.height); }
+  mat.line.color.set(C.accent); mat.marker.color.set(C.accent); mat.circle.color.set(C.accent);
+  mat.preview.color.set(C.ring); mat.ring.color.set(C.ring); mat.plane.color.set(C.ring); mat.volume.color.set(C.ring);
+  mat.height.color.set(C.height);
+  if (heightLabel) updateLabel(heightLabel, heightLabel.userData.text, C.height);
   try { localStorage.setItem('measureHue', String(deg)); } catch (e) {}
 }
 const hueSlider = $('hueSlider');
