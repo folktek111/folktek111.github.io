@@ -2,17 +2,24 @@
 <!--
 Made by:  Claude
 Model:    Claude Opus 5.5
-Version:  v1.2.0
+Version:  v1.2.1
 Created:  2026-11-20 CET (Europe/Stockholm, UTC+1)
-About:    AR Tape Measure — WebXR measuring tool for Chrome on Android: lines, shapes and areas,
+About:    AR Tape Measure — WebXR measuring tool for Android phones with ARCore (Chrome-based browsers): lines, shapes and areas,
           flat planes, volume, height and circles. Part of the Folktek Vibe Coding Lab,
           live at folktek.org/measure. Copyleft: GPL-3.0-or-later (see LICENSE).
 Prompt:   Review and fix the AR tape measure proposal, publish it so it runs on a Pixel, make the buttons pink,
           add version tags, export to VIBE/V, remove all orange, grey-pink palette with a hue slider,
           simple A-to-B line by default, advanced tools in a More tray, icon buttons, info overlay,
           Folktek logo, link, eyebrow, code download and copyleft on the start screen.
+          v1.2.1: requirements note on the start screen, clear messages when AR cannot start,
+          Play Store link for Google Play Services for AR.
 
 Changelog:
+  v1.2.1 (2026-11-20) Start screen now lists what you need (ARCore phone, Google Play Services for AR,
+                      camera allowed, a browser with WebXR such as Chrome or Brave, not inside a messaging app).
+                      Clear plain messages when AR cannot start: link opened inside another app,
+                      browser without WebXR, AR not available, or the AR session failed.
+                      Play Store link for Google Play Services for AR shown with those messages.
   v1.2.0 (2026-11-20) Line tool is the default: two taps = one A-to-B measurement, next tap starts a new line.
                       More tray with tools: Shape (close, area), Flatten (lines points up on one plane and
                       shows a see-through surface), Volume (shape area x measured height, drawn as a box),
@@ -68,6 +75,13 @@ Changelog:
   #start h1 { font-size:clamp(1.4rem,6vw,2rem); margin:0 0 8px; }
   #start p { max-width:34rem; line-height:1.5; color:var(--muted); margin:6px 0; }
   #status { color:var(--accent); min-height:3em; max-width:38rem; white-space:pre-wrap; margin:6px 0; }
+  #arLink { display:none; color:var(--accent); font-weight:600; margin:0 0 8px; }
+  #arLink.show { display:inline-block; }
+  #startBtn:disabled { opacity:.45; }
+  #needs { max-width:24rem; text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:15px;
+    padding:10px 16px; margin-top:12px; font-size:.88rem; color:var(--muted); line-height:1.5; }
+  #needs strong { color:var(--text); }
+  #needs ul { margin:6px 0 2px; padding-left:1.2em; }
   #startBtn { font-size:1.2rem; min-height:62px; padding:14px 30px; }
   .linkBtn { background:none; color:var(--muted); text-decoration:underline; min-height:44px; font-weight:600; }
   #hue { display:flex; align-items:center; gap:10px; margin-top:12px; width:min(100%,22rem); background:var(--panel);
@@ -157,18 +171,28 @@ Changelog:
     <h1>AR Tape Measure</h1>
     <p>Measure lines, shapes, areas, heights and circles with your phone camera. No ads, no account, no subscription.</p>
     <div id="status">Checking WebXR support…</div>
+    <a id="arLink" href="https://play.google.com/store/apps/details?id=com.google.ar.core" target="_blank" rel="noopener">Get Google Play Services for AR</a>
     <button id="startBtn" disabled>Start measuring</button>
     <button class="linkBtn openInfo" type="button">How to use it</button>
+    <div id="needs">
+      <strong>You need</strong>
+      <ul>
+        <li>An Android phone that supports ARCore</li>
+        <li>Google Play Services for AR (free, from the Play Store)</li>
+        <li>A browser with WebXR, such as Chrome. Camera allowed.</li>
+        <li>Open the link in your browser, not inside WhatsApp, Messenger or another app</li>
+        <li>iPhone does not work</li>
+      </ul>
+    </div>
     <div id="hue">
       <label for="hueSlider">Colour</label>
       <input id="hueSlider" type="range" min="0" max="359" step="1" value="0" aria-label="Shift the app colours">
       <button id="hueReset" type="button">Reset</button>
     </div>
     <footer>
-      Needs Chrome on an Android phone with ARCore.<br>
-      <a href="ar-tape-measure-v1.2.0.zip" download>Download the code</a> ·
+      <a href="ar-tape-measure-v1.2.1.zip" download>Download the code</a> ·
       <a href="https://github.com/folktek111/folktek111.github.io/tree/main/measure">Source on GitHub</a><br>
-      <span class="cl">©</span> Copyleft · <a href="LICENSE">GPL-3.0</a> · v1.2.0 · <a href="https://folktek.org">folktek.org</a>
+      <span class="cl">©</span> Copyleft · <a href="LICENSE">GPL-3.0</a> · v1.2.1 · <a href="https://folktek.org">folktek.org</a>
     </footer>
   </section>
 
@@ -278,7 +302,7 @@ const mat = {
 const markerGeometry = new THREE.SphereGeometry(0.02, 16, 12);
 const UP = new THREE.Vector3(0, 1, 0);
 
-function setStatus(message) { status.textContent = message; }
+function setStatus(message, showLink = false) { status.textContent = message; $('arLink').classList.toggle('show', showLink); }
 function setHint(text, holdMs = 0) {
   const now = performance.now();
   if (!holdMs && now < hintHoldUntil) return;
@@ -287,14 +311,18 @@ function setHint(text, holdMs = 0) {
 }
 
 async function checkSupport() {
+  const ua = navigator.userAgent || '';
+  if (/FBAN|FBAV|FB_IAB|Instagram|Snapchat|TikTok|MicroMessenger|Line\/|; wv\)/i.test(ua)) {
+    setStatus('This link is open inside another app. Open it in your browser instead (Chrome, Brave): use the menu in the corner and choose "Open in browser".'); return;
+  }
   if (!window.isSecureContext) { setStatus('WebXR needs a secure HTTPS page. Open this page from its https:// address.'); return; }
-  if (!navigator.xr) { setStatus('This browser does not support WebXR AR. Use Chrome on an ARCore-supported Android phone. (iPhone Safari does not support it.)'); return; }
+  if (!navigator.xr) { setStatus('This browser has no WebXR, so AR cannot start. Try Chrome on an Android phone. iPhones do not work.'); return; }
   try {
     const supported = await navigator.xr.isSessionSupported('immersive-ar');
-    if (!supported) { setStatus('AR is not available here. Check Chrome, Google Play Services for AR (ARCore), camera permission, and device support.'); return; }
+    if (!supported) { setStatus('AR is not available on this phone or browser. It needs a phone that supports ARCore, with Google Play Services for AR installed and up to date.', true); return; }
     setStatus('AR is available. Ready to measure.');
     startBtn.disabled = false;
-  } catch (error) { setStatus('Could not check AR support: ' + error.message); }
+  } catch (error) { setStatus('Could not check AR support: ' + error.message, true); }
 }
 checkSupport();
 
@@ -709,7 +737,7 @@ function render(_time, frame) {
 async function startAR() {
   startBtn.disabled = true;
   try {
-    if (window.top !== window.self) throw new Error('This page is inside an iframe. Open its address directly in Chrome.');
+    if (window.top !== window.self) throw new Error('This page is inside an iframe. Open its address directly in your browser.');
     initScene();
     overlay.style.display = 'block';
     session = await navigator.xr.requestSession('immersive-ar', {
@@ -725,7 +753,7 @@ async function startAR() {
   } catch (error) {
     if (session) { session.removeEventListener('end', endAR); session.end().catch(() => {}); session = null; }
     teardown();
-    setStatus('Could not start AR: ' + error.message + '\nCheck HTTPS, Chrome camera permission, ARCore / Google Play Services for AR, and that the page is not embedded.');
+    setStatus('Could not start AR: ' + error.message + '\nIf your browser asked you to install or update Google Play Services for AR, do that first, then try again. Also check that the camera is allowed and the page is not inside another app.', true);
     startBtn.disabled = false;
   }
 }
